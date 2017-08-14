@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="teste.lucasvegi.pokemongooffline.Controller.LoginActivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:id="@+id/imgFundoLogin"
+        android:src="@drawable/pallet2"
+        android:alpha="0.9"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="30dp"
+        android:background="@drawable/roundshapebranco"
+        android:alpha="0.8"
+        android:id="@+id/layoutFundoLogin">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Usuário:"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:id="@+id/labelUsuarioLogin"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/labelUsuarioLogin"
+            android:layout_alignLeft="@+id/labelUsuarioLogin"
+            android:layout_alignRight="@+id/labelUsuarioLogin"
+            android:layout_marginTop="5dp"
+            android:imeOptions="actionNext"
+            android:singleLine="true"
+            android:id="@+id/edtUsuarioLogin"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Senha:"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_below="@+id/edtUsuarioLogin"
+            android:layout_alignLeft="@+id/edtUsuarioLogin"
+            android:layout_alignRight="@+id/edtUsuarioLogin"
+            android:layout_marginTop="15dp"
+            android:id="@+id/labelSenhaLogin"/>
+
+        <EditText
+            android:password="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/labelSenhaLogin"
+            android:layout_alignLeft="@+id/labelSenhaLogin"
+            android:layout_alignRight="@+id/labelSenhaLogin"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:id="@+id/edtSenhaLogin"
+            android:text=""/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:id="@+id/btnLogin"
+            android:layout_below="@+id/edtSenhaLogin"
+            android:layout_alignRight="@+id/edtSenhaLogin"
+            android:layout_marginTop="15dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/botao_style"
+            android:onClick="clickLogin"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cadastrar"
+            android:textColor="#992416"
+            android:textStyle="bold"
+            android:id="@+id/btnCadastrar"
+            android:layout_below="@+id/btnLogin"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="25dp"
+            android:onClick="clickCadastrar"/>
+
+    </RelativeLayout>
+</FrameLayout>

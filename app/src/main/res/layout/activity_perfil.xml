@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="teste.lucasvegi.pokemongooffline.Controller.PerfilActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/view_fundo_barra_navegacao"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/barraVoltarPerfil">
+
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="5dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_back"
+            android:background="@android:color/transparent"
+            android:id="@+id/voltarPerfil"
+            android:onClick="clickVoltar"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Perfil do Usuário"
+            android:textStyle="normal"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/txtTituloPerfilUser"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/voltarPerfil" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/barraVoltarPerfil">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="2dp"
+                android:layout_centerHorizontal="true"
+                android:text="nome do usuário"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/txtNomeTreinadorPerfil"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="280dp"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/imgTreinadorPerfil"
+                android:layout_below="@+id/txtNomeTreinadorPerfil"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/male_grande"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/labelInicioAventuraPerfil"
+                android:layout_below="@+id/imgTreinadorPerfil"
+                android:layout_centerHorizontal="true"
+                android:text="Início da Aventura:"
+                android:textStyle="bold"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtInicioAventuraPerfil"
+                android:layout_below="@+id/labelInicioAventuraPerfil"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="5dp"
+                android:text="25/12/2016 - 20:10:26"
+                android:textStyle="italic"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/labelNumCapturasPerfil"
+                android:layout_below="@+id/txtInicioAventuraPerfil"
+                android:layout_centerHorizontal="true"
+                android:text="Número de capturas:"
+                android:textStyle="bold"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtNumCapturasPerfil"
+                android:layout_below="@+id/labelNumCapturasPerfil"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:text="50"
+                android:textStyle="italic"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Logout"
+                android:id="@+id/button"
+                android:background="@drawable/botao_style"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/txtNumCapturasPerfil"
+                android:onClick="clickLogout"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

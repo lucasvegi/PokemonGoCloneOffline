@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="teste.lucasvegi.pokemongooffline.Controller.DetalhesPokedexActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/view_fundo_barra_navegacao"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/barraVoltarDetalhesPokedex">
+
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="5dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_back"
+            android:background="@android:color/transparent"
+            android:id="@+id/voltarDetalhesPokedex"
+            android:onClick="clickVoltarDetalhe"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Detalhes Bulbasaur"
+            android:textStyle="normal"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/txtTituloDetalhesPokedex"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/voltarDetalhesPokedex" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/barraVoltarDetalhesPokedex">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="210dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgDetalhePokemon"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:src="@drawable/p1"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#001"
+                android:textColor="#808080"
+                android:id="@+id/txtNumPkmnDetalhes"
+                android:layout_below="@+id/imgDetalhePokemon"
+                android:layout_alignLeft="@+id/imgDetalhePokemon"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bulbasaur"
+                android:textColor="#000000"
+                android:id="@+id/txtNomePkmnDetalhes"
+                android:layout_alignBottom="@+id/txtNumPkmnDetalhes"
+                android:layout_toRightOf="@+id/txtNumPkmnDetalhes"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Capturados: 3"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"
+                android:id="@+id/txtPkmnCapturadosDetalhes"
+                android:layout_below="@+id/txtNumPkmnDetalhes"
+                android:layout_alignLeft="@+id/txtNumPkmnDetalhes" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tipo:"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:textColor="#000000"
+                android:layout_marginTop="15dp"
+                android:id="@+id/txtLabelTipoPkmnDetalhes"
+                android:layout_below="@+id/txtPkmnCapturadosDetalhes"
+                android:layout_alignStart="@+id/txtPkmnCapturadosDetalhes" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Grass"
+                android:textStyle="bold"
+                android:layout_marginLeft="20dp"
+                android:background="#00FF00"
+                android:textColor="#FFFFFF"
+                android:id="@+id/txtTipo1PkmnDetalhes"
+                android:layout_alignBottom="@+id/txtLabelTipoPkmnDetalhes"
+                android:layout_toRightOf="@+id/txtNumPkmnDetalhes" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Poison"
+                android:textStyle="bold"
+                android:layout_marginLeft="3dp"
+                android:background="#8A2BE2"
+                android:textColor="#FFFFFF"
+                android:id="@+id/txtTipo2PkmnDetalhes"
+                android:layout_alignBottom="@+id/txtTipo1PkmnDetalhes"
+                android:layout_toRightOf="@+id/txtTipo1PkmnDetalhes" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Locais das capturas"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/botao_style"
+                android:id="@+id/btnLocaisCapturasDetalhes"
+                android:layout_below="@+id/txtTipo1PkmnDetalhes"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:onClick="clickLocais"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
+
+</RelativeLayout>

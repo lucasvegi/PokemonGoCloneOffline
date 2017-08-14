@@ -1,0 +1,66 @@
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/gerenciadorImagem">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/labelPkmnNovo"
+        android:text="novo"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_x="8dp"
+        android:layout_y="8dp"
+        android:padding="5dp"
+        android:alpha="0.8"
+        android:clickable="false"
+        android:layout_margin="5dp"
+        android:background="@drawable/botao_style"
+        android:visibility="visible"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/txtNomePkmnCaptura"
+        android:text="Nome do Pokemon"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#000000"
+        android:background="@drawable/roundshapebranco"
+        android:textStyle="bold"
+        android:layout_x="200dp"
+        android:layout_y="8dp"
+        android:padding="5dp"
+        android:alpha="0.8"
+        android:clickable="false"
+        android:layout_margin="5dp"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:src="@drawable/pikachu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:resizeClip="true"
+        android:layout_x="0px"
+        android:layout_y="0px"
+        android:id="@+id/pokemon"
+        android:background="@android:color/transparent"/>
+
+    <ImageView
+        android:src="@drawable/pokeball"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:layout_x="0px"
+        android:layout_y="200px"
+        android:clipChildren="false"
+        android:id="@+id/pokeball"
+        android:background="@android:color/transparent"/>
+
+</AbsoluteLayout>

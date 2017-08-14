@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="teste.lucasvegi.pokemongooffline.Controller.CadastrarActivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:id="@+id/imgFundoCadastro"
+        android:src="@drawable/pallet2"
+        android:alpha="0.9"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/view_fundo_barra_navegacao"
+        android:layout_gravity="top"
+        android:id="@+id/barraVoltarCadastrar">
+
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_margin="5dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_action_back"
+            android:background="@android:color/transparent"
+            android:id="@+id/voltarCadastrar"
+            android:onClick="clickVoltar"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Cadastrar"
+            android:textStyle="normal"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/txtTituloCadastrar"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/voltarCadastrar" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="40dp"
+        android:background="@drawable/roundshapebranco"
+        android:alpha="0.8"
+        android:id="@+id/layoutFundoCadastro">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nome:"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:id="@+id/labelNomeCadastro"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/labelNomeCadastro"
+            android:layout_alignLeft="@+id/labelNomeCadastro"
+            android:layout_alignRight="@+id/labelNomeCadastro"
+            android:layout_marginTop="5dp"
+            android:inputType="textCapSentences"
+            android:id="@+id/edtNomeCadastro"
+            android:text=""
+            android:imeOptions="actionNext"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Usuário:"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_below="@+id/edtNomeCadastro"
+            android:layout_alignLeft="@+id/edtNomeCadastro"
+            android:layout_alignRight="@+id/edtNomeCadastro"
+            android:layout_marginTop="5dp"
+            android:id="@+id/labelUsuarioCadastro"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/labelUsuarioCadastro"
+            android:layout_alignLeft="@+id/labelUsuarioCadastro"
+            android:layout_alignRight="@+id/labelUsuarioCadastro"
+            android:layout_marginTop="5dp"
+            android:id="@+id/edtUsuarioCadastro"
+            android:imeOptions="actionNext"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Senha:"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_below="@+id/edtUsuarioCadastro"
+            android:layout_alignLeft="@+id/edtUsuarioCadastro"
+            android:layout_alignRight="@+id/edtUsuarioCadastro"
+            android:layout_marginTop="5dp"
+            android:id="@+id/labelSenhaCadastro"/>
+
+        <EditText
+            android:password="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/labelSenhaCadastro"
+            android:layout_alignLeft="@+id/labelSenhaCadastro"
+            android:layout_alignRight="@+id/labelSenhaCadastro"
+            android:layout_marginTop="5dp"
+            android:id="@+id/edtSenhaCadastro"
+            android:text=""
+            android:imeOptions="actionNext"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirmação da senha:"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_below="@+id/edtSenhaCadastro"
+            android:layout_alignLeft="@+id/edtSenhaCadastro"
+            android:layout_alignRight="@+id/edtSenhaCadastro"
+            android:layout_marginTop="5dp"
+            android:id="@+id/labelConfirmacaoSenhaCadastro"/>
+
+        <EditText
+            android:password="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/labelConfirmacaoSenhaCadastro"
+            android:layout_alignLeft="@+id/labelConfirmacaoSenhaCadastro"
+            android:layout_alignRight="@+id/labelConfirmacaoSenhaCadastro"
+            android:layout_marginTop="5dp"
+            android:id="@+id/edtConfirmacaoSenhaCadastro"
+            android:text=""
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sexo:"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/edtConfirmacaoSenhaCadastro"
+            android:layout_alignLeft="@+id/edtConfirmacaoSenhaCadastro"
+            android:id="@+id/labelSexo"/>
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/grupoSexo"
+            android:layout_below="@+id/labelSexo"
+            android:layout_alignLeft="@+id/labelSexo"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="25dp">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sexoMasculino"
+                android:text="Masculino"
+                android:checked="true"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sexoFeminino"
+                android:text="Feminino"/>
+
+        </RadioGroup>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cadastrar"
+            android:id="@+id/btnLoginCadastro"
+            android:layout_alignBottom="@+id/grupoSexo"
+            android:layout_alignRight="@+id/edtConfirmacaoSenhaCadastro"
+            android:layout_marginTop="15dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/botao_style"
+            android:onClick="clickCadastrarUser"/>
+
+    </RelativeLayout>
+</FrameLayout>
