@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    //buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId 'teste.lucasvegi.pokemongooffline'
         minSdkVersion 17
@@ -10,7 +9,6 @@ android {
         versionCode 1
         versionName '0.4'
         multiDexEnabled true
-
     }
     buildTypes {
         release {
