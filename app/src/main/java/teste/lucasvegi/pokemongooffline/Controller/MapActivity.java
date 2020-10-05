@@ -296,7 +296,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             for(int i = 0; i < apVet.length; i++){
                 Log.d("PlotarMarker", "Pokemon: " + apVet[i].getPokemon().getNome() + " Lat: " + apVet[i].getLatitude() + " Long: " + apVet[i].getLongitude());
 
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromResource();
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(apVet[i].getPokemon().getIcone());
 
                 Marker pokePonto = map.addMarker(new MarkerOptions().
                         icon(icon).
