@@ -3,13 +3,15 @@ package teste.lucasvegi.pokemongooffline.Controller;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
-import android.support.v4.app.FragmentActivity;
+//import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,10 +20,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -39,7 +45,7 @@ import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.R;
 
-public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener,Runnable {
+public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback {
     public GoogleMap map;
     public LocationManager lm;
     public Criteria criteria;
@@ -77,15 +83,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        //configura o mapa
-        map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa)).getMap();
-        map.setMyLocationEnabled(true);
-        map.setBuildingsEnabled(true);
-        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        map.setOnMarkerClickListener(this); //marcadores clicaveis
-
+        SupportMapFragment frag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
+        frag.getMapAsync(this);
         configuraCriterioLocation();
-
         //aloca lista e Map
         aparecimentos = new ArrayList<Aparecimento>();
         aparecimentoMap = new HashMap<Marker, Aparecimento>();
@@ -296,8 +296,10 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             for(int i = 0; i < apVet.length; i++){
                 Log.d("PlotarMarker", "Pokemon: " + apVet[i].getPokemon().getNome() + " Lat: " + apVet[i].getLatitude() + " Long: " + apVet[i].getLongitude());
 
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromResource();
+
                 Marker pokePonto = map.addMarker(new MarkerOptions().
-                        icon(BitmapDescriptorFactory.fromResource(apVet[i].getPokemon().getIcone())).
+                        icon(icon).
                         position(new LatLng(apVet[i].getLatitude(), apVet[i].getLongitude())).
                         title(apVet[i].getPokemon().getNome()));
 
@@ -430,5 +432,15 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             finish();
         }
 
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        //configura o mapa
+        map.setMyLocationEnabled(true);
+        map.setBuildingsEnabled(true);
+        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        map.setOnMarkerClickListener(this); //marcadores clicaveis
     }
 }

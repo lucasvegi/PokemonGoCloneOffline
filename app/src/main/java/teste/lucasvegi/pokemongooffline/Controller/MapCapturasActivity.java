@@ -1,13 +1,16 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+//import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -22,7 +25,7 @@ import teste.lucasvegi.pokemongooffline.Model.Pokemon;
 import teste.lucasvegi.pokemongooffline.Model.PokemonCapturado;
 import teste.lucasvegi.pokemongooffline.R;
 
-public class MapCapturasActivity extends FragmentActivity {
+public class MapCapturasActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
     private Pokemon pokemon;
@@ -32,28 +35,12 @@ public class MapCapturasActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_capturas);
 
-        //configura o mapa
-        map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapaCapturas)).getMap();
-        map.setMyLocationEnabled(true);
-        map.setBuildingsEnabled(true);
-        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
+        SupportMapFragment frag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapaCapturas);
         //recupera intent vinda dos detalhes da pokedex
         Intent it = getIntent();
         pokemon = (Pokemon) it.getSerializableExtra("pkmn");
+        frag.getMapAsync(this);
 
-        if(pokemon != null){
-            //Exibe todos os pokemons DE UMA ESPÉCIE capturados no mapa
-            TextView txtTituloBarra = (TextView) findViewById(R.id.txtTituloMapCapturas);
-            txtTituloBarra.setText("Mapa das capturas - " + pokemon.getNome());
-
-            //TODO: RESOLVIDO - procura na lista de pokemons da controladora o pokemon recebido da tela anterior.
-            //pokemon = ControladoraFachadaSingleton.getInstance().convertPokemonSerializableToObject(pokemon);
-            plotarMarcadoresPokemon(pokemon);
-        }else{
-            //Exibe todos os pokemons capturados no mapa - acontece quando a navegação vem do mapa principal
-            plotarMarcadoresTodosPokemon();
-        }
     }
 
     public void clickVoltar(View v){
@@ -97,6 +84,28 @@ public class MapCapturasActivity extends FragmentActivity {
             }
         }catch (Exception e){
             Log.e("PlotarMarker","ERRO: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        //configura o mapa
+        map.setMyLocationEnabled(true);
+        map.setBuildingsEnabled(true);
+        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        if(pokemon != null){
+            //Exibe todos os pokemons DE UMA ESPÉCIE capturados no mapa
+            TextView txtTituloBarra = (TextView) findViewById(R.id.txtTituloMapCapturas);
+            txtTituloBarra.setText("Mapa das capturas - " + pokemon.getNome());
+
+            //TODO: RESOLVIDO - procura na lista de pokemons da controladora o pokemon recebido da tela anterior.
+            //pokemon = ControladoraFachadaSingleton.getInstance().convertPokemonSerializableToObject(pokemon);
+            plotarMarcadoresPokemon(pokemon);
+        }else{
+            //Exibe todos os pokemons capturados no mapa - acontece quando a navegação vem do mapa principal
+            plotarMarcadoresTodosPokemon();
         }
     }
 }
