@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,9 +34,17 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +52,11 @@ import java.util.concurrent.TimeUnit;
 
 import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
+import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
+import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
 
-public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback, GoogleMap.OnPoiClickListener {
     public GoogleMap map;
     public LocationManager lm;
     public Criteria criteria;
@@ -106,6 +117,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //Configura o nome do usuário abaixo do botão de perfil
         TextView txtNomeUser = (TextView) findViewById(R.id.txtNomeUser);
         txtNomeUser.setText(ControladoraFachadaSingleton.getInstance().getUsuario().getLogin());
+
     }
 
     @Override
@@ -241,6 +253,74 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
     }
 
+    //Over da funcao de callback pra clicar nos POI
+    @Override
+    public void onPoiClick (PointOfInterest poi){
+        String placeIde = poi.placeId; //pega o ID do poi
+        //calcula a distancia e ve se eh valido interagir
+        double DistPkStop = getDistanciaPkStop(eu,poi);
+        double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
+        if (DistPkStop > distMin) {
+            DecimalFormat df = new DecimalFormat("0.##");
+            Toast.makeText(this,"Você está a " + df.format(DistPkStop) + " metros do " + poi.name + ".\n" +
+                    "Aproxime-se pelo menos " + df.format(DistPkStop - distMin) + " metros!", Toast.LENGTH_LONG).show();
+        } else {
+            // Inicializa o SDK
+            Places.initialize(getApplicationContext(), "AIzaSyAL89AOH7JqxRQG88vonwlf9vZqebXHvHw");
+
+            // Instancia Placesclient
+            PlacesClient placesClient = Places.createClient(this);
+
+            // Pega Id
+            final String placeId = placeIde;
+
+            // Escolhe o que quer no request
+            final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+            // Faz o request com a lista de requerimentos
+            final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+                // se achou o lugar pelo id do poi, passa os dados cria um novo pokestop e passa os dados
+                Log.i("TAG", "Achou: " + place.getName());
+                Pokestop pkStop = new Pokestop();
+                pkStop.setID(place.getId());
+                pkStop.setNome(place.getName());
+                pkStop.setUltimoAcesso(TimeUtil.getHoraMinutoSegundoDiaMesAno());
+                // pegar imagem do lugar
+                final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
+                if (metadata == null || metadata.isEmpty()) {
+                    Log.w("TAG", "Nao tem metadados");
+                    return;
+                }
+                final PhotoMetadata photoMetadata = metadata.get(0);
+
+                // Nao sei direito o q eh esse string de atribuicoes, mas precisa pegar ele pra tirar a imagem
+                final String attributions = photoMetadata.getAttributions();
+
+                // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
+                final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                        .setMaxWidth(500) // Optional.
+                        .setMaxHeight(300) // Optional.
+                        .build();
+                placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                    // PASSAR A IMAGEM PRO VIEW: imageView.setImageBitmap(bitmap);
+                    pkStop.setFoto(bitmap);
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        final ApiException apiException = (ApiException) exception;
+                        Log.e("TAG", "Encontrou nada: " + exception.getMessage());
+                        final int statusCode = apiException.getStatusCode();
+                        // TODO: Handle error with given status code.
+                    }
+
+                });
+            });
+        }
+    }
+
     @Override
     public boolean onMarkerClick(Marker marker) {
 
@@ -323,6 +403,20 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         poke.setLongitude(pkmn.getPosition().longitude);
 
         return trainer.distanceTo(poke);
+    }
+
+    public double getDistanciaPkStop(Marker treinador, PointOfInterest pkStop){
+        //cria location do treinador para ver distância
+        Location trainer = new Location(provider);
+        trainer.setLatitude(treinador.getPosition().latitude);
+        trainer.setLongitude(treinador.getPosition().longitude);
+
+        //cria location do pokemon para ver distância
+        Location pkstp= new Location(provider);
+        pkstp.setLatitude(pkStop.latLng.latitude);
+        pkstp.setLongitude(pkStop.latLng.longitude);
+
+        return trainer.distanceTo(pkstp);
     }
 
     public void calcularLatLongMinMaxParaSorteio(Location location){
@@ -442,5 +536,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         map.setBuildingsEnabled(true);
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         map.setOnMarkerClickListener(this); //marcadores clicaveis
+        map.setOnPoiClickListener(this); //label do maps clicavel
     }
 }
