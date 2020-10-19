@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/pokestop2_background">
+
+    <RelativeLayout
+        android:id="@+id/placeNameBackground"
+        android:layout_width="match_parent"
+        android:layout_height="92dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="5dp"
+        android:alpha="0.8"
+        android:background="@drawable/roundshapebranco">
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:alpha="0.07"
+            android:src="@drawable/pokestopicon" />
+
+        <ImageButton
+            android:id="@+id/placeGetInfoButton"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="24dp"
+            android:adjustViewBounds="true"
+            android:alpha="0.5"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:id="@+id/placeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:text="Escultura Praca Rua J "
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/placeInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/placeName"
+            android:layout_alignStart="@+id/placeName"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
+            android:text="Escultura"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+
+
+</FrameLayout>
