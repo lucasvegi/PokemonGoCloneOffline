@@ -393,4 +393,63 @@ public final class ControladoraFachadaSingleton {
         return pkmnAux;
     }*/
 
+    public boolean aumentaXp(String evento) {
+        final int xpRecebido = getXpEvento(evento);
+        final int nivelAtual = getUsuario().getNivel();
+        final int xpAtual = getUsuario().getXp();
+        final int xpMax = xpMaximo(nivelAtual);
+        int xpFinal = xpAtual, nivelFinal = nivelAtual;
+
+        if((xpAtual + xpRecebido) >= xpMax) {
+            xpFinal = (xpAtual + xpRecebido) - xpMax;
+            nivelFinal++;
+            getUsuario().setNivel(nivelFinal);
+        } else {
+            xpFinal = xpAtual + xpRecebido;
+        }
+
+        getUsuario().setXp(xpFinal);
+
+        ContentValues valores = new ContentValues();
+
+        valores.put("login", getUsuario().getLogin());
+        valores.put("senha", getUsuario().getSenha());
+        valores.put("nome", getUsuario().getNome());
+        valores.put("sexo", getUsuario().getSexo());
+        valores.put("foto", getUsuario().getFoto());
+        valores.put("dtCadastro", getUsuario().getDtCadastro());
+        valores.put("temSessao", "SIM");
+        valores.put("nivel", nivelFinal);
+        valores.put("xp", xpFinal);
+
+        int count = BancoDadosSingleton.getInstance().atualizar("usuario", valores, "login='"+getUsuario().getLogin()+"'");
+
+        return count == 1;
+    }
+
+    public int xpMaximo(int nivelUsuario) {
+        long max = nivelUsuario*1000;
+        int max_value = 2000000000;
+
+        if( max > max_value) {
+            return max_value;
+        } else {
+            return nivelUsuario*1000;
+        }
+    }
+
+    public int getXpEvento(String evento) {
+        switch(evento) {
+            case "captura":
+                return 20;
+            case "evolui":
+                return 200;
+            case "pokestop":
+                return 50;
+            case "choca":
+                return 100;
+            default:
+                return 0;
+        }
+    }
 }

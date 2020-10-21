@@ -19,7 +19,6 @@ import teste.lucasvegi.pokemongooffline.Model.PokemonCapturado;
 import teste.lucasvegi.pokemongooffline.Model.Usuario;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
-import teste.lucasvegi.pokemongooffline.Util.NivelUtil;
 
 public class PerfilActivity extends Activity {
 
@@ -27,23 +26,6 @@ public class PerfilActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
-
-        Usuario usuario = ControladoraFachadaSingleton.getInstance().getUsuario();
-        Log.d("usuario", "XP: " + usuario.getXp());
-        Log.d("usuario", "Nivel: " + usuario.getNivel());
-
-        NivelUtil.aumentaXp("evolui");
-
-        Log.d("usuario", "XP: " + usuario.getXp());
-        Log.d("usuario", "Nivel: " + usuario.getNivel());
-        Cursor user = BancoDadosSingleton.getInstance().buscar("usuario", new String[]{"nivel", "xp"}, "login= '"+usuario.getLogin()+"'", "");
-
-        while(user.moveToNext()) {
-            int idxp = user.getColumnIndex("xp");
-            int idnivel = user.getColumnIndex("nivel");
-            Log.d("usuario","XP banco: " + user.getInt(idxp));
-            Log.d("usuario","Nivel banco: " + user.getInt(idnivel));
-        }
 
         //obtem referências das views
         ImageView imageView = (ImageView) findViewById(R.id.imgTreinadorPerfil);

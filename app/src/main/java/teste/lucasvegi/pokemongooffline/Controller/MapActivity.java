@@ -3,7 +3,6 @@ package teste.lucasvegi.pokemongooffline.Controller;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -38,10 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
-import teste.lucasvegi.pokemongooffline.Model.Usuario;
 import teste.lucasvegi.pokemongooffline.R;
-import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
-import teste.lucasvegi.pokemongooffline.Util.NivelUtil;
 
 public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener,Runnable {
     public GoogleMap map;
