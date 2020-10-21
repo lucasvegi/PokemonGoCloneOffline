@@ -7,7 +7,7 @@ import teste.lucasvegi.pokemongooffline.Model.Usuario;
 
 public class NivelUtil {
 
-	public static void aumentaXp(String evento) {
+	public static boolean aumentaXp(String evento) {
 		final Usuario usuario = ControladoraFachadaSingleton.getInstance().getUsuario();
 		final int xpRecebido = getXpEvento(evento);
 		final int nivelAtual = usuario.getNivel();
@@ -26,16 +26,20 @@ public class NivelUtil {
 		usuario.setXp(xpFinal);
 
 		ContentValues valores = new ContentValues();
+
 		valores.put("login", usuario.getLogin());
 		valores.put("senha", usuario.getSenha());
 		valores.put("nome", usuario.getNome());
 		valores.put("sexo", usuario.getSexo());
 		valores.put("foto", usuario.getFoto());
 		valores.put("dtCadastro", usuario.getDtCadastro());
-		valores.put("temSessao", "");
+		valores.put("temSessao", "SIM");
 		valores.put("nivel", nivelFinal);
 		valores.put("xp", xpFinal);
-		BancoDadosSingleton.getInstance().atualizar("usuario", valores, "login=" + usuario.getLogin());
+
+		int count = BancoDadosSingleton.getInstance().atualizar("usuario", valores, "login='"+usuario.getLogin()+"'");
+
+		return (count == 1) ? true : false;
 	}
 
 	public static int xpMaximo(int nivelUsuario) {

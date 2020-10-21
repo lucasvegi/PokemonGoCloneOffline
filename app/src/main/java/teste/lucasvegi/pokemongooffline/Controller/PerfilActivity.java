@@ -32,15 +32,17 @@ public class PerfilActivity extends Activity {
         Log.d("usuario", "XP: " + usuario.getXp());
         Log.d("usuario", "Nivel: " + usuario.getNivel());
 
-        NivelUtil.aumentaXp("captura");
+        NivelUtil.aumentaXp("evolui");
 
         Log.d("usuario", "XP: " + usuario.getXp());
         Log.d("usuario", "Nivel: " + usuario.getNivel());
-        Cursor user = BancoDadosSingleton.getInstance().buscar("usuario", new String[]{"nivel", "xp"}, "login=" + usuario.getLogin(), null);
+        Cursor user = BancoDadosSingleton.getInstance().buscar("usuario", new String[]{"nivel", "xp"}, "login= '"+usuario.getLogin()+"'", "");
+
         while(user.moveToNext()) {
             int idxp = user.getColumnIndex("xp");
             int idnivel = user.getColumnIndex("nivel");
-            Log.d("usuario", "XP banco: " + user.getInt(idxp) + "Nivel banco: " + user.getInt(idnivel));
+            Log.d("usuario","XP banco: " + user.getInt(idxp));
+            Log.d("usuario","Nivel banco: " + user.getInt(idnivel));
         }
 
         //obtem referências das views

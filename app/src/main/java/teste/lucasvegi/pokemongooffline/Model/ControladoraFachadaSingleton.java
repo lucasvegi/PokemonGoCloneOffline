@@ -126,7 +126,7 @@ public final class ControladoraFachadaSingleton {
 
     private void daoUsuario(){
 
-        Cursor c = BancoDadosSingleton.getInstance().buscar("usuario",new String[]{"login","senha","nome","sexo","foto","dtCadastro"},"","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("usuario",new String[]{"login","senha","nome","sexo","foto","dtCadastro","xp","nivel"},"","");
 
         while(c.moveToNext()){
             int login = c.getColumnIndex("login");
@@ -135,6 +135,8 @@ public final class ControladoraFachadaSingleton {
             int sexo = c.getColumnIndex("sexo");
             int foto = c.getColumnIndex("foto");
             int dtCad = c.getColumnIndex("dtCadastro");
+            int xp = c.getColumnIndex("xp");
+            int nivel = c.getColumnIndex("nivel");
 
             user = new Usuario(c.getString(login));
 
@@ -143,6 +145,8 @@ public final class ControladoraFachadaSingleton {
             user.setSexo(c.getString(sexo));
             user.setFoto(c.getString(foto)); //IMPLEMENTAR RETIRAR FOTO DE USUÁRIO NO CADASTRO
             user.setDtCadastro(c.getString(dtCad));
+            user.setXp(c.getInt(xp));
+            user.setNivel(c.getInt(nivel));
         }
 
         c.close();
