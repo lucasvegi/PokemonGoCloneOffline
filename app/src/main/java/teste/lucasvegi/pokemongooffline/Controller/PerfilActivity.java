@@ -16,9 +16,7 @@ import java.util.Map;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Pokemon;
 import teste.lucasvegi.pokemongooffline.Model.PokemonCapturado;
-import teste.lucasvegi.pokemongooffline.Model.Usuario;
 import teste.lucasvegi.pokemongooffline.R;
-import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
 public class PerfilActivity extends Activity {
 
