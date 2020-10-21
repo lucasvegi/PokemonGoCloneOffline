@@ -35,14 +35,14 @@ public class NivelUtil {
 		valores.put("temSessao", "");
 		valores.put("nivel", nivelFinal);
 		valores.put("xp", xpFinal);
-		BancoDadosSingleton.getInstance().atualizar("Usuario", valores, "login = " + usuario.getLogin());
+		BancoDadosSingleton.getInstance().atualizar("usuario", valores, "login=" + usuario.getLogin());
 	}
 
 	public static int xpMaximo(int nivelUsuario) {
 		return nivelUsuario*1000;
 	}
 
-	private static int getXpEvento(String evento) {
+	public static int getXpEvento(String evento) {
 		switch(evento) {
 			case "captura":
 				return 20;
