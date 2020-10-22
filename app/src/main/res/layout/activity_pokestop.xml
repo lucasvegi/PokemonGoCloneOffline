@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -65,40 +65,51 @@
             android:text="Escultura"
             android:textSize="14sp" />
 
+
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/pokestopReturnButton"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="32dp"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:foregroundGravity="bottom"
-            android:scaleType="centerInside"
-            android:alpha="0.7"
-            android:src="@drawable/ic_return" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        app:cardCornerRadius="250dp"
+        app:cardBackgroundColor="@color/pokestopBorder"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="70dp"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/place_image_holder">
+        <androidx.cardview.widget.CardView
+            android:layout_width="255dp"
+            android:layout_height="255dp"
+            app:cardCornerRadius="250dp"
+            android:layout_gravity="center">
 
             <ImageView
-                android:id="@+id/place_image"
-                />
-        </ImageView>
+                android:id="@+id/imgPokestopIcon"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:scaleType="center"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.cardview.widget.CardView>
+
+    <ImageButton
+        android:id="@+id/pokestopReturnButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.7"
+        android:background="@android:color/transparent"
+        android:foregroundGravity="bottom"
+        android:scaleType="centerInside"
+        android:tint="@color/quantum_black_100"
+        android:src="@drawable/ic_action_back"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        />
 
 
-    </RelativeLayout>
-
-</FrameLayout>
+</RelativeLayout>
