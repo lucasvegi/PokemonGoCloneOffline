@@ -265,6 +265,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             Toast.makeText(this,"Você está a " + df.format(DistPkStop) + " metros do " + poi.name + ".\n" +
                     "Aproxime-se pelo menos " + df.format(DistPkStop - distMin) + " metros!", Toast.LENGTH_LONG).show();
         } else {
+
             // Inicializa o SDK
             Places.initialize(getApplicationContext(), "AIzaSyAL89AOH7JqxRQG88vonwlf9vZqebXHvHw");
 
@@ -272,35 +273,49 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             PlacesClient placesClient = Places.createClient(this);
 
             // Pega Id
-            final String placeId = placeIde;
+            String placeId = placeIde;
+
+            //incializa a pokestop
+            Pokestop pkStop = new Pokestop();
 
             // Escolhe o que quer no request
-            final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+            List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
             // Faz o request com a lista de requerimentos
-            final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+            FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                    .build();
 
+            // Add a listener to handle the response.
             placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
                 Place place = response.getPlace();
                 // se achou o lugar pelo id do poi, passa os dados cria um novo pokestop e passa os dados
                 Log.i("TAG", "Achou: " + place.getName());
-                Pokestop pkStop = new Pokestop();
+                Log.d("TAG", "createMarker: AAAAAAAAAAAAAAAAAAAAA");
                 pkStop.setID(place.getId());
                 pkStop.setNome(place.getName());
                 pkStop.setUltimoAcesso(TimeUtil.getHoraMinutoSegundoDiaMesAno());
-                // pegar imagem do lugar
-                final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
-                if (metadata == null || metadata.isEmpty()) {
-                    Log.w("TAG", "Nao tem metadados");
-                    return;
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    ApiException apiException = (ApiException) exception;
+                    int statusCode = apiException.getStatusCode();
+                    // Handle error with given status code.
+                    Log.e("TAG", "Place not found: " + exception.getMessage());
                 }
-                final PhotoMetadata photoMetadata = metadata.get(0);
+            });
 
-                // Nao sei direito o q eh esse string de atribuicoes, mas precisa pegar ele pra tirar a imagem
-                final String attributions = photoMetadata.getAttributions();
+            List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
 
-                // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
-                final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+            FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+
+            // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
+            placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+                // Get the photo metadata.
+                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+                // Get the attribution text.
+                String attributions = photoMetadata.getAttributions();
+                // Create a FetchPhotoRequest.
+                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
                         .setMaxWidth(500) // Optional.
                         .setMaxHeight(300) // Optional.
                         .build();
@@ -308,17 +323,27 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     Bitmap bitmap = fetchPhotoResponse.getBitmap();
                     // PASSAR A IMAGEM PRO VIEW: imageView.setImageBitmap(bitmap);
                     pkStop.setFoto(bitmap);
+                    createMarker(place);
                 }).addOnFailureListener((exception) -> {
                     if (exception instanceof ApiException) {
-                        final ApiException apiException = (ApiException) exception;
-                        Log.e("TAG", "Encontrou nada: " + exception.getMessage());
-                        final int statusCode = apiException.getStatusCode();
-                        // TODO: Handle error with given status code.
+                        ApiException apiException = (ApiException) exception;
+                        int statusCode = apiException.getStatusCode();
+                        // Handle error with given status code.
+                        Log.e("TAG", "Place not found: " + exception.getMessage());
                     }
-
                 });
             });
         }
+    }
+
+    public void createMarker(Place place) {
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.pokestop_longe);
+
+        Marker pokeParada = map.addMarker(new MarkerOptions().
+                icon(icon).
+                position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude)).
+                title(place.getName()));
+        Log.d("TAG", "createMarker: AAAAAAAAAAAAAAAAAAAAA");
     }
 
     @Override
