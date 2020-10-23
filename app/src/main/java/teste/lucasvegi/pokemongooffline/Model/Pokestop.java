@@ -24,6 +24,9 @@ public class Pokestop implements Serializable{
     private String id;
     private String nome;
     private Bitmap foto;
+    private Double lat;
+    private Double longi;
+    private String descri;
     private Map<String,String> UltimoAcesso;
 
     public Pokestop(){
@@ -51,6 +54,30 @@ public class Pokestop implements Serializable{
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getDescri() {
+        return descri;
+    }
+
+    public void setDescri(String descri) {
+        this.descri = descri;
+    }
+
+    public double getlat() {
+        return lat;
+    }
+
+    public void setlat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getlongi() {
+        return longi;
+    }
+
+    public void setlong(double longi) {
+        this.longi = longi;
     }
 
     public Bitmap getFoto() {

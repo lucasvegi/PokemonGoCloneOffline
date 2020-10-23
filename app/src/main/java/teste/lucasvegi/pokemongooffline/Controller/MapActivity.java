@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -34,13 +33,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.maps.model.PlacesSearchResult;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -49,14 +48,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
+import teste.lucasvegi.pokemongooffline.Model.NearbySearch;
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
 
-public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback, GoogleMap.OnPoiClickListener {
+public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback {
     public GoogleMap map;
     public LocationManager lm;
     public Criteria criteria;
@@ -79,6 +80,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
     public List<Aparecimento> aparecimentos;
     public Map<Marker,Aparecimento> aparecimentoMap; //dicionário para ajudar no momento de clicar em pontos
+    public Map<Marker,PlacesSearchResult> aparecimentoMap2; //dicionário para ajudar no momento de clicar em pontos
 
     public Marker LatMin;
     public Marker LatMax;
@@ -254,46 +256,67 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     }
 
     //Over da funcao de callback pra clicar nos POI
-    @Override
-    public void onPoiClick (PointOfInterest poi){
-        String placeIde = poi.placeId; //pega o ID do poi
+    public Pokestop criarPokestop (Marker pok){
         //calcula a distancia e ve se eh valido interagir
-        double DistPkStop = getDistanciaPkStop(eu,poi);
-        double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
-        if (DistPkStop > distMin) {
-            DecimalFormat df = new DecimalFormat("0.##");
-            Toast.makeText(this,"Você está a " + df.format(DistPkStop) + " metros do " + poi.name + ".\n" +
-                    "Aproxime-se pelo menos " + df.format(DistPkStop - distMin) + " metros!", Toast.LENGTH_LONG).show();
-        } else {
+        // Inicializa o SDK
+        //Places.initialize(getApplicationContext(), "AIzaSyAL89AOH7JqxRQG88vonwlf9vZqebXHvHw");
+        Places.initialize(getApplicationContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
+        // Instancia Placesclient
+        PlacesClient placesClient = Places.createClient(this);
 
-            // Inicializa o SDK
-            Places.initialize(getApplicationContext(), "AIzaSyAL89AOH7JqxRQG88vonwlf9vZqebXHvHw");
+        // Pega Id
+        String placeId = pok.getTitle(); //pega o ID do lugar
 
-            // Instancia Placesclient
-            PlacesClient placesClient = Places.createClient(this);
+        //incializa a pokestop
+        Pokestop pkStop = new Pokestop();
 
-            // Pega Id
-            String placeId = placeIde;
+        // Escolhe o que quer no request
+        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
-            //incializa a pokestop
-            Pokestop pkStop = new Pokestop();
+        // Faz o request com a lista de requerimentos
+        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+                .build();
 
-            // Escolhe o que quer no request
-            List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+        // Add a listener to handle the response.
+        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            // se achou o lugar pelo id do poi, passa os dados cria um novo pokestop e passa os dados
+            Log.i("TAG", "Achou: " + place.getName());
+            pkStop.setID(place.getId());
+            pkStop.setNome(place.getName());
+            Log.d("TAG", "BBBBBBBBBBBBBBBBBBBBBcriarPokestop: "+pkStop.getNome());
+            pkStop.setUltimoAcesso(TimeUtil.getHoraMinutoSegundoDiaMesAno());
 
-            // Faz o request com a lista de requerimentos
-            FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                int statusCode = apiException.getStatusCode();
+                // Handle error with given status code.
+                Log.e("TAG", "Place not found: " + exception.getMessage());
+            }
+        });
+
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+
+        // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
+        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            // Get the photo metadata.
+            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+            // Get the attribution text.
+            String attributions = photoMetadata.getAttributions();
+            // Create a FetchPhotoRequest.
+            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                    .setMaxWidth(500) // Optional.
+                    .setMaxHeight(300) // Optional.
                     .build();
+            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                // PASSAR A IMAGEM PRO POKESTOP
+                pkStop.setFoto(bitmap);
 
-            // Add a listener to handle the response.
-            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-                Place place = response.getPlace();
-                // se achou o lugar pelo id do poi, passa os dados cria um novo pokestop e passa os dados
-                Log.i("TAG", "Achou: " + place.getName());
-                Log.d("TAG", "createMarker: AAAAAAAAAAAAAAAAAAAAA");
-                pkStop.setID(place.getId());
-                pkStop.setNome(place.getName());
-                pkStop.setUltimoAcesso(TimeUtil.getHoraMinutoSegundoDiaMesAno());
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     ApiException apiException = (ApiException) exception;
@@ -302,92 +325,75 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     Log.e("TAG", "Place not found: " + exception.getMessage());
                 }
             });
-
-            List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
-
-            FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
-
-            // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
-            placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-                Place place = response.getPlace();
-                // Get the photo metadata.
-                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-                // Get the attribution text.
-                String attributions = photoMetadata.getAttributions();
-                // Create a FetchPhotoRequest.
-                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                        .setMaxWidth(500) // Optional.
-                        .setMaxHeight(300) // Optional.
-                        .build();
-                placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                    // PASSAR A IMAGEM PRO VIEW: imageView.setImageBitmap(bitmap);
-                    pkStop.setFoto(bitmap);
-                    createMarker(place);
-                }).addOnFailureListener((exception) -> {
-                    if (exception instanceof ApiException) {
-                        ApiException apiException = (ApiException) exception;
-                        int statusCode = apiException.getStatusCode();
-                        // Handle error with given status code.
-                        Log.e("TAG", "Place not found: " + exception.getMessage());
-                    }
-                });
-            });
-        }
-    }
-
-    public void createMarker(Place place) {
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.pokestop_longe);
-
-        Marker pokeParada = map.addMarker(new MarkerOptions().
-                icon(icon).
-                position(new LatLng(place.getLatLng().latitude, place.getLatLng().longitude)).
-                title(place.getName()));
-        Log.d("TAG", "createMarker: AAAAAAAAAAAAAAAAAAAAA");
+        });
+        return pkStop;
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        if (marker.getAlpha()!=3) {
+            if (!marker.equals(eu)) {
+                double distanciaPkmn = getDistanciaPkmn(eu, marker);
+                double distanciaMin = distanciaMinimaParaBatalhar;
 
-        if(!marker.equals(eu)){
-            double distanciaPkmn = getDistanciaPkmn(eu,marker);
-            double distanciaMin = distanciaMinimaParaBatalhar;
+                //TODO: diminuir a distância entre treinador e pokemon
+                if (distanciaPkmn <= distanciaMin) {
+                    try {
+                        //pausa a música
+                        mp.pause();
 
-            //TODO: diminuir a distância entre treinador e pokemon
-            if( distanciaPkmn <= distanciaMin) {
-                try {
-                    //pausa a música
-                    mp.pause();
+                        Aparecimento ap = aparecimentoMap.get(marker);
+                        Intent it = new Intent(this, CapturaActivity.class);
+                        it.putExtra("pkmn", ap);
 
-                    Aparecimento ap = aparecimentoMap.get(marker);
-                    Intent it = new Intent(this, CapturaActivity.class);
-                    it.putExtra("pkmn", ap);
+                        startActivity(it);
 
-                    startActivity(it);
-
-                    marker.remove();
-                }catch (Exception e){
-                    Log.e("CliqueMarker","Erro: " + e.getMessage());
+                        marker.remove();
+                    } catch (Exception e) {
+                        Log.e("CliqueMarker", "Erro: " + e.getMessage());
+                    }
+                } else {
+                    DecimalFormat df = new DecimalFormat("0.##");
+                    Toast.makeText(this, "Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
+                            "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
                 }
-            }else{
+            }
+        }
+        else  {
+            Location Locpkstp= new Location(provider);
+            Locpkstp.setLatitude(marker.getPosition().latitude);
+            Locpkstp.setLongitude(marker.getPosition().longitude);
+            double DistPkStop = getDistanciaPkStop(eu,Locpkstp);
+            double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
+            Pokestop pkstp = criarPokestop(marker);
+            if (DistPkStop > distMin) {
                 DecimalFormat df = new DecimalFormat("0.##");
-                Toast.makeText(this,"Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
-                        "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"Você está a " + df.format(DistPkStop) + " metros do " + pkstp.getNome() + ".\n" +
+                        "Aproxime-se pelo menos " + df.format(DistPkStop - distMin) + " metros!", Toast.LENGTH_LONG).show();
+            } else {
+                //salva e interagi
             }
         }
         return false;
     }
 
     public void limparMarcadores(){
-        try{
+        try {
             //itera no dicionário de marcadores de aparecimentos
-            for (Map.Entry<Marker, Aparecimento> entry : aparecimentoMap.entrySet()){
+            for (Map.Entry<Marker, Aparecimento> entry : aparecimentoMap.entrySet()) {
                 Log.d("LimparMarker", "Pokemon: " + entry.getKey().getTitle());
                 entry.getKey().remove();
             }
-
             //limpa o dicionário de marcadores de aparecimentos
             aparecimentoMap.clear();
+
+//            for (Map.Entry<Marker, PlacesSearchResult> entry : aparecimentoMap2.entrySet()){
+//                Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
+//                entry.getKey().remove();
+//            }
+//            //limpa o dicionário de marcadores de aparecimentos
+//            aparecimentoMap2.clear();
+
         }catch (Exception e){
             Log.e("LimparMarker","ERRO: " + e.getMessage());
         }
@@ -414,6 +420,25 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }catch (Exception e){
             Log.e("PlotarMarker","ERRO: " + e.getMessage());
         }
+
+        PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude,eu.getPosition().longitude)).results;
+        for (int i=0; i< placesSearchResults.length/2;i++){
+            double lat = placesSearchResults[i].geometry.location.lat;
+            double lng = placesSearchResults[i].geometry.location.lng;
+
+            Location pkstp= new Location(provider);
+            pkstp.setLatitude(lat);
+            pkstp.setLongitude(lng);
+            double DistPkStop = getDistanciaPkStop(eu, pkstp);
+            double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
+            if (DistPkStop < distMin) {
+                Marker pokestop = map.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.pokestop_perto)).position(new LatLng(lat, lng)).title(placesSearchResults[i].placeId) .alpha(3));
+                //aparecimentoMap2.put(pokestop, placesSearchResults[i]);
+            } else {
+                Marker pokestop = map.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.pokestop_longe)).position(new LatLng(lat, lng)).title(placesSearchResults[i].placeId) .alpha(3));
+                //aparecimentoMap2.put(pokestop, placesSearchResults[i]);
+            }
+        }
     }
 
     public double getDistanciaPkmn(Marker treinador, Marker pkmn){
@@ -430,18 +455,13 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         return trainer.distanceTo(poke);
     }
 
-    public double getDistanciaPkStop(Marker treinador, PointOfInterest pkStop){
+    public double getDistanciaPkStop(Marker treinador, Location pkStop){
         //cria location do treinador para ver distância
         Location trainer = new Location(provider);
         trainer.setLatitude(treinador.getPosition().latitude);
         trainer.setLongitude(treinador.getPosition().longitude);
 
-        //cria location do pokemon para ver distância
-        Location pkstp= new Location(provider);
-        pkstp.setLatitude(pkStop.latLng.latitude);
-        pkstp.setLongitude(pkStop.latLng.longitude);
-
-        return trainer.distanceTo(pkstp);
+        return trainer.distanceTo(pkStop);
     }
 
     public void calcularLatLongMinMaxParaSorteio(Location location){
@@ -561,6 +581,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         map.setBuildingsEnabled(true);
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         map.setOnMarkerClickListener(this); //marcadores clicaveis
-        map.setOnPoiClickListener(this); //label do maps clicavel
+        //map.setOnPoiClickListener(this); //label do maps clicavel
     }
 }
