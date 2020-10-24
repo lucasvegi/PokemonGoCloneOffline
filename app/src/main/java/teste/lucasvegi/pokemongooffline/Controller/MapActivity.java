@@ -361,12 +361,12 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             //limpa o dicionário de marcadores de aparecimentos
             aparecimentoMap.clear();
 
-//            for (Map.Entry<Marker, PlacesSearchResult> entry : aparecimentoMap2.entrySet()){
-//                Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
-//                entry.getKey().remove();
-//            }
-//            //limpa o dicionário de marcadores de aparecimentos
-//            aparecimentoMap2.clear();
+            for (Map.Entry<Marker, Pokestop> entry : pokestopMap.entrySet()){
+                Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
+                entry.getKey().remove();
+            }
+            //limpa o dicionário de marcadores de aparecimentos
+            pokestopMap.clear();
 
         }catch (Exception e){
             Log.e("LimparMarker","ERRO: " + e.getMessage());
