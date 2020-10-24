@@ -81,7 +81,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
     public List<Aparecimento> aparecimentos;
     public Map<Marker,Aparecimento> aparecimentoMap; //dicionário para ajudar no momento de clicar em pontos
-    public Map<Marker,PlacesSearchResult> aparecimentoMap2; //dicionário para ajudar no momento de clicar em pontos
+    public Map<Marker,Pokestop> pokestopMap; //dicionário para ajudar no momento de clicar em pontos
 
     public Marker LatMin;
     public Marker LatMax;
@@ -103,6 +103,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //aloca lista e Map
         aparecimentos = new ArrayList<Aparecimento>();
         aparecimentoMap = new HashMap<Marker, Aparecimento>();
+
+        //aloca map de pokestops
+        pokestopMap = new HashMap<Marker, Pokestop>();
 
         //Configura web view loader sorteio de pokemon
         webViewLoader = (WebView) findViewById(R.id.imgLoader);
@@ -258,48 +261,16 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     }
 
     //Over da funcao de callback pra clicar nos POI
-    public Pokestop criarPokestop (Marker pok){
+    public void getPlaceImage (Pokestop pokestop){
         //calcula a distancia e ve se eh valido interagir
         // Inicializa o SDK
         Places.initialize(getApplicationContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
         // Instancia Placesclient
         PlacesClient placesClient = Places.createClient(this);
 
-        // Pega Id
-        String placeId = pok.getTitle(); //pega o ID do lugar
-
-        //incializa a pokestop
-        Pokestop pkStop = new Pokestop();
-
-        // Escolhe o que quer no request
-        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-
-        // Faz o request com a lista de requerimentos
-        FetchPlaceRequest request = FetchPlaceRequest.builder(placeId, placeFields)
-                .build();
-
-        // Add a listener to handle the response.
-        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            Place place = response.getPlace();
-            // se achou o lugar pelo id do poi, passa os dados cria um novo pokestop e passa os dados
-            Log.i("TAG", "Achou: " + place.getName());
-            pkStop.setID(place.getId());
-            pkStop.setNome(place.getName());
-            Log.d("TAG", "criarPokestop: "+pkStop.getNome());
-            pkStop.setUltimoAcesso(TimeUtil.getHoraMinutoSegundoDiaMesAno());
-
-        }).addOnFailureListener((exception) -> {
-            if (exception instanceof ApiException) {
-                ApiException apiException = (ApiException) exception;
-                int statusCode = apiException.getStatusCode();
-                // Handle error with given status code.
-                Log.e("TAG", "Place not found: " + exception.getMessage());
-            }
-        });
-
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
 
-        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(pokestop.getID(), fields).build();
 
         // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
@@ -318,8 +289,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
                     Bitmap bitmap = fetchPhotoResponse.getBitmap();
                     // PASSAR A IMAGEM PRO POKESTOP
-                    pkStop.setFoto(bitmap);
-
+                    pokestop.setFoto(bitmap);
                 }).addOnFailureListener((exception) -> {
                     if (exception instanceof ApiException) {
                         ApiException apiException = (ApiException) exception;
@@ -331,12 +301,13 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             }
 
         });
-        return pkStop;
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if (marker.getAlpha()!=3) {
+        String tag = marker.getTag().toString();
+
+        if (tag == "pokemon") {
             if (!marker.equals(eu)) {
                 double distanciaPkmn = getDistanciaPkmn(eu, marker);
                 double distanciaMin = distanciaMinimaParaBatalhar;
@@ -364,17 +335,15 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 }
             }
         }
-        else  {
+        if(tag == "pokestop")  {
             Location Locpkstp= new Location(provider);
             Locpkstp.setLatitude(marker.getPosition().latitude);
             Locpkstp.setLongitude(marker.getPosition().longitude);
             double DistPkStop = getDistanciaPkStop(eu,Locpkstp);
             double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
-            Pokestop pkstp = criarPokestop(marker);
             if (DistPkStop > distMin) {
                 DecimalFormat df = new DecimalFormat("0.##");
-                Toast.makeText(this,"Você está a " + df.format(DistPkStop) + " metros do " + pkstp.getNome() + ".\n" +
-                        "Aproxime-se pelo menos " + df.format(DistPkStop - distMin) + " metros!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"Você está a " + df.format(DistPkStop) + " metros do " + marker.getTitle() + ".\n" +"Aproxime-se pelo menos " + df.format(DistPkStop - distMin) + " metros!", Toast.LENGTH_LONG).show();
             } else {
                 //salva e interagi
             }
@@ -418,6 +387,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                         icon(icon).
                         position(new LatLng(apVet[i].getLatitude(), apVet[i].getLongitude())).
                         title(apVet[i].getPokemon().getNome()));
+                pokePonto.setTag("pokemon");
 
                 //adiciona marcador no dicionário
                 aparecimentoMap.put(pokePonto,apVet[i]);
@@ -426,8 +396,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             Log.e("PlotarMarker","ERRO: " + e.getMessage());
         }
 
+        //TODO : transformar esse for em um método da classe Pokestop
         PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude,eu.getPosition().longitude)).results;
-        for (int i=0; i< placesSearchResults.length/2;i++){
+        for (int i=0; i< placesSearchResults.length; i++){
             double lat = placesSearchResults[i].geometry.location.lat;
             double lng = placesSearchResults[i].geometry.location.lng;
 
@@ -436,13 +407,34 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             pkstp.setLongitude(lng);
             double DistPkStop = getDistanciaPkStop(eu, pkstp);
             double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
-            if (DistPkStop < distMin) {
-                Marker pokestop = map.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.pokestop_perto)).position(new LatLng(lat, lng)).title(placesSearchResults[i].placeId) .alpha(3));
-                //aparecimentoMap2.put(pokestop, placesSearchResults[i]);
+            Marker pokestopMarker;
+
+            Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
+            pokestop.setLat(lat);
+            pokestop.setLongi(lng);
+
+            //TODO : setar imagem do pokestop dentro da classe do pokestop
+            if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
+                getPlaceImage(pokestop);
+
+            pokestopMarker = map.addMarker(pokestop.getMarkerOptions(DistPkStop < distMin));
+            /*if (DistPkStop < distMin) {
+                pokestopMarker = map.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory
+                        .fromResource(R.drawable.pokestop_perto))
+                        .position(new LatLng(lat, lng))
+                        .title(placesSearchResults[i].placeId)
+                        .alpha(3));
             } else {
-                Marker pokestop = map.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.drawable.pokestop_longe)).position(new LatLng(lat, lng)).title(placesSearchResults[i].placeId) .alpha(3));
-                //aparecimentoMap2.put(pokestop, placesSearchResults[i]);
-            }
+                pokestopMarker = map.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory
+                        .fromResource(R.drawable.pokestop_longe))
+                        .position(new LatLng(lat, lng))
+                        .title(placesSearchResults[i].placeId)
+                        .alpha(3));
+            }*/
+            pokestopMarker.setTag("pokestop");
+            pokestopMap.put(pokestopMarker, pokestop);
         }
     }
 
