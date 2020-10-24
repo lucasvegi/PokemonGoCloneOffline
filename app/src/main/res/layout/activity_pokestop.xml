@@ -85,9 +85,9 @@
 
             <ImageView
                 android:id="@+id/imgPokestopIcon"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:scaleType="center"/>
+                android:layout_width="255dp"
+                android:layout_height="255dp"
+                android:scaleType="center" />
 
         </androidx.cardview.widget.CardView>
 
