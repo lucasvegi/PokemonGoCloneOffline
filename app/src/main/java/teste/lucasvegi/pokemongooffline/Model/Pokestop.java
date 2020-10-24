@@ -27,7 +27,7 @@ import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 public class Pokestop implements Serializable{
     private String id;
     private String nome;
-    private Bitmap foto = null;
+    private transient Bitmap foto = null;
     private Double lat;
     private Double longi;
     private String descri;
