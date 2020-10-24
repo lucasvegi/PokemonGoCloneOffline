@@ -1,5 +1,6 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -242,6 +243,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
     }
 
+    @SuppressLint("MissingPermission")
     public void iniciaGeolocation(Context ctx) {
         //obtem o melhor provedor habilitado com o critério
         provider = lm.getBestProvider(criteria, true);
@@ -259,7 +261,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public Pokestop criarPokestop (Marker pok){
         //calcula a distancia e ve se eh valido interagir
         // Inicializa o SDK
-        //Places.initialize(getApplicationContext(), "AIzaSyAL89AOH7JqxRQG88vonwlf9vZqebXHvHw");
         Places.initialize(getApplicationContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
         // Instancia Placesclient
         PlacesClient placesClient = Places.createClient(this);
@@ -284,7 +285,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             Log.i("TAG", "Achou: " + place.getName());
             pkStop.setID(place.getId());
             pkStop.setNome(place.getName());
-            Log.d("TAG", "BBBBBBBBBBBBBBBBBBBBBcriarPokestop: "+pkStop.getNome());
+            Log.d("TAG", "criarPokestop: "+pkStop.getNome());
             pkStop.setUltimoAcesso(TimeUtil.getHoraMinutoSegundoDiaMesAno());
 
         }).addOnFailureListener((exception) -> {
@@ -304,27 +305,31 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
             // Get the photo metadata.
-            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-            // Get the attribution text.
-            String attributions = photoMetadata.getAttributions();
-            // Create a FetchPhotoRequest.
-            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                    .setMaxWidth(500) // Optional.
-                    .setMaxHeight(300) // Optional.
-                    .build();
-            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                // PASSAR A IMAGEM PRO POKESTOP
-                pkStop.setFoto(bitmap);
+            List<PhotoMetadata> list = place.getPhotoMetadatas();
+            if(list != null && list.size() > 0){
+                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+                // Get the attribution text.
+                String attributions = photoMetadata.getAttributions();
+                // Create a FetchPhotoRequest.
+                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                        .setMaxWidth(500) // Optional.
+                        .setMaxHeight(300) // Optional.
+                        .build();
+                placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                    // PASSAR A IMAGEM PRO POKESTOP
+                    pkStop.setFoto(bitmap);
 
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    ApiException apiException = (ApiException) exception;
-                    int statusCode = apiException.getStatusCode();
-                    // Handle error with given status code.
-                    Log.e("TAG", "Place not found: " + exception.getMessage());
-                }
-            });
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        int statusCode = apiException.getStatusCode();
+                        // Handle error with given status code.
+                        Log.e("TAG", "Place not found: " + exception.getMessage());
+                    }
+                });
+            }
+
         });
         return pkStop;
     }
@@ -573,10 +578,12 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         //configura o mapa
+        map.clear();
         map.setMyLocationEnabled(true);
         map.setBuildingsEnabled(true);
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
