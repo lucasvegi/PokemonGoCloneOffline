@@ -262,7 +262,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
     }
 
-    //Over da funcao de callback pra clicar nos POI
+    //Recuperar imagem do local usando sdk places
     public void getPlaceImage (Pokestop pokestop){
         //calcula a distancia e ve se eh valido interagir
         // Inicializa o SDK
@@ -296,8 +296,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     if (exception instanceof ApiException) {
                         ApiException apiException = (ApiException) exception;
                         int statusCode = apiException.getStatusCode();
-                        // Handle error with given status code.
-                        Log.e("TAG", "Place not found: " + exception.getMessage());
+                        // Erro
+                        Log.e("TAG", "Lugar nao encontrado: " + exception.getMessage());
                     }
                 });
             }
@@ -344,14 +344,15 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             Locpkstp.setLatitude(marker.getPosition().latitude);
             Locpkstp.setLongitude(marker.getPosition().longitude);
             double DistPkStop = getDistanciaPkStop(eu,Locpkstp);
-            double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
+            double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos uma distancia apropriada deixar a mesma da batalha
             if (DistPkStop > distMin) {
                 DecimalFormat df = new DecimalFormat("0.##");
                 Toast.makeText(this,"Você está a " + df.format(DistPkStop) + " metros do " + marker.getTitle() + ".\n" +"Aproxime-se pelo menos " + df.format(DistPkStop - distMin) + " metros!", Toast.LENGTH_LONG).show();
             } else {
+                //Pega o pokestop equivalente ao marcado no mapa e iniciar a tela do pokestop
                 Pokestop pokestop = pokestopMap.get(marker);
                 Intent it = new Intent(this, PokestopActivity.class);
-
+                //salvar a imagem e pokestop para recuperacao dos dados na outra activity
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 pokestop.getFoto().compress(Bitmap.CompressFormat.PNG,80, stream);
                 byte[] byteArray = stream.toByteArray();
@@ -411,7 +412,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
         //TODO : transformar esse for em um método da classe Pokestop
         PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude,eu.getPosition().longitude)).results;
-        for (int i=0; i< placesSearchResults.length; i++){
+        for (int i=0; i< placesSearchResults.length/2; i++){
             double lat = placesSearchResults[i].geometry.location.lat;
             double lng = placesSearchResults[i].geometry.location.lng;
 
