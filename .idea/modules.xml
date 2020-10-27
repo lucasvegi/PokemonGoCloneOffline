@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/PokemonGoCloneOffline.iml" filepath="$PROJECT_DIR$/.idea/modules/PokemonGoCloneOffline.iml" group="PokemonGoCloneOffline" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/PokemonGoCloneOffline-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/PokemonGoCloneOffline-app.iml" group="PokemonGoCloneOffline/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="PokemonGoCloneOffline/app" />
     </modules>
   </component>
