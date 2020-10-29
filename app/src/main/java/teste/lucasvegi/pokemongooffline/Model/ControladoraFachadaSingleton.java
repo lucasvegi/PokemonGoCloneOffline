@@ -403,6 +403,12 @@ public final class ControladoraFachadaSingleton {
         if((xpAtual + xpRecebido) >= xpMax) {
             xpFinal = (xpAtual + xpRecebido) - xpMax;
             nivelFinal++;
+
+            if(nivelFinal > 40) {
+                nivelFinal = 40;
+                xpFinal = xpMaximo(nivelFinal);
+            }
+
             getUsuario().setNivel(nivelFinal);
         } else {
             xpFinal = xpAtual + xpRecebido;
@@ -428,14 +434,7 @@ public final class ControladoraFachadaSingleton {
     }
 
     public int xpMaximo(int nivelUsuario) {
-        long max = nivelUsuario*1000;
-        int max_value = 2000000000;
-
-        if( max > max_value) {
-            return max_value;
-        } else {
-            return nivelUsuario*1000;
-        }
+        return nivelUsuario*1000;
     }
 
     public int getXpEvento(String evento) {
