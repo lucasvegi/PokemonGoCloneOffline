@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerVertical="true"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:onClick="clickVoltar"
+    tools:context="teste.lucasvegi.pokemongooffline.Controller.OvosActivity">
 
     <RelativeLayout
         android:id="@+id/barraVoltarOvos"
@@ -19,7 +22,7 @@
         android:layout_marginEnd="0dp"
         android:background="@drawable/view_fundo_barra_navegacao">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/voltarOvos"
             android:layout_width="25dp"
             android:layout_height="25dp"
@@ -27,7 +30,11 @@
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="5dp"
-            app:srcCompat="@drawable/ic_action_back" />
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:onClick="clickVoltar"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_action_back" />
 
         <TextView
             android:id="@+id/txtTituloOvos"
