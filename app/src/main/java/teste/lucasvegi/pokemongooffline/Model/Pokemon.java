@@ -18,18 +18,20 @@ public class Pokemon implements Serializable{
     private int foto;
     private int icone;
     private List<Tipo> tipos;
+    private int grupoEvol;
 
     public Pokemon(){
 
     }
 
-    protected Pokemon(int numero, String nome, String categoria, int foto, int icone, ControladoraFachadaSingleton cg){
+    protected Pokemon(int numero, String nome, String categoria, int foto, int icone, int grupoEvol, ControladoraFachadaSingleton cg){
         this.numero = numero;
         this.nome = nome;
         this.categoria = categoria;
         this.foto = foto;
         this.icone = icone;
         this.tipos = new ArrayList<Tipo>();
+        this.grupoEvol = grupoEvol;
 
         preencherTipos(cg);
     }
@@ -97,6 +99,10 @@ public class Pokemon implements Serializable{
     public void setIcone(int icone) {
         this.icone = icone;
     }
+
+    public int getGrupoEvol(){return grupoEvol;}
+
+    public void setGrupoEvol(int grupoEvol){this.grupoEvol = grupoEvol;}
 
     @Override
     public boolean equals(Object obj) {

@@ -34,6 +34,7 @@ public class DetalhesPokedexActivity extends Activity {
         TextView txtNum = (TextView) findViewById(R.id.txtNumPkmnDetalhes);
         TextView txtNome = (TextView) findViewById(R.id.txtNomePkmnDetalhes);
         TextView txtCapturados = (TextView) findViewById(R.id.txtPkmnCapturadosDetalhes);
+        TextView txtGrupoEvolutivo = (TextView) findViewById(R.id.txtGrupoPkmnDetalhes); //linha add
         TextView txtTipo1 = (TextView) findViewById(R.id.txtTipo1PkmnDetalhes);
         TextView txtTipo2 = (TextView) findViewById(R.id.txtTipo2PkmnDetalhes);
 
@@ -51,6 +52,7 @@ public class DetalhesPokedexActivity extends Activity {
             }
 
             txtTituloDetalhes.setText("Detalhes " + pkmn.getNome());
+            txtGrupoEvolutivo.setText("Grupo Evolutivo: " + pkmn.getGrupoEvol());
             txtNome.setText(pkmn.getNome());
             txtCapturados.setText("Capturados: " + ControladoraFachadaSingleton.getInstance().getUsuario().getQuantidadeCapturas(pkmn));
 

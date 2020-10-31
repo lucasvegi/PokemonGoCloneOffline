@@ -60,7 +60,7 @@ public final class ControladoraFachadaSingleton {
     private void daoPokemons(ControladoraFachadaSingleton controladorGeral){
         pokemons = new HashMap<String,List<Pokemon>>();
 
-        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon",new String[]{"idPokemon","nome","categoria","foto","icone"},"","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon",new String[]{"idPokemon","nome","categoria","foto","icone","grupoEvol"},"","");
 
         while(c.moveToNext()){
             int idP = c.getColumnIndex("idPokemon");
@@ -68,8 +68,9 @@ public final class ControladoraFachadaSingleton {
             int cat = c.getColumnIndex("categoria");
             int foto = c.getColumnIndex("foto");
             int icone = c.getColumnIndex("icone");
+            int grupoEvol = c.getColumnIndex("grupoEvol");
 
-            Pokemon p = new Pokemon(c.getInt(idP),c.getString(name),c.getString(cat),c.getInt(foto),c.getInt(icone),controladorGeral);
+            Pokemon p = new Pokemon(c.getInt(idP),c.getString(name),c.getString(cat),c.getInt(foto),c.getInt(icone),c.getInt(grupoEvol),controladorGeral);
 
             //verifica se lista de alguma categoria ainda não existe
             if(pokemons.get(p.getCategoria()) == null)
