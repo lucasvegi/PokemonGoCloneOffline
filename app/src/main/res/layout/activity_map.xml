@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -39,19 +40,21 @@
                 android:scaleType="centerInside"
                 android:adjustViewBounds="true"
                 android:onClick="clickPerfil" />
+
             <ImageButton
+                android:id="@+id/botaoMapaGeral"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/botaoMapaGeral"
-                android:src="@drawable/mapa_captura"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                android:adjustViewBounds="true"
-                android:onClick="clickMapaCaptura"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_marginStart="113dp"
+                android:layout_toEndOf="@+id/botaoPerfil"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:onClick="clickMapaCaptura"
+                android:scaleType="centerInside"
+                android:src="@drawable/mapa_captura" />
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,6 +76,17 @@
                 android:id="@+id/txtNomeUser"
                 android:layout_below="@+id/botaoPerfil"
                 android:layout_alignLeft="@+id/botaoPerfil" />
+
+            <ImageButton
+                android:id="@+id/botaoOvo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:onClick="clickOvo"
+
+                android:layout_toEndOf="@+id/botaoMapaGeral"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ovo_verde" />
         </RelativeLayout>
 
         <WebView
