@@ -59,6 +59,10 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="teste.lucasvegi.pokemongooffline.Controller.OvosActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="teste.lucasvegi.pokemongooffline.Controller.SplashActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
