@@ -14,17 +14,17 @@
         android:id="@+id/barraVoltarPokedex">
 
         <ImageButton
+            android:id="@+id/voltarPokedex"
             android:layout_width="25dp"
             android:layout_height="25dp"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_centerVertical="true"
-            android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:src="@drawable/ic_action_back"
             android:background="@android:color/transparent"
-            android:id="@+id/voltarPokedex"
-            android:onClick="clickVoltar"/>
+            android:onClick="clickVoltar"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_action_back" />
 
         <TextView
             android:id="@+id/txtTituloPokedex"
