@@ -20,7 +20,7 @@ public class Pokemon implements Serializable{
     private List<Tipo> tipos;
     private int idDoce;
     private int idPokemonBase;
-    private Pokemon evolução; // TODO: VER ISSO E VER A POSSIBILIDADE DE TROCAR PARA UMA LISTA, LEVANDO EM CONTA O EVE
+    private Pokemon evolucao;
 
     public Pokemon(){
 
@@ -107,22 +107,26 @@ public class Pokemon implements Serializable{
 
     public int getIdPokemonBase(){return idPokemonBase;}
 
-    public Pokemon getEvolução() {
-        return evolução;
+    public Pokemon getEvolucao() {
+        return evolucao;
     }
 
-    public void setEvolução(Pokemon evolução) {
-        this.evolução = evolução;
+    public void setEvolucao(Pokemon evolucao) {
+        this.evolucao = evolucao;
     }
 
     public void evoluir() {
-        setNome(evolução.getNome());
-        setNumero(evolução.getNumero());
-        setCategoria(evolução.getCategoria());
-        setFoto(evolução.getFoto());
-        setIcone(evolução.getIcone());
+        // Caso o pokemon não evolua
+        if (evolucao == null) {
+            return;
+        }
+        setNome(evolucao.getNome());
+        setNumero(evolucao.getNumero());
+        setCategoria(evolucao.getCategoria());
+        setFoto(evolucao.getFoto());
+        setIcone(evolucao.getIcone());
         // TODO VER COMO ATUALIZAR OS TIPOS DOS POKEMONS
-        setEvolução(evolução.getEvolução());
+        setEvolucao(evolucao.getEvolucao());
     }
 
     @Override
