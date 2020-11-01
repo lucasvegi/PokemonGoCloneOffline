@@ -40,7 +40,8 @@
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/voltarOvos"
             android:text="Ovos"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/txtOvosTotal"
