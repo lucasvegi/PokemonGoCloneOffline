@@ -18,21 +18,23 @@ public class Pokemon implements Serializable{
     private int foto;
     private int icone;
     private List<Tipo> tipos;
-    private int grupoEvol;
+    private int idDoce;
+    private int idPokemonBase;
     private Pokemon evolução; // TODO: VER ISSO E VER A POSSIBILIDADE DE TROCAR PARA UMA LISTA, LEVANDO EM CONTA O EVE
 
     public Pokemon(){
 
     }
 
-    protected Pokemon(int numero, String nome, String categoria, int foto, int icone, int grupoEvol, ControladoraFachadaSingleton cg){
+    protected Pokemon(int numero, String nome, String categoria, int foto, int icone, int idDoce, int idPokemonBase, ControladoraFachadaSingleton cg){
         this.numero = numero;
         this.nome = nome;
         this.categoria = categoria;
         this.foto = foto;
         this.icone = icone;
         this.tipos = new ArrayList<Tipo>();
-        this.grupoEvol = grupoEvol;
+        this.idDoce = idDoce;
+        this.idPokemonBase = idPokemonBase;
 
         preencherTipos(cg);
     }
@@ -101,9 +103,9 @@ public class Pokemon implements Serializable{
         this.icone = icone;
     }
 
-    public int getGrupoEvol(){return grupoEvol;}
+    public int getIdDoce(){return idDoce;}
 
-    public void setGrupoEvol(int grupoEvol){this.grupoEvol = grupoEvol;}
+    public int getIdPokemonBase(){return idPokemonBase;}
 
     public Pokemon getEvolução() {
         return evolução;

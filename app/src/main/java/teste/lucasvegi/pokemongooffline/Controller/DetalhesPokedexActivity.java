@@ -25,6 +25,10 @@ public class DetalhesPokedexActivity extends Activity {
         Intent it = getIntent();
         pkmn = (Pokemon) it.getSerializableExtra("pkmn");
 
+        //Logs úteis para implementação dos doces
+        Log.i("DOCES:","idDoce: " + pkmn.getIdDoce());
+        Log.i("DOCES:","idPokemonBase: " + pkmn.getIdPokemonBase());
+
         //TODO: RESOLVIDO - procura na lista de pokemons da controladora o pokemon recebido da tela anterior.
         //pkmn = ControladoraFachadaSingleton.getInstance().convertPokemonSerializableToObject(pkmn);
 
@@ -34,7 +38,7 @@ public class DetalhesPokedexActivity extends Activity {
         TextView txtNum = (TextView) findViewById(R.id.txtNumPkmnDetalhes);
         TextView txtNome = (TextView) findViewById(R.id.txtNomePkmnDetalhes);
         TextView txtCapturados = (TextView) findViewById(R.id.txtPkmnCapturadosDetalhes);
-        TextView txtGrupoEvolutivo = (TextView) findViewById(R.id.txtGrupoPkmnDetalhes); //linha add
+        //TextView txtGrupoEvolutivo = (TextView) findViewById(R.id.txtGrupoPkmnDetalhes); //linha add
         TextView txtTipo1 = (TextView) findViewById(R.id.txtTipo1PkmnDetalhes);
         TextView txtTipo2 = (TextView) findViewById(R.id.txtTipo2PkmnDetalhes);
 
@@ -52,7 +56,7 @@ public class DetalhesPokedexActivity extends Activity {
             }
 
             txtTituloDetalhes.setText("Detalhes " + pkmn.getNome());
-            txtGrupoEvolutivo.setText("Grupo Evolutivo: " + pkmn.getGrupoEvol());
+            //txtGrupoEvolutivo.setText("Grupo Evolutivo: " + pkmn.getGrupoEvol());
             txtNome.setText(pkmn.getNome());
             txtCapturados.setText("Capturados: " + ControladoraFachadaSingleton.getInstance().getUsuario().getQuantidadeCapturas(pkmn));
 

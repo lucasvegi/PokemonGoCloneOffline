@@ -24,11 +24,13 @@ public final class BancoDadosSingleton {
                     "  categoria TEXT NOT NULL," +
                     "  foto INTEGER NOT NULL," +
                     "  icone INTEGER NOT NULL," +
+                    "  idDoce INTEGER NOT NULL," +
+                    "  idPokemonBase INTEGER ," +
                     " CONSTRAINT fk_pokemon_doce FOREIGN KEY (idDoce) REFERENCES doce (idDoce)," +    // relacionamento com Doce
-                    " CONSTRAINT fk_pokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES doce (idPokemon)" + //rel. evolução
+                    " CONSTRAINT fk_pokemon_pokemon FOREIGN KEY (idPokemonBase) REFERENCES doce (idPokemon)" + //rel. evolução
                     ");",
             //agora os pokemons estao agrupados por evolucao
-            "INSERT INTO pokemon (idPokemon, nome, categoria, foto, icone, fk_pokemon_doce, fk_pokemon_pokemon) VALUES" +
+            "INSERT INTO pokemon (idPokemon, nome, categoria, foto, icone, idDoce, idPokemonBase) VALUES" +
                     "(1, 'Bulbasaur', 'I', "+ R.drawable.p1+", "+ R.drawable.i1+", 1, null)," +
                     "(2, 'Ivysaur', 'I', "+ R.drawable.p2+", "+ R.drawable.i2+", 1, 1)," +
                     "(3, 'Venusaur', 'R', "+ R.drawable.p3+", "+ R.drawable.i3+", 1, 2)," +

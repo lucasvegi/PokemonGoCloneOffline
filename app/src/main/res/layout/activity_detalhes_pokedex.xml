@@ -130,19 +130,6 @@
                 android:layout_alignBottom="@+id/txtTipo1PkmnDetalhes"
                 android:layout_toRightOf="@+id/txtTipo1PkmnDetalhes" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Grupo evolutivo: 0"
-                android:paddingRight="5dp"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:textColor="#000000"
-                android:layout_marginTop="15dp"
-                android:id="@+id/txtGrupoPkmnDetalhes"
-                android:layout_below="@+id/txtLabelTipoPkmnDetalhes"
-                android:layout_alignStart="@+id/txtLabelTipoPkmnDetalhes" />
-
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
@@ -153,7 +140,7 @@
                 android:textColor="#FFFFFF"
                 android:background="@drawable/botao_style"
                 android:id="@+id/btnLocaisCapturasDetalhes"
-                android:layout_below="@+id/txtGrupoPkmnDetalhes"
+                android:layout_below="@+id/txtLabelTipoPkmnDetalhes"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="25dp"
                 android:onClick="clickLocais"/>
