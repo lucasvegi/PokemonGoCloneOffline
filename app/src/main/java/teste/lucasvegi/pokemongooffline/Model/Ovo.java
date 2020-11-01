@@ -11,13 +11,14 @@ public class Ovo implements Serializable {
     private String categoria;
     private int foto;
     private int fotoIncubadora;
-    private boolean incubadora = false;
+    private boolean incubadora;
     public Ovo(int idOvo, String cor, String categoria, int foto, int fotoIncubadora) {
         this.idOvo = idOvo;
         this.cor = cor;
         this.categoria = categoria;
         this.foto = foto;
         this.fotoIncubadora = fotoIncubadora;
+        this.incubadora = false;
     }
 
     public int getIdOvo(){ return idOvo; }

@@ -47,21 +47,21 @@ public class AdapterOvos extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
         try {
-            View view = act.getLayoutInflater().inflate(R.layout.lista_ovos_personalizada, parent, false);
+            final View view = act.getLayoutInflater().inflate(R.layout.lista_ovos_personalizada, parent, false);
 
-            Ovo ovo = ovos.get(position);
+            final Ovo ovo = ovos.get(position);
 
             Log.i("OVOS", "Montando lista de ovos para " + ovo.getCor());
 
-            ImageView imagem = (ImageView)
+             final ImageView imagem = (ImageView)
                     view.findViewById(R.id.imagemOvoOvos);
 
             TextView kmAndou = (TextView)
                     view.findViewById(R.id.kmAndou);
 
-            Button incubar = (Button)
+            final Button incubar = (Button)
                     view.findViewById(R.id.botaoIncubar);
 
 
@@ -69,6 +69,8 @@ public class AdapterOvos extends BaseAdapter {
                 //kmAndou.setText("0km");
                 imagem.setImageResource(ovo.getFotoIncubadora());
                 incubar.setEnabled(false);
+                //Log.i("OVOS", "Esta incubado");
+
 
             }else {
                 //kmAndou.setText("");
@@ -76,9 +78,11 @@ public class AdapterOvos extends BaseAdapter {
 
                 incubar.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(View v) {
                         imagem.setImageResource(ovo.getFotoIncubadora());
+                        incubar.setEnabled(false);
                         ovo.setIncubado(true);
+                       // Log.i("OVOS", "Incubou");
                     }
                 });
             }

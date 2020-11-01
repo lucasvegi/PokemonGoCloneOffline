@@ -1,6 +1,7 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +27,6 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ovos);
 
-        //ovos.add(1,"verde", "C", R.drawable.ovo_verde, R.drawable.incubadora_verde);
 
         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","cor","categoria","foto","fotoIncubadora"},"","");
         ListView listView = (ListView) findViewById(R.id.listaOvos);
