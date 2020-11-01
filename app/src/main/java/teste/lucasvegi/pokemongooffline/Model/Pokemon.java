@@ -106,7 +106,7 @@ public class Pokemon implements Serializable{
     public void setGrupoEvol(int grupoEvol){this.grupoEvol = grupoEvol;}
 
     public Pokemon getEvolucao() {
-        return evolução;
+        return evolucao;
     }
 
     public void setEvolucao(Pokemon evolucao) {
