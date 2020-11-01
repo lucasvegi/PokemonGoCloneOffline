@@ -114,6 +114,10 @@ public class Pokemon implements Serializable{
     }
 
     public void evoluir() {
+        // Caso o pokemon não evolua
+        if (evolucao == null) {
+            return;
+        }
         setNome(evolucao.getNome());
         setNumero(evolucao.getNumero());
         setCategoria(evolucao.getCategoria());
