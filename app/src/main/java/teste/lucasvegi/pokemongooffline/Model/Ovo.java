@@ -1,9 +1,6 @@
 package teste.lucasvegi.pokemongooffline.Model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-
-import teste.lucasvegi.pokemongooffline.Controller.OvosActivity;
 
 public class Ovo implements Serializable {
     private int idOvo;

@@ -20,7 +20,7 @@ public class AdapterOvos extends BaseAdapter {
 
     private List<Ovo> ovos;
     private Activity act;
-    //private OvosActivity act;
+
     public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
             this.ovos = ovos;
@@ -29,8 +29,6 @@ public class AdapterOvos extends BaseAdapter {
             Log.e("OVO", "ERRO: " + e.getMessage());
         }
     }
-
-
 
 
     @Override
@@ -47,15 +45,15 @@ public class AdapterOvos extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, View convertView, final ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         try {
-            final View view = act.getLayoutInflater().inflate(R.layout.lista_ovos_personalizada, parent, false);
+            View view = act.getLayoutInflater().inflate(R.layout.lista_ovos_personalizada, parent, false);
 
             final Ovo ovo = ovos.get(position);
 
             Log.i("OVOS", "Montando lista de ovos para " + ovo.getCor());
 
-             final ImageView imagem = (ImageView)
+            final ImageView imagem = (ImageView)
                     view.findViewById(R.id.imagemOvoOvos);
 
             TextView kmAndou = (TextView)
@@ -69,8 +67,6 @@ public class AdapterOvos extends BaseAdapter {
                 //kmAndou.setText("0km");
                 imagem.setImageResource(ovo.getFotoIncubadora());
                 incubar.setEnabled(false);
-                //Log.i("OVOS", "Esta incubado");
-
 
             }else {
                 //kmAndou.setText("");
@@ -78,14 +74,14 @@ public class AdapterOvos extends BaseAdapter {
 
                 incubar.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View view) {
                         imagem.setImageResource(ovo.getFotoIncubadora());
                         incubar.setEnabled(false);
                         ovo.setIncubado(true);
-                       // Log.i("OVOS", "Incubou");
                     }
                 });
             }
+
 
             return view;
         }catch (Exception e){
