@@ -11,6 +11,7 @@ public class Ovo implements Serializable {
     private String categoria;
     private int foto;
     private int fotoIncubadora;
+    private boolean incubadora = false;
     public Ovo(int idOvo, String cor, String categoria, int foto, int fotoIncubadora) {
         this.idOvo = idOvo;
         this.cor = cor;
@@ -19,12 +20,12 @@ public class Ovo implements Serializable {
         this.fotoIncubadora = fotoIncubadora;
     }
 
-
     public int getIdOvo(){ return idOvo; }
     public String getCor(){ return cor; }
     public String getCategoria(){ return categoria; }
     public int getFoto(){ return foto; }
     public int getFotoIncubadora(){ return fotoIncubadora; }
+    public boolean getIncubado(){ return incubadora;}
 
     public void setIdOvo(int idOvo) {
         this.idOvo = idOvo;
@@ -41,4 +42,5 @@ public class Ovo implements Serializable {
     public void setFotoIncubadora(int fotoIncubadora) {
         this.fotoIncubadora = fotoIncubadora;
     }
+    public void setIncubado(boolean incubadora){this.incubadora = incubadora;}
 }

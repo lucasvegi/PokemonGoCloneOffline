@@ -8,9 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import teste.lucasvegi.pokemongooffline.Controller.OvosActivity;
 import teste.lucasvegi.pokemongooffline.Model.Ovo;
 import teste.lucasvegi.pokemongooffline.R;
 
@@ -18,7 +20,7 @@ public class AdapterOvos extends BaseAdapter {
 
     private List<Ovo> ovos;
     private Activity act;
-
+    //private OvosActivity act;
     public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
             this.ovos = ovos;
@@ -27,6 +29,9 @@ public class AdapterOvos extends BaseAdapter {
             Log.e("OVO", "ERRO: " + e.getMessage());
         }
     }
+
+
+
 
     @Override
     public int getCount() { return ovos.size(); }
@@ -56,18 +61,26 @@ public class AdapterOvos extends BaseAdapter {
             TextView kmAndou = (TextView)
                     view.findViewById(R.id.kmAndou);
 
-            Button botaoAndou = (Button)
+            Button incubar = (Button)
                     view.findViewById(R.id.botaoIncubar);
 
 
-            //Decide se vai ter informações do pokemon ou não
-            if(ovo.getIdOvo() != 0) {
-                kmAndou.setText("0km");
-                imagem.setImageResource(ovo.getFoto());
+            if(ovo.getIncubado()) {
+                //kmAndou.setText("0km");
+                imagem.setImageResource(ovo.getFotoIncubadora());
+                incubar.setEnabled(false);
 
             }else {
-                kmAndou.setText("");
-                imagem.setImageResource(R.drawable.help);
+                //kmAndou.setText("");
+                imagem.setImageResource(ovo.getFoto());
+
+                incubar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        imagem.setImageResource(ovo.getFotoIncubadora());
+                        ovo.setIncubado(true);
+                    }
+                });
             }
 
             return view;

@@ -32,6 +32,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="48dp"
         android:layout_toEndOf="@+id/kmAndou"
+        android:onClick="clickIncubar"
         android:text="Incubar"
         android:textAlignment="center" />
 </RelativeLayout>

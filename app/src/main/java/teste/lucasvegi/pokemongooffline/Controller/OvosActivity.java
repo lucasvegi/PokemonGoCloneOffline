@@ -20,6 +20,7 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
     private List<Ovo> ovos = new ArrayList<Ovo>();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +50,7 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
     public void clickVoltar(View v){
         finish();
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
