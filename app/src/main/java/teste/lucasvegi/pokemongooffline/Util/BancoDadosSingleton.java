@@ -444,7 +444,22 @@ public final class BancoDadosSingleton {
                     "  PRIMARY KEY  (login,idPokemon,dtCaptura)," +
                     "  CONSTRAINT fk_usuariopokemon_login FOREIGN KEY (login) REFERENCES usuario (login)," +
                     "  CONSTRAINT fk_usuariopokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES pokemon (idPokemon)" +
-                    ");"};
+                    ");",
+            "CREATE TABLE ovo (" +
+                    "  idOvo INTEGER PRIMARY KEY," +
+                    "  cor TEXT NOT NULL," +
+                    "  categoria TEXT NOT NULL," +
+                    "  foto INTEGER NOT NULL," +
+                    "  fotoIncubadora INTEGER NOT NULL" +
+                    ");",
+            "INSERT INTO ovo (idOvo, cor, categoria, foto, fotoIncubadora) VALUES" +
+                    "(1, 'Verde', 'C', "+ R.drawable.ovo_verde+ R.drawable.incubadora_verde+")," +
+                    "(2, 'Laranja', 'I', "+ R.drawable.ovo_laranja+ R.drawable.incubadora_laranja+")," +
+                    "(3, 'Azul', 'R', "+ R.drawable.ovo_azul+ R.drawable.incubadora_azul+")," +
+                    "(4, 'Vermelho', 'L', "+ R.drawable.ovo_vermelho+ R.drawable.incubadora_vermelha+");",
+
+    };
+
 
     private BancoDadosSingleton() {
         Context ctx = MyApp.getAppContext();

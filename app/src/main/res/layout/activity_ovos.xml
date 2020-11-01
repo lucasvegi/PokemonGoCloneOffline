@@ -53,4 +53,11 @@
             android:text="Ovos: 0/9"
             android:textColor="#FFFFFF" />
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/listaOvos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/barraVoltarOvos"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

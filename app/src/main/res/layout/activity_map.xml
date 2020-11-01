@@ -82,10 +82,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:onClick="clickOvo"
-
                 android:layout_toEndOf="@+id/botaoMapaGeral"
+
                 android:background="@android:color/transparent"
+                android:onClick="clickOvo"
                 android:src="@drawable/ovo_verde" />
         </RelativeLayout>
 
