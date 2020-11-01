@@ -1,9 +1,6 @@
 package teste.lucasvegi.pokemongooffline.Model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-
-import teste.lucasvegi.pokemongooffline.Controller.OvosActivity;
 
 public class Ovo implements Serializable {
     private int idOvo;
@@ -11,7 +8,7 @@ public class Ovo implements Serializable {
     private String categoria;
     private int foto;
     private int fotoIncubadora;
-    private boolean incubadora = false;
+    private int incubadora = 0;
     public Ovo(int idOvo, String cor, String categoria, int foto, int fotoIncubadora) {
         this.idOvo = idOvo;
         this.cor = cor;
@@ -25,7 +22,7 @@ public class Ovo implements Serializable {
     public String getCategoria(){ return categoria; }
     public int getFoto(){ return foto; }
     public int getFotoIncubadora(){ return fotoIncubadora; }
-    public boolean getIncubado(){ return incubadora;}
+    public int getIncubado(){ return incubadora;}
 
     public void setIdOvo(int idOvo) {
         this.idOvo = idOvo;
@@ -42,5 +39,5 @@ public class Ovo implements Serializable {
     public void setFotoIncubadora(int fotoIncubadora) {
         this.fotoIncubadora = fotoIncubadora;
     }
-    public void setIncubado(boolean incubadora){this.incubadora = incubadora;}
+    public void setIncubado(int incubadora){this.incubadora = incubadora;}
 }

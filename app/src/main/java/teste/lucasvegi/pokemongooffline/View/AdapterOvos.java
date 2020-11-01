@@ -20,7 +20,7 @@ public class AdapterOvos extends BaseAdapter {
 
     private List<Ovo> ovos;
     private Activity act;
-    //private OvosActivity act;
+
     public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
             this.ovos = ovos;
@@ -29,8 +29,6 @@ public class AdapterOvos extends BaseAdapter {
             Log.e("OVO", "ERRO: " + e.getMessage());
         }
     }
-
-
 
 
     @Override
@@ -51,11 +49,11 @@ public class AdapterOvos extends BaseAdapter {
         try {
             View view = act.getLayoutInflater().inflate(R.layout.lista_ovos_personalizada, parent, false);
 
-            Ovo ovo = ovos.get(position);
+            final Ovo ovo = ovos.get(position);
 
             Log.i("OVOS", "Montando lista de ovos para " + ovo.getCor());
 
-            ImageView imagem = (ImageView)
+            final ImageView imagem = (ImageView)
                     view.findViewById(R.id.imagemOvoOvos);
 
             TextView kmAndou = (TextView)
@@ -65,7 +63,7 @@ public class AdapterOvos extends BaseAdapter {
                     view.findViewById(R.id.botaoIncubar);
 
 
-            if(ovo.getIncubado()) {
+            if(ovo.getIncubado()==1) {
                 //kmAndou.setText("0km");
                 imagem.setImageResource(ovo.getFotoIncubadora());
                 incubar.setEnabled(false);
@@ -78,10 +76,11 @@ public class AdapterOvos extends BaseAdapter {
                     @Override
                     public void onClick(View view) {
                         imagem.setImageResource(ovo.getFotoIncubadora());
-                        ovo.setIncubado(true);
+                        ovo.setIncubado(1);
                     }
                 });
             }
+
 
             return view;
         }catch (Exception e){

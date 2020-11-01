@@ -450,13 +450,14 @@ public final class BancoDadosSingleton {
                     "  cor TEXT NOT NULL," +
                     "  categoria TEXT NOT NULL," +
                     "  foto INTEGER NOT NULL," +
-                    "  fotoIncubadora INTEGER NOT NULL" +
+                    "  fotoIncubadora INTEGER NOT NULL," +
+                    "  incubadora INTEGER NOT NULL" +
                     ");",
-            "INSERT INTO ovo (idOvo, cor, categoria, foto, fotoIncubadora) VALUES" +
-                    "(1, 'Verde', 'C', "+R.drawable.ovo_verde+", "+R.drawable.incubadora_verde+")," +
-                    "(2, 'Laranja', 'I', "+R.drawable.ovo_laranja+", "+R.drawable.incubadora_laranja+")," +
-                    "(3, 'Azul', 'R', "+R.drawable.ovo_azul+", "+R.drawable.incubadora_azul+")," +
-                    "(4, 'Vermelho', 'L', "+R.drawable.ovo_vermelho+", "+R.drawable.incubadora_vermelha+");",
+            "INSERT INTO ovo (idOvo, cor, categoria, foto, fotoIncubadora, incubadora) VALUES" +
+                    "(1, 'Verde', 'C', "+R.drawable.ovo_verde+", "+R.drawable.incubadora_verde+", 0)," +
+                    "(2, 'Laranja', 'I', "+R.drawable.ovo_laranja+", "+R.drawable.incubadora_laranja+", 0)," +
+                    "(3, 'Azul', 'R', "+R.drawable.ovo_azul+", "+R.drawable.incubadora_azul+", 0)," +
+                    "(4, 'Vermelho', 'L', "+R.drawable.ovo_vermelho+", "+R.drawable.incubadora_vermelha+", 0)",
 
     };
 
