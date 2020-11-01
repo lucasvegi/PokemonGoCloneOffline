@@ -24,162 +24,249 @@ public final class BancoDadosSingleton {
                     "  categoria TEXT NOT NULL," +
                     "  foto INTEGER NOT NULL," +
                     "  icone INTEGER NOT NULL," +
-                    "  grupoEvol INTEGER NOT NULL" + //coluna adicionada
+                    " CONSTRAINT fk_pokemon_doce FOREIGN KEY (idDoce) REFERENCES doce (idDoce)," +    // relacionamento com Doce
+                    " CONSTRAINT fk_pokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES doce (idPokemon)" + //rel. evolução
+                    ");",
+            //agora os pokemons estao agrupados por evolucao
+            "INSERT INTO pokemon (idPokemon, nome, categoria, foto, icone, fk_pokemon_doce, fk_pokemon_pokemon) VALUES" +
+                    "(1, 'Bulbasaur', 'I', "+ R.drawable.p1+", "+ R.drawable.i1+", 1, null)," +
+                    "(2, 'Ivysaur', 'I', "+ R.drawable.p2+", "+ R.drawable.i2+", 1, 1)," +
+                    "(3, 'Venusaur', 'R', "+ R.drawable.p3+", "+ R.drawable.i3+", 1, 2)," +
+                    "(4, 'Charmander', 'I', "+ R.drawable.p4+", "+ R.drawable.i4+", 2, null)," +
+                    "(5, 'Charmeleon', 'I', "+ R.drawable.p5+", "+ R.drawable.i5+", 2, 4)," +
+                    "(6, 'Charizard', 'R', "+ R.drawable.p6+", "+ R.drawable.i6+", 2, 5)," +
+                    "(7, 'Squirtle', 'I', "+ R.drawable.p7+", "+ R.drawable.i7+", 3, null)," +
+                    "(8, 'Wartortle', 'I', "+ R.drawable.p8+", "+ R.drawable.i8+", 3, 7)," +
+                    "(9, 'Blastoise', 'R', "+ R.drawable.p9+", "+ R.drawable.i9+", 3, 8)," +
+                    "(10, 'Caterpie', 'C', "+ R.drawable.p10+", "+ R.drawable.i10+", 4, null)," +
+                    "(11, 'Metapod', 'C', "+ R.drawable.p11+", "+ R.drawable.i11+", 4, 10)," +
+                    "(12, 'Butterfree', 'I', "+ R.drawable.p12+", "+ R.drawable.i12+", 4, 11)," +
+                    "(13, 'Weedle', 'C', "+ R.drawable.p13+", "+ R.drawable.i13+", 5, null)," +
+                    "(14, 'Kakuna', 'C', "+ R.drawable.p14+", "+ R.drawable.i14+", 5, 13)," +
+                    "(15, 'Beedrill', 'I', "+ R.drawable.p15+", "+ R.drawable.i15+", 5, 14)," +
+                    "(16, 'Pidgey', 'C', "+ R.drawable.p16+", "+ R.drawable.i16+", 6, null)," +
+                    "(17, 'Pidgeotto', 'I', "+ R.drawable.p17+", "+ R.drawable.i17+", 6, 16)," +
+                    "(18, 'Pidgeot', 'R', "+ R.drawable.p18+", "+ R.drawable.i18+", 6, 17)," +
+                    "(19, 'Rattata', 'C', "+ R.drawable.p19+", "+ R.drawable.i19+", 7, null)," +
+                    "(20, 'Raticate', 'I', "+ R.drawable.p20+", "+ R.drawable.i20+", 7, 19)," +
+                    "(21, 'Spearow', 'C', "+ R.drawable.p21+", "+ R.drawable.i21+", 8, null)," +
+                    "(22, 'Fearow', 'I', "+ R.drawable.p22+", "+ R.drawable.i22+", 8, 21)," +
+                    "(23, 'Ekans', 'C', "+ R.drawable.p23+", "+ R.drawable.i23+", 9, null)," +
+                    "(24, 'Arbok', 'I', "+ R.drawable.p24+", "+ R.drawable.i24+", 9, 23)," +
+                    "(25, 'Pikachu', 'C', "+ R.drawable.p25+", "+ R.drawable.i25+", 10, null)," +
+                    "(26, 'Raichu', 'I', "+ R.drawable.p26+", "+ R.drawable.i26+", 10, 25)," +
+                    "(27, 'Sandshrew', 'C', "+ R.drawable.p27+", "+ R.drawable.i27+", 11, null)," +
+                    "(28, 'Sandslash', 'I', "+ R.drawable.p28+", "+ R.drawable.i28+", 11, 27)," +
+                    "(29, 'Nidoran Femea', 'C', "+ R.drawable.p29+", "+ R.drawable.i29+", 12, null)," +
+                    "(30, 'Nidorina', 'I', "+ R.drawable.p30+", "+ R.drawable.i30+", 12, 29)," +
+                    "(31, 'Nidoqueen', 'R', "+ R.drawable.p31+", "+ R.drawable.i31+", 12, 30)," +
+                    "(32, 'Nidoran Macho', 'C', "+ R.drawable.p32+", "+ R.drawable.i32+", 13, null)," +
+                    "(33, 'Nidorino', 'I', "+ R.drawable.p33+", "+ R.drawable.i33+", 13, 32)," +
+                    "(34, 'Nidoking', 'R', "+ R.drawable.p34+", "+ R.drawable.i34+", 13, 33)," +
+                    "(35, 'Clefairy', 'I', "+ R.drawable.p35+", "+ R.drawable.i35+", 14, null)," +
+                    "(36, 'Clefable', 'R', "+ R.drawable.p36+", "+ R.drawable.i36+", 14, 35)," +
+                    "(37, 'Vulpix', 'C', "+ R.drawable.p37+", "+ R.drawable.i37+", 15, null)," +
+                    "(38, 'Ninetales', 'R', "+ R.drawable.p38+", "+ R.drawable.i38+", 15, 37)," +
+                    "(39, 'Jigglypuff', 'C', "+ R.drawable.p39+", "+ R.drawable.i39+", 16, null)," +
+                    "(40, 'Wigglytuff', 'R', "+ R.drawable.p40+", "+ R.drawable.i40+", 16, 39)," +
+                    "(41, 'Zubat', 'C', "+ R.drawable.p41+", "+ R.drawable.i41+", 17, null)," +
+                    "(42, 'Golbat', 'I', "+ R.drawable.p42+", "+ R.drawable.i42+", 17, 41)," +
+                    "(43, 'Oddish', 'C', "+ R.drawable.p43+", "+ R.drawable.i43+", 18, null)," +
+                    "(44, 'Gloom', 'C', "+ R.drawable.p44+", "+ R.drawable.i44+", 18,43)," +
+                    "(45, 'Vileplume', 'I', "+ R.drawable.p45+", "+ R.drawable.i45+", 18,44)," +
+                    "(46, 'Paras', 'C', "+ R.drawable.p46+", "+ R.drawable.i46+", 19, null)," +
+                    "(47, 'Parasect', 'I', "+ R.drawable.p47+", "+ R.drawable.i47+", 19, 46)," +
+                    "(48, 'Venonat', 'C', "+ R.drawable.p48+", "+ R.drawable.i48+", 20, null)," +
+                    "(49, 'Venomoth', 'I', "+ R.drawable.p49+", "+ R.drawable.i49+", 20, 48)," +
+                    "(50, 'Diglett', 'C', "+ R.drawable.p50+", "+ R.drawable.i50+", 21, null)," +
+                    "(51, 'Dugtrio', 'I', "+ R.drawable.p51+", "+ R.drawable.i51+", 21, 50)," +
+                    "(52, 'Meowth', 'C', "+ R.drawable.p52+", "+ R.drawable.i52+", 22, null)," +
+                    "(53, 'Persian', 'I', "+ R.drawable.p53+", "+ R.drawable.i53+", 22, 52)," +
+                    "(54, 'Psyduck', 'C', "+ R.drawable.p54+", "+ R.drawable.i54+", 23, null)," +
+                    "(55, 'Golduck', 'I', "+ R.drawable.p55+", "+ R.drawable.i55+", 23, 54)," +
+                    "(56, 'Mankey', 'C', "+ R.drawable.p56+", "+ R.drawable.i56+", 24, null)," +
+                    "(57, 'Primeape', 'I', "+ R.drawable.p57+", "+ R.drawable.i57+", 24, 56)," +
+                    "(58, 'Growlithe', 'C', "+ R.drawable.p58+", "+ R.drawable.i58+", 25, null)," +
+                    "(59, 'Arcanine', 'R', "+ R.drawable.p59+", "+ R.drawable.i59+", 25, 58)," +
+                    "(60, 'Poliwag', 'C', "+ R.drawable.p60+", "+ R.drawable.i60+", 26, null)," +
+                    "(61, 'Poliwhril', 'C', "+ R.drawable.p61+", "+ R.drawable.i61+", 26, 60)," +
+                    "(62, 'Poliwrath', 'R', "+ R.drawable.p62+", "+ R.drawable.i62+", 26, 61)," +
+                    "(63, 'Abra', 'C', "+ R.drawable.p63+", "+ R.drawable.i63+", 27, null)," +
+                    "(64, 'Kadabra', 'I', "+ R.drawable.p64+", "+ R.drawable.i64+", 27, 63)," +
+                    "(65, 'Alakazam', 'R', "+ R.drawable.p65+", "+ R.drawable.i65+", 27, 64)," +
+                    "(66, 'Machop', 'C', "+ R.drawable.p66+", "+ R.drawable.i66+", 28, null)," +
+                    "(67, 'Machoke', 'I', "+ R.drawable.p67+", "+ R.drawable.i67+", 28, 66)," +
+                    "(68, 'Machamp', 'R', "+ R.drawable.p68+", "+ R.drawable.i68+", 28, 67)," +
+                    "(69, 'Bellsprout', 'C', "+ R.drawable.p69+", "+ R.drawable.i69+", 29, null)," +
+                    "(70, 'Weepinbell', 'I', "+ R.drawable.p70+", "+ R.drawable.i70+", 29, 69)," +
+                    "(71, 'Victreebel', 'R', "+ R.drawable.p71+", "+ R.drawable.i71+", 29, 70)," +
+                    "(72, 'Tentacool', 'C', "+ R.drawable.p72+", "+ R.drawable.i72+", 30, null)," +
+                    "(73, 'Tentacruel', 'I', "+ R.drawable.p73+", "+ R.drawable.i73+", 30, 72)," +
+                    "(74, 'Geodude', 'C', "+ R.drawable.p74+", "+ R.drawable.i74+", 31, null)," +
+                    "(75, 'Graveler', 'I', "+ R.drawable.p75+", "+ R.drawable.i75+", 31, 74)," +
+                    "(76, 'Golem', 'R', "+ R.drawable.p76+", "+ R.drawable.i76+", 31, 75)," +
+                    "(77, 'Ponyta', 'C', "+ R.drawable.p77+", "+ R.drawable.i77+", 32, null)," +
+                    "(78, 'Rapidash', 'I', "+ R.drawable.p78+", "+ R.drawable.i78+", 32, 77)," +
+                    "(79, 'Slowpoke', 'C', "+ R.drawable.p79+", "+ R.drawable.i79+", 33, null)," +
+                    "(80, 'Slowbro', 'I', "+ R.drawable.p80+", "+ R.drawable.i80+", 33, 79)," +
+                    "(81, 'Magnemite', 'C', "+ R.drawable.p81+", "+ R.drawable.i81+", 34, null)," +
+                    "(82, 'Magneton', 'I', "+ R.drawable.p82+", "+ R.drawable.i82+", 34, 81)," +
+                    "(83, 'Farfetch''d', 'C', "+ R.drawable.p83+", "+ R.drawable.i83+", 35, null)," +
+                    "(84, 'Doduo', 'C', "+ R.drawable.p84+", "+ R.drawable.i84+", 36, null)," +
+                    "(85, 'Dodrio', 'I', "+ R.drawable.p85+", "+ R.drawable.i85+", 36, 84)," +
+                    "(86, 'Seel', 'C', "+ R.drawable.p86+", "+ R.drawable.i86+", 37, null)," +
+                    "(87, 'Dewgong', 'R', "+ R.drawable.p87+", "+ R.drawable.i87+", 37, 86)," +
+                    "(88, 'Grimer', 'C', "+ R.drawable.p88+", "+ R.drawable.i88+", 38, null)," +
+                    "(89, 'Muk', 'R', "+ R.drawable.p89+", "+ R.drawable.i89+", 38, 88)," +
+                    "(90, 'Shellder', 'C', "+ R.drawable.p90+", "+ R.drawable.i90+", 39, null)," +
+                    "(91, 'Cloyster', 'R', "+ R.drawable.p91+", "+ R.drawable.i91+", 39, 90)," +
+                    "(92, 'Gastly', 'C', "+ R.drawable.p92+", "+ R.drawable.i92+", 40, null)," +
+                    "(93, 'Haunter', 'I', "+ R.drawable.p93+", "+ R.drawable.i93+", 40, 92)," +
+                    "(94, 'Gengar', 'R', "+ R.drawable.p94+", "+ R.drawable.i94+", 40, 93)," +
+                    "(95, 'Onix', 'C', "+ R.drawable.p95+", "+ R.drawable.i95+", 41, null)," +
+                    "(96, 'Drowzee', 'C', "+ R.drawable.p96+", "+ R.drawable.i96+", 42, null)," +
+                    "(97, 'Hypno', 'I', "+ R.drawable.p97+", "+ R.drawable.i97+", 42, 96)," +
+                    "(98, 'Krabby', 'C', "+ R.drawable.p98+", "+ R.drawable.i98+", 43, null)," +
+                    "(99, 'Kingler', 'I', "+ R.drawable.p99+", "+ R.drawable.i99+", 43, 98)," +
+                    "(100, 'Voltorb', 'C', "+ R.drawable.p100+", "+ R.drawable.i100+", 44, null)," +
+                    "(101, 'Electrode', 'I', "+ R.drawable.p101+", "+ R.drawable.i101+", 44, 100)," +
+                    "(102, 'Exeggcute', 'I', "+ R.drawable.p102+", "+ R.drawable.i102+", 45, null)," +
+                    "(103, 'Exeggutor', 'R', "+ R.drawable.p103+", "+ R.drawable.i103+", 45, 102)," +
+                    "(104, 'Cubone', 'C', "+ R.drawable.p104+", "+ R.drawable.i104+", 46, null)," +
+                    "(105, 'Marowak', 'I', "+ R.drawable.p105+", "+ R.drawable.i105+", 46, 104)," +
+                    "(106, 'Hitmonlee', 'I', "+ R.drawable.p106+", "+ R.drawable.i106+", 47, null)," +
+                    "(107, 'Hitmonchan', 'I', "+ R.drawable.p107+", "+ R.drawable.i107+", 47, 106)," +
+                    "(108, 'Lickitung', 'I', "+ R.drawable.p108+", "+ R.drawable.i108+", 48, null)," +
+                    "(109, 'Koffing', 'C', "+ R.drawable.p109+", "+ R.drawable.i109+", 49, null)," +
+                    "(110, 'Weezing', 'I', "+ R.drawable.p110+", "+ R.drawable.i110+", 49, 109)," +
+                    "(111, 'Rhyhorn', 'C', "+ R.drawable.p111+", "+ R.drawable.i111+", 50, null)," +
+                    "(112, 'Rhydon', 'I', "+ R.drawable.p112+", "+ R.drawable.i112+", 50, 111)," +
+                    "(113, 'Chansey', 'I', "+ R.drawable.p113+", "+ R.drawable.i113+", 51, null)," +
+                    "(114, 'Tangela', 'I', "+ R.drawable.p114+", "+ R.drawable.i114+", 52, null)," +
+                    "(115, 'Kangaskhan', 'I', "+ R.drawable.p115+", "+ R.drawable.i115+", 53, null)," +
+                    "(116, 'Horsea', 'C', "+ R.drawable.p116+", "+ R.drawable.i116+", 54, null)," +
+                    "(117, 'Seadra', 'I', "+ R.drawable.p117+", "+ R.drawable.i117+", 54, 116)," +
+                    "(118, 'Goldeen', 'C', "+ R.drawable.p118+", "+ R.drawable.i118+", 55, null)," +
+                    "(119, 'Seaking', 'I', "+ R.drawable.p119+", "+ R.drawable.i119+", 55, 118)," +
+                    "(120, 'Staryu', 'C', "+ R.drawable.p120+", "+ R.drawable.i120+", 56, null)," +
+                    "(121, 'Starmie', 'I', "+ R.drawable.p121+", "+ R.drawable.i121+", 56, 120)," +
+                    "(122, 'Mr. Mime', 'I', "+ R.drawable.p122+", "+ R.drawable.i122+", 57, null)," +
+                    "(123, 'Scyther', 'I', "+ R.drawable.p123+", "+ R.drawable.i123+", 58, null)," +
+                    "(124, 'Jynx', 'I', "+ R.drawable.p124+", "+ R.drawable.i124+", 59, null)," +
+                    "(125, 'Electabuzz', 'I', "+ R.drawable.p125+", "+ R.drawable.i125+", 60, null)," +
+                    "(126, 'Magmar', 'I', "+ R.drawable.p126+", "+ R.drawable.i126+", 61, null)," +
+                    "(127, 'Pinsir', 'I', "+ R.drawable.p127+", "+ R.drawable.i127+", 62, null)," +
+                    "(128, 'Tauros', 'I', "+ R.drawable.p128+", "+ R.drawable.i128+", 63, null)," +
+                    "(129, 'Magikarp', 'C', "+ R.drawable.p129+", "+ R.drawable.i129+", 64, null)," +
+                    "(130, 'Gyarados', 'I', "+ R.drawable.p130+", "+ R.drawable.i130+", 64, 129)," +
+                    "(131, 'Lapras', 'I', "+ R.drawable.p131+", "+ R.drawable.i131+", 65, null)," +
+                    "(132, 'Ditto', 'I', "+ R.drawable.p132+", "+ R.drawable.i132+", 66, null)," +
+                    "(133, 'Eevee', 'I', "+ R.drawable.p133+", "+ R.drawable.i133+", 67, null)," +
+                    "(134, 'Vaporeon', 'R', "+ R.drawable.p134+", "+ R.drawable.i134+", 67, 133)," +
+                    "(135, 'Jolteon', 'R', "+ R.drawable.p135+", "+ R.drawable.i135+", 67, 133)," +
+                    "(136, 'Flareon', 'R', "+ R.drawable.p136+", "+ R.drawable.i136+", 67, 133)," +
+                    "(137, 'Porygon', 'R', "+ R.drawable.p137+", "+ R.drawable.i137+", 68, null)," +
+                    "(138, 'Omanyte', 'R', "+ R.drawable.p138+", "+ R.drawable.i138+", 69, null)," +
+                    "(139, 'Omastar', 'R', "+ R.drawable.p139+", "+ R.drawable.i139+", 69, 138)," +
+                    "(140, 'Kabuto', 'R', "+ R.drawable.p140+", "+ R.drawable.i140+", 70, null)," +
+                    "(141, 'Kabutops', 'R', "+ R.drawable.p141+", "+ R.drawable.i141+", 70, 140)," +
+                    "(142, 'Aerodactyl', 'R', "+ R.drawable.p142+", "+ R.drawable.i142+", 71, null)," +
+                    "(143, 'Snorlax', 'I', "+ R.drawable.p143+", "+ R.drawable.i143+", 72, null)," +
+                    "(144, 'Articuno', 'L', "+ R.drawable.p144+", "+ R.drawable.i144+", 73, null)," +
+                    "(145, 'Zapdos', 'L', "+ R.drawable.p145+", "+ R.drawable.i145+", 74, null)," +
+                    "(146, 'Moltres', 'L', "+ R.drawable.p146+", "+ R.drawable.i146+", 75, null)," +
+                    "(147, 'Dratini', 'I', "+ R.drawable.p147+", "+ R.drawable.i147+", 76, null)," +
+                    "(148, 'Dragonair', 'I', "+ R.drawable.p148+", "+ R.drawable.i148+", 76, 147)," +
+                    "(149, 'Dragonite', 'R', "+ R.drawable.p149+", "+ R.drawable.i149+", 76, 148)," +
+                    "(150, 'Mewtwo', 'L', "+ R.drawable.p150+", "+ R.drawable.i150+", 77, null)," +
+                    "(151, 'Mew', 'L', "+ R.drawable.p151+", "+ R.drawable.i151+", 78, null);",
+
+            "CREATE TABLE doce (" +
+                    "  idDoce INTEGER PRIMARY KEY," +
+                    "  nome TEXT NOT NULL," +
+                    "  quant INTEGER NOT NULL" +
                     ");",
 
-            //agora os pokemons estao agrupados por evolucao
-            "INSERT INTO pokemon (idPokemon, nome, categoria, foto, icone, grupoEvol) VALUES" +
-                    "(1, 'Bulbasaur', 'I', "+ R.drawable.p1+", "+ R.drawable.i1+", 1)," +
-                    "(2, 'Ivysaur', 'I', "+ R.drawable.p2+", "+ R.drawable.i2+", 1)," +
-                    "(3, 'Venusaur', 'R', "+ R.drawable.p3+", "+ R.drawable.i3+", 1)," +
-                    "(4, 'Charmander', 'I', "+ R.drawable.p4+", "+ R.drawable.i4+", 2)," +
-                    "(5, 'Charmeleon', 'I', "+ R.drawable.p5+", "+ R.drawable.i5+", 2)," +
-                    "(6, 'Charizard', 'R', "+ R.drawable.p6+", "+ R.drawable.i6+", 2)," +
-                    "(7, 'Squirtle', 'I', "+ R.drawable.p7+", "+ R.drawable.i7+", 3)," +
-                    "(8, 'Wartortle', 'I', "+ R.drawable.p8+", "+ R.drawable.i8+", 3)," +
-                    "(9, 'Blastoise', 'R', "+ R.drawable.p9+", "+ R.drawable.i9+", 3)," +
-                    "(10, 'Caterpie', 'C', "+ R.drawable.p10+", "+ R.drawable.i10+", 4)," +
-                    "(11, 'Metapod', 'C', "+ R.drawable.p11+", "+ R.drawable.i11+", 4)," +
-                    "(12, 'Butterfree', 'I', "+ R.drawable.p12+", "+ R.drawable.i12+", 4)," +
-                    "(13, 'Weedle', 'C', "+ R.drawable.p13+", "+ R.drawable.i13+", 5)," +
-                    "(14, 'Kakuna', 'C', "+ R.drawable.p14+", "+ R.drawable.i14+", 5)," +
-                    "(15, 'Beedrill', 'I', "+ R.drawable.p15+", "+ R.drawable.i15+", 5)," +
-                    "(16, 'Pidgey', 'C', "+ R.drawable.p16+", "+ R.drawable.i16+", 6)," +
-                    "(17, 'Pidgeotto', 'I', "+ R.drawable.p17+", "+ R.drawable.i17+", 6)," +
-                    "(18, 'Pidgeot', 'R', "+ R.drawable.p18+", "+ R.drawable.i18+", 6)," +
-                    "(19, 'Rattata', 'C', "+ R.drawable.p19+", "+ R.drawable.i19+", 7)," +
-                    "(20, 'Raticate', 'I', "+ R.drawable.p20+", "+ R.drawable.i20+", 7)," +
-                    "(21, 'Spearow', 'C', "+ R.drawable.p21+", "+ R.drawable.i21+", 8)," +
-                    "(22, 'Fearow', 'I', "+ R.drawable.p22+", "+ R.drawable.i22+", 8)," +
-                    "(23, 'Ekans', 'C', "+ R.drawable.p23+", "+ R.drawable.i23+", 9)," +
-                    "(24, 'Arbok', 'I', "+ R.drawable.p24+", "+ R.drawable.i24+", 9)," +
-                    "(25, 'Pikachu', 'C', "+ R.drawable.p25+", "+ R.drawable.i25+", 10)," +
-                    "(26, 'Raichu', 'I', "+ R.drawable.p26+", "+ R.drawable.i26+", 10)," +
-                    "(27, 'Sandshrew', 'C', "+ R.drawable.p27+", "+ R.drawable.i27+", 11)," +
-                    "(28, 'Sandslash', 'I', "+ R.drawable.p28+", "+ R.drawable.i28+", 11)," +
-                    "(29, 'Nidoran Femea', 'C', "+ R.drawable.p29+", "+ R.drawable.i29+", 12)," +
-                    "(30, 'Nidorina', 'I', "+ R.drawable.p30+", "+ R.drawable.i30+", 12)," +
-                    "(31, 'Nidoqueen', 'R', "+ R.drawable.p31+", "+ R.drawable.i31+", 12)," +
-                    "(32, 'Nidoran Macho', 'C', "+ R.drawable.p32+", "+ R.drawable.i32+", 13)," +
-                    "(33, 'Nidorino', 'I', "+ R.drawable.p33+", "+ R.drawable.i33+", 13)," +
-                    "(34, 'Nidoking', 'R', "+ R.drawable.p34+", "+ R.drawable.i34+", 13)," +
-                    "(35, 'Clefairy', 'I', "+ R.drawable.p35+", "+ R.drawable.i35+", 14)," +
-                    "(36, 'Clefable', 'R', "+ R.drawable.p36+", "+ R.drawable.i36+", 14)," +
-                    "(37, 'Vulpix', 'C', "+ R.drawable.p37+", "+ R.drawable.i37+", 15)," +
-                    "(38, 'Ninetales', 'R', "+ R.drawable.p38+", "+ R.drawable.i38+", 15)," +
-                    "(39, 'Jigglypuff', 'C', "+ R.drawable.p39+", "+ R.drawable.i39+", 16)," +
-                    "(40, 'Wigglytuff', 'R', "+ R.drawable.p40+", "+ R.drawable.i40+", 16)," +
-                    "(41, 'Zubat', 'C', "+ R.drawable.p41+", "+ R.drawable.i41+", 17)," +
-                    "(42, 'Golbat', 'I', "+ R.drawable.p42+", "+ R.drawable.i42+", 17)," +
-                    "(43, 'Oddish', 'C', "+ R.drawable.p43+", "+ R.drawable.i43+", 18)," +
-                    "(44, 'Gloom', 'C', "+ R.drawable.p44+", "+ R.drawable.i44+", 18)," +
-                    "(45, 'Vileplume', 'I', "+ R.drawable.p45+", "+ R.drawable.i45+", 18)," +
-                    "(46, 'Paras', 'C', "+ R.drawable.p46+", "+ R.drawable.i46+", 19)," +
-                    "(47, 'Parasect', 'I', "+ R.drawable.p47+", "+ R.drawable.i47+", 19)," +
-                    "(48, 'Venonat', 'C', "+ R.drawable.p48+", "+ R.drawable.i48+", 20)," +
-                    "(49, 'Venomoth', 'I', "+ R.drawable.p49+", "+ R.drawable.i49+", 20)," +
-                    "(50, 'Diglett', 'C', "+ R.drawable.p50+", "+ R.drawable.i50+", 21)," +
-                    "(51, 'Dugtrio', 'I', "+ R.drawable.p51+", "+ R.drawable.i51+", 21)," +
-                    "(52, 'Meowth', 'C', "+ R.drawable.p52+", "+ R.drawable.i52+", 22)," +
-                    "(53, 'Persian', 'I', "+ R.drawable.p53+", "+ R.drawable.i53+", 22)," +
-                    "(54, 'Psyduck', 'C', "+ R.drawable.p54+", "+ R.drawable.i54+", 23)," +
-                    "(55, 'Golduck', 'I', "+ R.drawable.p55+", "+ R.drawable.i55+", 23)," +
-                    "(56, 'Mankey', 'C', "+ R.drawable.p56+", "+ R.drawable.i56+", 24)," +
-                    "(57, 'Primeape', 'I', "+ R.drawable.p57+", "+ R.drawable.i57+", 24)," +
-                    "(58, 'Growlithe', 'C', "+ R.drawable.p58+", "+ R.drawable.i58+", 25)," +
-                    "(59, 'Arcanine', 'R', "+ R.drawable.p59+", "+ R.drawable.i59+", 25)," +
-                    "(60, 'Poliwag', 'C', "+ R.drawable.p60+", "+ R.drawable.i60+", 26)," +
-                    "(61, 'Poliwhril', 'C', "+ R.drawable.p61+", "+ R.drawable.i61+", 26)," +
-                    "(62, 'Poliwrath', 'R', "+ R.drawable.p62+", "+ R.drawable.i62+", 26)," +
-                    "(63, 'Abra', 'C', "+ R.drawable.p63+", "+ R.drawable.i63+", 27)," +
-                    "(64, 'Kadabra', 'I', "+ R.drawable.p64+", "+ R.drawable.i64+", 27)," +
-                    "(65, 'Alakazam', 'R', "+ R.drawable.p65+", "+ R.drawable.i65+", 27)," +
-                    "(66, 'Machop', 'C', "+ R.drawable.p66+", "+ R.drawable.i66+", 28)," +
-                    "(67, 'Machoke', 'I', "+ R.drawable.p67+", "+ R.drawable.i67+", 28)," +
-                    "(68, 'Machamp', 'R', "+ R.drawable.p68+", "+ R.drawable.i68+", 28)," +
-                    "(69, 'Bellsprout', 'C', "+ R.drawable.p69+", "+ R.drawable.i69+", 29)," +
-                    "(70, 'Weepinbell', 'I', "+ R.drawable.p70+", "+ R.drawable.i70+", 29)," +
-                    "(71, 'Victreebel', 'R', "+ R.drawable.p71+", "+ R.drawable.i71+", 29)," +
-                    "(72, 'Tentacool', 'C', "+ R.drawable.p72+", "+ R.drawable.i72+", 30)," +
-                    "(73, 'Tentacruel', 'I', "+ R.drawable.p73+", "+ R.drawable.i73+", 30)," +
-                    "(74, 'Geodude', 'C', "+ R.drawable.p74+", "+ R.drawable.i74+", 31)," +
-                    "(75, 'Graveler', 'I', "+ R.drawable.p75+", "+ R.drawable.i75+", 31)," +
-                    "(76, 'Golem', 'R', "+ R.drawable.p76+", "+ R.drawable.i76+", 31)," +
-                    "(77, 'Ponyta', 'C', "+ R.drawable.p77+", "+ R.drawable.i77+", 32)," +
-                    "(78, 'Rapidash', 'I', "+ R.drawable.p78+", "+ R.drawable.i78+", 32)," +
-                    "(79, 'Slowpoke', 'C', "+ R.drawable.p79+", "+ R.drawable.i79+", 33)," +
-                    "(80, 'Slowbro', 'I', "+ R.drawable.p80+", "+ R.drawable.i80+", 33)," +
-                    "(81, 'Magnemite', 'C', "+ R.drawable.p81+", "+ R.drawable.i81+", 34)," +
-                    "(82, 'Magneton', 'I', "+ R.drawable.p82+", "+ R.drawable.i82+", 34)," +
-                    "(83, 'Farfetch''d', 'C', "+ R.drawable.p83+", "+ R.drawable.i83+", 35)," +
-                    "(84, 'Doduo', 'C', "+ R.drawable.p84+", "+ R.drawable.i84+", 36)," +
-                    "(85, 'Dodrio', 'I', "+ R.drawable.p85+", "+ R.drawable.i85+", 36)," +
-                    "(86, 'Seel', 'C', "+ R.drawable.p86+", "+ R.drawable.i86+", 37)," +
-                    "(87, 'Dewgong', 'R', "+ R.drawable.p87+", "+ R.drawable.i87+", 37)," +
-                    "(88, 'Grimer', 'C', "+ R.drawable.p88+", "+ R.drawable.i88+", 38)," +
-                    "(89, 'Muk', 'R', "+ R.drawable.p89+", "+ R.drawable.i89+", 38)," +
-                    "(90, 'Shellder', 'C', "+ R.drawable.p90+", "+ R.drawable.i90+", 39)," +
-                    "(91, 'Cloyster', 'R', "+ R.drawable.p91+", "+ R.drawable.i91+", 39)," +
-                    "(92, 'Gastly', 'C', "+ R.drawable.p92+", "+ R.drawable.i92+", 40)," +
-                    "(93, 'Haunter', 'I', "+ R.drawable.p93+", "+ R.drawable.i93+", 40)," +
-                    "(94, 'Gengar', 'R', "+ R.drawable.p94+", "+ R.drawable.i94+", 40)," +
-                    "(95, 'Onix', 'C', "+ R.drawable.p95+", "+ R.drawable.i95+", 41)," +
-                    "(96, 'Drowzee', 'C', "+ R.drawable.p96+", "+ R.drawable.i96+", 42)," +
-                    "(97, 'Hypno', 'I', "+ R.drawable.p97+", "+ R.drawable.i97+", 42)," +
-                    "(98, 'Krabby', 'C', "+ R.drawable.p98+", "+ R.drawable.i98+", 43)," +
-                    "(99, 'Kingler', 'I', "+ R.drawable.p99+", "+ R.drawable.i99+", 43)," +
-                    "(100, 'Voltorb', 'C', "+ R.drawable.p100+", "+ R.drawable.i100+", 44)," +
-                    "(101, 'Electrode', 'I', "+ R.drawable.p101+", "+ R.drawable.i101+", 44)," +
-                    "(102, 'Exeggcute', 'I', "+ R.drawable.p102+", "+ R.drawable.i102+", 45)," +
-                    "(103, 'Exeggutor', 'R', "+ R.drawable.p103+", "+ R.drawable.i103+", 45)," +
-                    "(104, 'Cubone', 'C', "+ R.drawable.p104+", "+ R.drawable.i104+", 46)," +
-                    "(105, 'Marowak', 'I', "+ R.drawable.p105+", "+ R.drawable.i105+", 46)," +
-                    "(106, 'Hitmonlee', 'I', "+ R.drawable.p106+", "+ R.drawable.i106+", 47)," +
-                    "(107, 'Hitmonchan', 'I', "+ R.drawable.p107+", "+ R.drawable.i107+", 47)," +
-                    "(108, 'Lickitung', 'I', "+ R.drawable.p108+", "+ R.drawable.i108+", 48)," +
-                    "(109, 'Koffing', 'C', "+ R.drawable.p109+", "+ R.drawable.i109+", 49)," +
-                    "(110, 'Weezing', 'I', "+ R.drawable.p110+", "+ R.drawable.i110+", 49)," +
-                    "(111, 'Rhyhorn', 'C', "+ R.drawable.p111+", "+ R.drawable.i111+", 50)," +
-                    "(112, 'Rhydon', 'I', "+ R.drawable.p112+", "+ R.drawable.i112+", 50)," +
-                    "(113, 'Chansey', 'I', "+ R.drawable.p113+", "+ R.drawable.i113+", 51)," +
-                    "(114, 'Tangela', 'I', "+ R.drawable.p114+", "+ R.drawable.i114+", 52)," +
-                    "(115, 'Kangaskhan', 'I', "+ R.drawable.p115+", "+ R.drawable.i115+", 53)," +
-                    "(116, 'Horsea', 'C', "+ R.drawable.p116+", "+ R.drawable.i116+", 54)," +
-                    "(117, 'Seadra', 'I', "+ R.drawable.p117+", "+ R.drawable.i117+", 54)," +
-                    "(118, 'Goldeen', 'C', "+ R.drawable.p118+", "+ R.drawable.i118+", 55)," +
-                    "(119, 'Seaking', 'I', "+ R.drawable.p119+", "+ R.drawable.i119+", 55)," +
-                    "(120, 'Staryu', 'C', "+ R.drawable.p120+", "+ R.drawable.i120+", 56)," +
-                    "(121, 'Starmie', 'I', "+ R.drawable.p121+", "+ R.drawable.i121+", 56)," +
-                    "(122, 'Mr. Mime', 'I', "+ R.drawable.p122+", "+ R.drawable.i122+", 57)," +
-                    "(123, 'Scyther', 'I', "+ R.drawable.p123+", "+ R.drawable.i123+", 58)," +
-                    "(124, 'Jynx', 'I', "+ R.drawable.p124+", "+ R.drawable.i124+", 59)," +
-                    "(125, 'Electabuzz', 'I', "+ R.drawable.p125+", "+ R.drawable.i125+", 60)," +
-                    "(126, 'Magmar', 'I', "+ R.drawable.p126+", "+ R.drawable.i126+", 61)," +
-                    "(127, 'Pinsir', 'I', "+ R.drawable.p127+", "+ R.drawable.i127+", 62)," +
-                    "(128, 'Tauros', 'I', "+ R.drawable.p128+", "+ R.drawable.i128+", 63)," +
-                    "(129, 'Magikarp', 'C', "+ R.drawable.p129+", "+ R.drawable.i129+", 64)," +
-                    "(130, 'Gyarados', 'I', "+ R.drawable.p130+", "+ R.drawable.i130+", 64)," +
-                    "(131, 'Lapras', 'I', "+ R.drawable.p131+", "+ R.drawable.i131+", 65)," +
-                    "(132, 'Ditto', 'I', "+ R.drawable.p132+", "+ R.drawable.i132+", 66)," +
-                    "(133, 'Eevee', 'I', "+ R.drawable.p133+", "+ R.drawable.i133+", 67)," +
-                    "(134, 'Vaporeon', 'R', "+ R.drawable.p134+", "+ R.drawable.i134+", 67)," +
-                    "(135, 'Jolteon', 'R', "+ R.drawable.p135+", "+ R.drawable.i135+", 67)," +
-                    "(136, 'Flareon', 'R', "+ R.drawable.p136+", "+ R.drawable.i136+", 67)," +
-                    "(137, 'Porygon', 'R', "+ R.drawable.p137+", "+ R.drawable.i137+", 68)," +
-                    "(138, 'Omanyte', 'R', "+ R.drawable.p138+", "+ R.drawable.i138+", 69)," +
-                    "(139, 'Omastar', 'R', "+ R.drawable.p139+", "+ R.drawable.i139+", 69)," +
-                    "(140, 'Kabuto', 'R', "+ R.drawable.p140+", "+ R.drawable.i140+", 70)," +
-                    "(141, 'Kabutops', 'R', "+ R.drawable.p141+", "+ R.drawable.i141+", 70)," +
-                    "(142, 'Aerodactyl', 'R', "+ R.drawable.p142+", "+ R.drawable.i142+", 71)," +
-                    "(143, 'Snorlax', 'I', "+ R.drawable.p143+", "+ R.drawable.i143+", 72)," +
-                    "(144, 'Articuno', 'L', "+ R.drawable.p144+", "+ R.drawable.i144+", 73)," +
-                    "(145, 'Zapdos', 'L', "+ R.drawable.p145+", "+ R.drawable.i145+", 74)," +
-                    "(146, 'Moltres', 'L', "+ R.drawable.p146+", "+ R.drawable.i146+", 75)," +
-                    "(147, 'Dratini', 'I', "+ R.drawable.p147+", "+ R.drawable.i147+", 76)," +
-                    "(148, 'Dragonair', 'I', "+ R.drawable.p148+", "+ R.drawable.i148+", 76)," +
-                    "(149, 'Dragonite', 'R', "+ R.drawable.p149+", "+ R.drawable.i149+", 76)," +
-                    "(150, 'Mewtwo', 'L', "+ R.drawable.p150+", "+ R.drawable.i150+", 77)," +
-                    "(151, 'Mew', 'L', "+ R.drawable.p151+", "+ R.drawable.i151+", 78);",
+            "INSERT INTO doce (idDoce, nome, quant) VALUES" +
+                    "(1, 'Bulbasaur', 0)," +
+                    "(2, 'Charmander', 0)," +
+                    "(3, 'Squirtle', 0)," +
+                    "(4, 'Caterpie', 0)," +
+                    "(5, 'Weedle', 0)," +
+                    "(6, 'Pidgey', 0)," +
+                    "(7, 'Rattata', 0)," +
+                    "(8, 'Spearow', 0)," +
+                    "(9, 'Ekans', 0)," +
+                    "(10, 'Pikachu', 0)," +
+                    "(11, 'Sandshrew', 0)," +
+                    "(12, 'Nidoran Femea', 0)," +
+                    "(13, 'Nidoran Macho', 0)," +
+                    "(14, 'Clefairy', 0)," +
+                    "(15, 'Vulpix', 0)," +
+                    "(16, 'Jigglypuff', 0)," +
+                    "(17, 'Zubat', 0)," +
+                    "(18, 'Oddish', 0)," +
+                    "(19, 'Paras', 0)," +
+                    "(20, 'Venonat', 0)," +
+                    "(21, 'Diglett', 0)," +
+                    "(22, 'Meowth', 0)," +
+                    "(23, 'Psyduck', 0)," +
+                    "(24, 'Mankey', 0)," +
+                    "(25, 'Growlithe', 0)," +
+                    "(26, 'Poliwag', 0)," +
+                    "(27, 'Abra', 0)," +
+                    "(28, 'Machop', 0)," +
+                    "(29, 'Bellsprout', 0)," +
+                    "(30, 'Tentacool', 0)," +
+                    "(31, 'Geodude', 0)," +
+                    "(32, 'Ponyta', 0)," +
+                    "(33, 'Slowpoke', 0)," +
+                    "(34, 'Magnemite', 0)," +
+                    "(35, 'Farfetch''d', 0)," +
+                    "(36, 'Doduo', 0)," +
+                    "(37, 'Seel', 0)," +
+                    "(38, 'Grimer', 0)," +
+                    "(39, 'Shellder', 0)," +
+                    "(40, 'Gastly', 0)," +
+                    "(41, 'Onix', 0)," +
+                    "(42, 'Drowzee', 0)," +
+                    "(43, 'Krabby', 0)," +
+                    "(44, 'Voltorb', 0)," +
+                    "(45, 'Exeggcute', 0)," +
+                    "(46, 'Cubone', 0)," +
+                    "(47, 'Tyrogue', 0)," +
+                    "(48, 'Lickitung', 0)," +
+                    "(49, 'Koffing', 0)," +
+                    "(50, 'Rhyhorn', 0)," +
+                    "(51, 'Chansey', 0)," +
+                    "(52, 'Tangela', 0)," +
+                    "(53, 'Kangaskhan', 0)," +
+                    "(54, 'Horsea', 0)," +
+                    "(55, 'Goldeen', 0)," +
+                    "(56, 'Staryu', 0)," +
+                    "(57, 'Mr. Mime', 0)," +
+                    "(58, 'Scyther', 0)," +
+                    "(59, 'Jynx', 0)," +
+                    "(60, 'Electabuzz', 0)," +
+                    "(61, 'Magmar', 0)," +
+                    "(62, 'Pinsir', 0)," +
+                    "(63, 'Tauros', 0)," +
+                    "(64, 'Magikarp', 0)," +
+                    "(65, 'Lapras', 0)," +
+                    "(66, 'Ditto', 0)," +
+                    "(67, 'Eevee', 0)," +
+                    "(68, 'Porygon', 0)," +
+                    "(69, 'Omanyte', 0)," +
+                    "(70, 'Kabuto', 0)," +
+                    "(71, 'Aerodactyl', 0)," +
+                    "(72, 'Snorlax', 0)," +
+                    "(73, 'Articuno', 0)," +
+                    "(74, 'Zapdos', 0)," +
+                    "(75, 'Moltres', 0)," +
+                    "(76, 'Dratini', 0)," +
+                    "(77, 'Mewtwo', 0)," +
+                    "(78, 'Mew', 0);",
+
             "CREATE TABLE tipo (" +
                     "  idTipo INTEGER PRIMARY KEY," +
                     "  nome TEXT NOT NULL" +
