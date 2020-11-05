@@ -27,7 +27,7 @@ public final class BancoDadosSingleton {
                     "  idDoce INTEGER NOT NULL," +
                     "  idPokemonBase INTEGER ," +
                     " CONSTRAINT fk_pokemon_doce FOREIGN KEY (idDoce) REFERENCES doce (idDoce)," +    // relacionamento com Doce
-                    " CONSTRAINT fk_pokemon_pokemon FOREIGN KEY (idPokemonBase) REFERENCES doce (idPokemon)" + //rel. evolução
+                    " CONSTRAINT fk_pokemon_pokemon FOREIGN KEY (idPokemonBase) REFERENCES pokemon (idPokemon)" + //rel. evolução
                     ");",
             //agora os pokemons estao agrupados por evolucao
             "INSERT INTO pokemon (idPokemon, nome, categoria, foto, icone, idDoce, idPokemonBase) VALUES" +
