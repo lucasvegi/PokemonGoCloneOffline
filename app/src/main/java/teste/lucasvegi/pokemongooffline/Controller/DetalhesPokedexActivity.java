@@ -1,7 +1,9 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +14,20 @@ import android.widget.TextView;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Pokemon;
 import teste.lucasvegi.pokemongooffline.R;
+import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
 public class DetalhesPokedexActivity extends Activity {
 
     private Pokemon pkmn;
+
+    private int getQuantDoces(Pokemon p){
+        Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
+                new String[]{"d.quant quant"},
+                "p.idDoce = d.idDoce and d.idDoce = '" + p.getIdDoce() + "'",null);
+        cDoce.moveToNext(); //obs: fora do while pois deve haver apenas uma linha de resposta
+
+        return cDoce.getInt(cDoce.getColumnIndex("quant"));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +38,9 @@ public class DetalhesPokedexActivity extends Activity {
         pkmn = (Pokemon) it.getSerializableExtra("pkmn");
 
         //Logs úteis para implementação dos doces
-        Log.i("DOCES:","idDoce: " + pkmn.getIdDoce());
+        /*Log.i("DOCES:","idDoce: " + pkmn.getIdDoce());
         Log.i("DOCES:","idPokemonBase: " + pkmn.getIdPokemonBase());
+        Log.i("DOCES:","Quantidade de doces: " + getQuantDoces(pkmn));*/
 
         //TODO: RESOLVIDO - procura na lista de pokemons da controladora o pokemon recebido da tela anterior.
         //pkmn = ControladoraFachadaSingleton.getInstance().convertPokemonSerializableToObject(pkmn);
@@ -38,7 +51,7 @@ public class DetalhesPokedexActivity extends Activity {
         TextView txtNum = (TextView) findViewById(R.id.txtNumPkmnDetalhes);
         TextView txtNome = (TextView) findViewById(R.id.txtNomePkmnDetalhes);
         TextView txtCapturados = (TextView) findViewById(R.id.txtPkmnCapturadosDetalhes);
-        //TextView txtGrupoEvolutivo = (TextView) findViewById(R.id.txtGrupoPkmnDetalhes); //linha add
+        TextView txtQuantDoces = (TextView) findViewById(R.id.txtQuantidadeDocesDetalhes); //linha add
         TextView txtTipo1 = (TextView) findViewById(R.id.txtTipo1PkmnDetalhes);
         TextView txtTipo2 = (TextView) findViewById(R.id.txtTipo2PkmnDetalhes);
 
@@ -56,9 +69,10 @@ public class DetalhesPokedexActivity extends Activity {
             }
 
             txtTituloDetalhes.setText("Detalhes " + pkmn.getNome());
-            //txtGrupoEvolutivo.setText("Grupo Evolutivo: " + pkmn.getGrupoEvol());
             txtNome.setText(pkmn.getNome());
             txtCapturados.setText("Capturados: " + ControladoraFachadaSingleton.getInstance().getUsuario().getQuantidadeCapturas(pkmn));
+
+            txtQuantDoces.setText("Doces: " + getQuantDoces(pkmn));
 
             //Ajusta texto e cores dos tipos
             setTextViewBackground(txtTipo1,pkmn.getTipos().get(0).getNome());
