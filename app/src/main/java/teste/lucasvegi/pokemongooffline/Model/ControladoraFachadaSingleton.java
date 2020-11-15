@@ -56,7 +56,6 @@ public final class ControladoraFachadaSingleton {
             Log.d("DOCES",d.getNomePkm() + ": " + d.getQuantidade());
         }
     }
-    /******************************************************************/
 
     private ControladoraFachadaSingleton() {
         daoDoce();
