@@ -162,6 +162,22 @@ public class Usuario {
             //Persiste captura no banco
             BancoDadosSingleton.getInstance().inserir("pokemonusuario", valores);
 
+            /** TESTE **/
+            Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
+                    new String[]{"d.idDoce idDoce","d.nome nome","d.quant quant"},
+                    "p.idDoce = d.idDoce and d.idDoce = '" + pkmnAux.getIdDoce() + "'",null);
+            cDoce.moveToNext();
+            int idDoce = cDoce.getColumnIndex("idDoce");
+            int nome = cDoce.getColumnIndex("nome");
+            int quantDoces = cDoce.getColumnIndex("quant");
+            ContentValues valoresDoce = new ContentValues();
+            valoresDoce.put("idDoce",cDoce.getInt(idDoce));
+            valoresDoce.put("nome",cDoce.getString(nome));
+            valoresDoce.put("quant",cDoce.getInt(quantDoces)+3); //soma 3 na qtd de doces
+            BancoDadosSingleton.getInstance().atualizar("doce",valoresDoce,"idDoce = " + "'" +pkmnAux.getIdDoce() + "'");
+            Log.i("DOCES", "Quantidade de doces do "+cDoce.getString(nome)+" = "+(int)(cDoce.getInt(quantDoces)+3));
+            /** **************************************** **/
+
             //cria objeto PokemonCapturado com informações vindas do objeto Aparecimento parâmetro
             PokemonCapturado pc = new PokemonCapturado();
             pc.setLatitude(aparecimento.getLatitude());
