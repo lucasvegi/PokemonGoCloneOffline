@@ -133,8 +133,11 @@ public class Pokemon implements Serializable{
         if (evolucao == null) {
             return;
         }
-//        TODO FAZER A BUSCA DO DOCE NO BANCO DE DADOS
+        Cursor c = BancoDadosSingleton.getInstance().buscar("doce",new String[]{"idDoce","nome","quant"},"idDoce = " + String.valueOf(this.idDoce),"");
         Doce doce = new Doce();
+        doce.setIdDoce(c.getInt(c.getColumnIndex("idDoce")));
+        doce.setNomePkm(c.getString(c.getColumnIndex("nome")));
+        doce.setQuantidade(c.getInt(c.getColumnIndex("quant")));
         if (doce.getQuantidade() < getQuantidadeDoces()) {
             return;
         }
