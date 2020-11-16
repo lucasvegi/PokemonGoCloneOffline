@@ -1,5 +1,6 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.common.api.ApiException;
@@ -66,6 +69,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public Criteria criteria;
     public String provider;
 
+    Marker marcador_Permissao = null;
+    boolean permissao_cam = false;
+    boolean permissao_local = false;
+    private final int CAMERA_PERMISSION = 1;
+    private final int LOCATION_PERMISSION = 1;
     public int TEMPO_REQUISICAO_LATLONG = 5000;
     public int DISTANCIA_MIN_METROS = 0;
     public int intervaloEntreSorteiosEmMinutos = 1;     //USADO PARA DETERMINAR INTERVALO DE TEMPO ENTRE SORTEIOS DE POKEMON
@@ -125,7 +133,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //Configura o nome do usuário abaixo do botão de perfil
         TextView txtNomeUser = (TextView) findViewById(R.id.txtNomeUser);
         txtNomeUser.setText(ControladoraFachadaSingleton.getInstance().getUsuario().getLogin());
-
+        PackageManager packageManager = getPackageManager();
+        boolean hasCam = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        if (hasCam)
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
     }
 
     @Override
@@ -321,7 +333,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     try {
                         //pausa a música
                         mp.pause();
-
                         Aparecimento ap = aparecimentoMap.get(marker);
                         Intent it = new Intent(this, CapturaActivity.class);
                         it.putExtra("pkmn", ap);
@@ -363,6 +374,23 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             }
         }
         return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case CAMERA_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permissao_cam = true;
+                    Toast.makeText(this, "Permissão concedida", 5000);
+                }
+                else {
+                    permissao_cam = true;
+                    Toast.makeText(this, "Permissão Necessária para usar a camera", 5000);
+                    Log.d("PERMISSAO", "NAO DEIXOUUUUUUU");
+                }
+            }
+        }
     }
 
     public void limparMarcadores(){
@@ -439,7 +467,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             pokestopMap.put(pokestopMarker, pokestop);
         }
     }
-
+ 
     public double getDistanciaPkmn(Marker treinador, Marker pkmn){
         //cria location do treinador para ver distância
         Location trainer = new Location(provider);
