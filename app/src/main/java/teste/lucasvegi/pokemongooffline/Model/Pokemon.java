@@ -115,9 +115,27 @@ public class Pokemon implements Serializable{
         this.evolucao = evolucao;
     }
 
+    private int getQuantidadeDoces() {
+        switch (this.categoria) {
+            case "C":
+                return 25;
+            case "I":
+                return 50;
+            case "R":
+                return 75;
+            default:
+                return 100;
+        }
+    }
+
     public void evoluir() {
         // Caso o pokemon não evolua
         if (evolucao == null) {
+            return;
+        }
+//        TODO FAZER A BUSCA DO DOCE NO BANCO DE DADOS
+        Doce doce = new Doce();
+        if (doce.getQuantidade() < getQuantidadeDoces()) {
             return;
         }
         setNome(evolucao.getNome());
