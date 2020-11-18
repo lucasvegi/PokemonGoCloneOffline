@@ -399,7 +399,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 Intent it = new Intent(this, PokestopActivity.class);
                 //salvar a imagem e pokestop para recuperacao dos dados na outra activity
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                pokestop.getFoto().compress(Bitmap.CompressFormat.PNG,80, stream);
+                Bitmap foto = pokestop.getFoto();
+                if(foto != null)
+                    pokestop.getFoto().compress(Bitmap.CompressFormat.PNG,80, stream);
                 byte[] byteArray = stream.toByteArray();
 
                 LastPkstopMarker = marker;
