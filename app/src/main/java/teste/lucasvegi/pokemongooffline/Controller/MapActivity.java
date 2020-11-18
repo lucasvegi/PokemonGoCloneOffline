@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -50,6 +51,8 @@ import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +64,7 @@ import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.NearbySearch;
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
+import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
 
 public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback {
@@ -92,6 +96,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public List<Aparecimento> aparecimentos;
     public Map<Marker,Aparecimento> aparecimentoMap; //dicionário para ajudar no momento de clicar em pontos
     public Map<Marker,Pokestop> pokestopMap; //dicionário para ajudar no momento de clicar em pontos
+    public Marker LastPkstopMarker = null;
 
     public Marker LatMin;
     public Marker LatMax;
@@ -169,6 +174,35 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             Log.e("MAPA", "ERRO: " + e.getMessage());
         }
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        try {
+//            if (LastPkstopMarker!=null) {
+//                Log.d("VOLTA DA POKESTOP","INTERAGIU");
+//                Pokestop Pkstp = pokestopMap.get(LastPkstopMarker);
+//                Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
+//                        new String[]{"pkstp.disponivel disp","pkstp.acesso access"},
+//                        "pkstp.idPokestop = " + Pkstp.getID(),
+//                        "");
+//                while (cPokestop.moveToNext()) {
+//                    int coluna = cPokestop.getColumnIndex("disponivel");
+//                    if (cPokestop.getInt(coluna)==0)
+//                        Pkstp.setDisponivel(false);
+//                    else
+//                        Pkstp.setDisponivel(true);
+//                    coluna = cPokestop.getColumnIndex("acesso");
+//                    Date data = new Date(cPokestop.getLong(coluna));
+//                    Pkstp.setUltimoAcesso(data);
+//                    pokestopMap.put(LastPkstopMarker, Pkstp);
+//                }
+//                cPokestop.close();
+//            }
+//        }catch (Exception e){
+//            Log.e("RESUME", "ERRO: " + e.getMessage());
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
@@ -368,6 +402,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 pokestop.getFoto().compress(Bitmap.CompressFormat.PNG,80, stream);
                 byte[] byteArray = stream.toByteArray();
 
+                LastPkstopMarker = marker;
                 it.putExtra("foto", byteArray);
                 it.putExtra("pokestop", pokestop);
                 startActivity(it);
@@ -452,19 +487,28 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             Marker pokestopMarker;
 
             Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
-            pokestop.setLat(lat);
-            pokestop.setLongi(lng);
+            pokestop.setlat(lat);
+            pokestop.setlong(lng);
             if(placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
                 pokestop.setDescri(placesSearchResults[i].types[0]);
 
             //TODO : setar imagem do pokestop dentro da classe do pokestop
             if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
                 getPlaceImage(pokestop);
-
+            //atualizar se eh possivel interagir em questao de tempo
+            if (pokestop.getUltimoAcesso()!=null){
+                Date TempoAtual = Calendar.getInstance().getTime();
+                double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
+                double diffMinuto = diff / (1000);
+                if (diffMinuto>300){
+                    pokestop.setDisponivel(true);
+                }
+            }
             pokestopMarker = map.addMarker(pokestop.getMarkerOptions(DistPkStop < distMin));
-
             pokestopMarker.setTag("pokestop");
-            pokestopMap.put(pokestopMarker, pokestop);
+            if(!pokestopMap.containsKey(pokestopMarker))
+                pokestopMap.put(pokestopMarker, pokestop);
+            else Toast.makeText(this,"NAO TEM UM",Toast.LENGTH_LONG).show();
         }
     }
  
