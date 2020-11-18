@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.lang.reflect.Field;
+
 import teste.lucasvegi.pokemongooffline.R;
 
 public final class BancoDadosSingleton {
@@ -462,6 +464,44 @@ public final class BancoDadosSingleton {
                 db.execSQL(SCRIPT_DATABASE_CREATE[i]);
             }
             Log.i("BANCO_DADOS", "Criou tabelas do banco e as populou.");
+        }
+        else{
+            //Banco já criado
+            //precisamos garantir que os hashes dos resources sejam os mesmos
+
+            //primeiro buscamos no banco os dados dos pokemons
+            c = buscar("pokemon", new String[]{"idPokemon,foto,icone"}, "", "");
+
+            Class res = R.drawable.class;
+            while (c.moveToNext()){
+                int idPokemon = c.getColumnIndex("idPokemon");
+                int fotoCol = c.getColumnIndex("foto");
+                int iconeCol = c.getColumnIndex("icone");
+
+                int id = c.getInt(idPokemon);
+                int foto = c.getInt(fotoCol);
+                int icone = c.getInt(iconeCol);
+                try {
+                    //recuperamos os resources de um pokemon específico
+                    Field idFoto = res.getDeclaredField("p"+id);
+                    Field idIcone = res.getDeclaredField("i"+id);
+
+                    //se o hash do icone ou foto for diferente atualizamos o hash do banco
+                    if(idFoto.getInt(null) != foto || idIcone.getInt(null) != icone ){
+                        ContentValues ct = new ContentValues();
+                        ct.put("foto", idFoto.getInt(null));
+                        ct.put("icone", idIcone.getInt(null));
+                        atualizar("pokemon", ct, "idPokemon="+id);
+                    }
+
+                } catch (NoSuchFieldException e) {
+                    Log.e("BANCO_DADOS", "Imagem de pokemon acessado não existe. idPokemon="+id);
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.e("BANCO_DADOS", "Sistema não pemitiu acesso ao resource de imagem do pokemon. idPokemon="+id);
+                    e.printStackTrace();
+                }
+            }
         }
 
         c.close();
