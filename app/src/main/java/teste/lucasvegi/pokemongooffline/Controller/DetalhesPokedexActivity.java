@@ -8,8 +8,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Pokemon;
@@ -20,7 +23,7 @@ public class DetalhesPokedexActivity extends Activity {
 
     private Pokemon pkmn;
 
-    private int getQuantDoces(Pokemon p){
+    private int getQuantDocesObtidos(Pokemon p){
         Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
                 new String[]{"d.quant quant"},
                 "p.idDoce = d.idDoce and d.idDoce = '" + p.getIdDoce() + "'",null);
@@ -55,6 +58,13 @@ public class DetalhesPokedexActivity extends Activity {
         TextView txtTipo1 = (TextView) findViewById(R.id.txtTipo1PkmnDetalhes);
         TextView txtTipo2 = (TextView) findViewById(R.id.txtTipo2PkmnDetalhes);
 
+        Button btn_evoluir = (Button) findViewById(R.id.btnEvoluirDetalhes);
+
+        //Ajusta cor do botão evoluir
+        if(getQuantDocesObtidos(pkmn) <= pkmn.getQuantidadeDoces()){
+            btn_evoluir.setBackgroundResource(R.drawable.roundshape_botao_cinza);
+        }
+
         //Tenta colocar valores vindos do pokemon por navegação
         try {
             foto.setImageResource(pkmn.getFoto());
@@ -72,7 +82,7 @@ public class DetalhesPokedexActivity extends Activity {
             txtNome.setText(pkmn.getNome());
             txtCapturados.setText("Capturados: " + ControladoraFachadaSingleton.getInstance().getUsuario().getQuantidadeCapturas(pkmn));
 
-            txtQuantDoces.setText("Doces: " + getQuantDoces(pkmn));
+            txtQuantDoces.setText("Doces obtidos: " + getQuantDocesObtidos(pkmn));
 
             //Ajusta texto e cores dos tipos
             setTextViewBackground(txtTipo1,pkmn.getTipos().get(0).getNome());
@@ -97,6 +107,24 @@ public class DetalhesPokedexActivity extends Activity {
         Intent it = new Intent(this,MapCapturasActivity.class);
         it.putExtra("pkmn",pkmn);
         startActivity(it);
+    }
+
+    public void clickEvoluir(View v){
+        int quantNecessaria = pkmn.getQuantidadeDoces();
+        int quantObtida = getQuantDocesObtidos(pkmn);
+        int restante = quantNecessaria-quantObtida;
+
+        Log.i("EVOLUCAO","Doces necessários: " + quantNecessaria);
+        Log.i("EVOLUCAO","Doces obtidos: " + quantObtida);
+        Log.i("EVOLUCAO","Doces restantes: " + restante);
+
+        if(quantNecessaria > quantObtida){
+            Toast.makeText(this,"Restam "+ restante +" doces para evoluir!",Toast.LENGTH_LONG).show();
+        }
+        else{
+            //TODO: Evoluir!
+        }
+
     }
 
     private void setTextViewBackground(TextView txt, String tipo){

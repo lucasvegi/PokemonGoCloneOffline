@@ -115,7 +115,7 @@ public class Pokemon implements Serializable{
         this.evolucao = evolucao;
     }
 
-    private int getQuantidadeDoces() {
+    public int getQuantidadeDoces() {
         switch (this.categoria) {
             case "C":
                 return 25;
