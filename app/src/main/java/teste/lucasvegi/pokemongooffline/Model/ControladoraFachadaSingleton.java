@@ -2,18 +2,36 @@ package teste.lucasvegi.pokemongooffline.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.maps.model.PlacesSearchResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
+import teste.lucasvegi.pokemongooffline.Util.NearbySearch;
 import teste.lucasvegi.pokemongooffline.Util.RandomUtil;
 import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
+import teste.lucasvegi.pokemongooffline.Model.Tipo;
 
 /**
  * Created by Lucas on 08/12/2016.
@@ -184,6 +202,84 @@ public final class ControladoraFachadaSingleton {
         }
 
         return pkmn;
+    }
+
+    public List<Pokestop> getPokestops(){
+
+        List<Pokestop> list = new ArrayList<Pokestop>();
+
+        PlacesSearchResult[] placesSearchResults = NearbySearch.run(new com.google.maps.model.LatLng(eu.getPosition().latitude, eu.getPosition().longitude)).results;
+        for (int i = 0; i < placesSearchResults.length / 2; i++) {
+            double lat = placesSearchResults[i].geometry.location.lat;
+            double lng = placesSearchResults[i].geometry.location.lng;
+
+            Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
+            pokestop.setlat(lat);
+            pokestop.setlong(lng);
+            if (placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
+                pokestop.setDescri(placesSearchResults[i].types[0]);
+
+            //TODO : setar imagem do pokestop dentro da classe do pokestop
+            if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
+                getPlaceImage(pokestop);
+            //atualizar se eh possivel interagir em questao de tempo
+            if (pokestop.getUltimoAcesso() != null) {
+                Date TempoAtual = Calendar.getInstance().getTime();
+                double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
+                double diffMinuto = diff / (1000);
+                if (diffMinuto > 300) {
+                    pokestop.setDisponivel(true);
+                }
+            }
+
+            list.add(pokestop);
+
+        }
+
+        return list;
+    }
+
+    //Recuperar imagem do local usando sdk places
+    private void getPlaceImage(Pokestop pokestop) {
+        //calcula a distancia e ve se eh valido interagir
+        // Inicializa o SDK
+        Places.initialize(getApplicationContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
+        // Instancia Placesclient
+        PlacesClient placesClient = Places.createClient(this);
+
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(pokestop.getID(), fields).build();
+
+        // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
+        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            // Get the photo metadata.
+            List<PhotoMetadata> list = place.getPhotoMetadatas();
+            if (list != null && list.size() > 0) {
+                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+                // Get the attribution text.
+                String attributions = photoMetadata.getAttributions();
+                // Create a FetchPhotoRequest.
+                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                        .setMaxWidth(500) // Optional.
+                        .setMaxHeight(300) // Optional.
+                        .build();
+                placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                    // PASSAR A IMAGEM PRO POKESTOP
+                    pokestop.setFoto(bitmap);
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        int statusCode = apiException.getStatusCode();
+                        // Erro
+                        Log.e("TAG", "Lugar nao encontrado: " + exception.getMessage());
+                    }
+                });
+            }
+
+        });
     }
 
     public Aparecimento[] getAparecimentos(){
