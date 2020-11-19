@@ -20,7 +20,7 @@ public class Pokemon implements Serializable{
     private List<Tipo> tipos;
     private int idDoce;
     private int idPokemonBase;
-    private Pokemon evolucao;
+    Pokemon evolucao;
 
     public Pokemon(){
 
@@ -108,6 +108,27 @@ public class Pokemon implements Serializable{
     public int getIdPokemonBase(){return idPokemonBase;}
 
     public Pokemon getEvolucao() {
+        /*
+        Cursor cPkmn = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemon pe",
+                new String[]{"pe.numero idPokemon", "pe.nome nome", "pe.categoria categoria", "pe.foto foto", "pe.icone icone",
+                        "pe.idDoce idDoce", "pe.idPokemonBase idPokemonBase"},
+                "pe.idPokemonBase = '" + this.numero + "'", null);
+
+        cPkmn.moveToNext();
+
+        int numero = cPkmn.getColumnIndex("idPokemon");
+        int nome = cPkmn.getColumnIndex("nome");
+        int categoria = cPkmn.getColumnIndex("categoria");
+        int foto = cPkmn.getColumnIndex("foto");
+        int icone = cPkmn.getColumnIndex("icone");
+        int idDoce = cPkmn.getColumnIndex("idDoce");
+        int idPokemonBase = cPkmn.getColumnIndex("idPokemonBase");
+        evolucao = new Pokemon(cPkmn.getInt(numero),cPkmn.getString(nome),cPkmn.getString(categoria),
+                cPkmn.getInt(foto),cPkmn.getInt(icone),cPkmn.getInt(idDoce), cPkmn.getInt(idPokemonBase),
+                ControladoraFachadaSingleton.getInstance());
+
+         */
+
         return evolucao;
     }
 

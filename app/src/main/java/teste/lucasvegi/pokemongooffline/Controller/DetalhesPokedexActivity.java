@@ -2,10 +2,17 @@ package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,14 +21,43 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+
+import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Pokemon;
+import teste.lucasvegi.pokemongooffline.Model.PokemonCapturado;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
-public class DetalhesPokedexActivity extends Activity {
+public class DetalhesPokedexActivity extends Activity implements LocationListener {
 
     private Pokemon pkmn;
+    public LocationManager lm;
+    public Criteria criteria;
+    public String provider;
+    public int TEMPO = 5000;
+    public int DIST = 0;
+    public Location atual;
+
+    public void configuraCriterioLocation() {
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        criteria = new Criteria();
+
+        PackageManager packageManager = getPackageManager();
+        boolean hasGPS = packageManager.hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
+
+        if (hasGPS) {
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            Log.i("LOCATION", "usando GPS");
+        } else {
+            criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            Log.i("LOCATION", "usando WI-FI ou dados");
+        }
+    }
+
 
     private int getQuantDocesObtidos(Pokemon p){
         Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
@@ -61,9 +97,11 @@ public class DetalhesPokedexActivity extends Activity {
         Button btn_evoluir = (Button) findViewById(R.id.btnEvoluirDetalhes);
 
         //Ajusta cor do botão evoluir
-        if(getQuantDocesObtidos(pkmn) <= pkmn.getQuantidadeDoces()){
+        if(getQuantDocesObtidos(pkmn) < pkmn.getQuantidadeDoces() || pkmn.getEvolucao() == null){
             btn_evoluir.setBackgroundResource(R.drawable.roundshape_botao_cinza);
         }
+        else
+            btn_evoluir.setBackgroundResource(R.drawable.roundshape_botaopadrao);
 
         //Tenta colocar valores vindos do pokemon por navegação
         try {
@@ -95,6 +133,23 @@ public class DetalhesPokedexActivity extends Activity {
             Log.e("DETALHES", "ERRO: " + e.getMessage());
         }
 
+        configuraCriterioLocation();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("PROVEDOR", "start");
+
+        provider = lm.getBestProvider(criteria, true);
+
+        if (provider == null) {
+            Log.e("PROVEDOR", "Nenhum provedor encontrado");
+        } else {
+            Log.i("PROVEDOR", "Esta sendo utilizado o provedor " + provider);
+
+            lm.requestLocationUpdates(provider, TEMPO, DIST, this);
+        }
     }
 
     public void clickVoltarDetalhe(View v){
@@ -119,9 +174,31 @@ public class DetalhesPokedexActivity extends Activity {
         Log.i("EVOLUCAO","Doces restantes: " + restante);
 
         if(quantNecessaria > quantObtida){
-            Toast.makeText(this,"Restam "+ restante +" doces para evoluir!",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Faltam "+ restante +" doces para evoluir!",Toast.LENGTH_LONG).show();
+        }
+        else if(pkmn.getEvolucao() == null){
+            Toast.makeText(this,"O Pokemon não possui evolução!",Toast.LENGTH_LONG).show();
         }
         else{
+            Aparecimento ap = new Aparecimento();
+            ap.setLatitude(atual.getLatitude());
+            ap.setLongitude(atual.getLongitude());
+            ap.setPokemon(pkmn.getEvolucao());
+
+            //envia captura para o servidor antes de fechar tela.
+            ControladoraFachadaSingleton.getInstance().getUsuario().capturar(ap);
+            Log.i("EVOLUCAO","Evolução capturada");
+
+            //Subtrai os doces utilizados na evolução
+            ControladoraFachadaSingleton.getInstance().getUsuario().somarDoces(pkmn, -quantNecessaria);
+            Log.i("EVOLUCAO","Pokemon evoluído");
+
+            Toast.makeText(getBaseContext(),pkmn.getNome() + " foi evoluído! \\o/",Toast.LENGTH_LONG).show();
+/*
+            Intent it = new Intent(this, DetalhesPokedexActivity.class);
+            it.putExtra("pkmnevol", pkmn.getEvolucao());
+            startActivity(it);*/
+
             //TODO: Evoluir!
         }
 
@@ -169,5 +246,24 @@ public class DetalhesPokedexActivity extends Activity {
 
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        if(location != null)
+            atual = location;
+    }
 
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+        Log.d("PROVEDOR", "Provedor mudou de estado");
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+        Log.d("PROVEDOR", "Habilitou o provedor");
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+        Log.d("PROVEDOR", "Desabilitou o provedor");
+    }
 }
