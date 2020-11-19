@@ -509,7 +509,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
 
         //TODO : transformar esse for em um método da classe Pokestop
-        PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude, eu.getPosition().longitude)).results;
+        PlacesSearchResult[] placesSearchResults = NearbySearch.run(new com.google.maps.model.LatLng(eu.getPosition().latitude, eu.getPosition().longitude)).results;
         for (int i = 0; i < placesSearchResults.length / 2; i++) {
             double lat = placesSearchResults[i].geometry.location.lat;
             double lng = placesSearchResults[i].geometry.location.lng;
