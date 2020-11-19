@@ -28,6 +28,20 @@ public class PokedexActivity extends Activity implements AdapterView.OnItemClick
         setContentView(R.layout.activity_pokedex);
 
         try {
+            //Inicia a musica tema do menu
+            mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.tema_menu);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.start();
+
+        }catch (Exception e){
+            Log.e("POKEDEX", "ERRO: " + e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        try{
             //Configura total de pokemons capturados
             TextView txtTotal = (TextView) findViewById(R.id.txtPokedexTotal);
             int total = ControladoraFachadaSingleton.getInstance().getUsuario().getPokemons().size();
@@ -40,12 +54,6 @@ public class PokedexActivity extends Activity implements AdapterView.OnItemClick
             AdapterPokedex adapterPokedex = new AdapterPokedex(pokemons, this);
             listView.setAdapter(adapterPokedex);
             listView.setOnItemClickListener(this);
-
-            //Inicia a musica tema do menu
-            mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.tema_menu);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.start();
-
         }catch (Exception e){
             Log.e("POKEDEX", "ERRO: " + e.getMessage());
         }
