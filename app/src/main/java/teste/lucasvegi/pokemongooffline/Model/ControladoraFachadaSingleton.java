@@ -3,9 +3,7 @@ package teste.lucasvegi.pokemongooffline.Model;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.model.Marker;
@@ -28,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
+import teste.lucasvegi.pokemongooffline.Util.MyApp;
 import teste.lucasvegi.pokemongooffline.Util.NearbySearch;
 import teste.lucasvegi.pokemongooffline.Util.RandomUtil;
 import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
-import teste.lucasvegi.pokemongooffline.Model.Tipo;
 
 /**
  * Created by Lucas on 08/12/2016.
@@ -204,7 +202,7 @@ public final class ControladoraFachadaSingleton {
         return pkmn;
     }
 
-    public List<Pokestop> getPokestops(){
+    public List<Pokestop> getPokestops(Marker eu){
 
         List<Pokestop> list = new ArrayList<Pokestop>();
 
@@ -243,7 +241,7 @@ public final class ControladoraFachadaSingleton {
     private void getPlaceImage(Pokestop pokestop) {
         //calcula a distancia e ve se eh valido interagir
         // Inicializa o SDK
-        Places.initialize(getApplicationContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
+        Places.initialize(MyApp.getAppContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
         // Instancia Placesclient
         PlacesClient placesClient = Places.createClient(this);
 
