@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.Map;
@@ -36,34 +37,36 @@ public class PerfilActivity extends Activity {
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);     //Referência da barra de xp
         TextView txtXp = (TextView) findViewById(R.id.txtXp);           //Referência da textView de xp
+        TextView txtNivel = (TextView) findViewById(R.id.txtNivel);     //Referência da textView de nível
 
-        Usuario usuario = ControladoraFachadaSingleton.getInstance().getUsuario();
-        Log.d("usuario", "XP: " + usuario.getXp());
-        Log.d("usuario", "Nivel: " + usuario.getNivel());
+        Log.d("usuario", "XP: " + ControladoraFachadaSingleton.getInstance().getUsuario().getXp());
+        Log.d("usuario", "Nivel: " + ControladoraFachadaSingleton.getInstance().getUsuario().getNivel());
 
         ControladoraFachadaSingleton.getInstance().aumentaXp("evolui");
+        Toast.makeText(getBaseContext(),"Você ganhou " +
+                ControladoraFachadaSingleton.getInstance().getXpEvento("evolui") + " de XP",Toast.LENGTH_SHORT).show();
 
-        Log.d("usuario", "XP: " + usuario.getXp());
-        Log.d("usuario", "Nivel: " + usuario.getNivel());
-        Cursor user = BancoDadosSingleton.getInstance().buscar("usuario", new String[]{"nivel", "xp"}, "login= '"+usuario.getLogin()+"'", "");
+        Cursor user = BancoDadosSingleton.getInstance().buscar("usuario", new String[]{"nivel", "xp"},
+                "login= '" + ControladoraFachadaSingleton.getInstance().getUsuario().getLogin()+"'", "");
 
         while(user.moveToNext()) {
             int idxp = user.getColumnIndex("xp");
             int idnivel = user.getColumnIndex("nivel");
 
             progressStatus = user.getInt(idxp);                         //Armazena o xp atual do usuário após a captura
-            xpMaxBar = user.getInt(idnivel);
-            xpMaxBar *= 1000;                                           //Calcula o valor máximo da barra (importante para que ela termine quando o usuário upar)
+            xpMaxBar = ControladoraFachadaSingleton.getInstance().xpMaximo(ControladoraFachadaSingleton.getInstance().getUsuario().getNivel());      //Calcula o valor máximo da barra (importante para que ela termine quando o usuário upar)
             progressBar.setMax(xpMaxBar);                               //Setando o valor máximo da progressBar
             progressBar.setProgress(progressStatus);                    //Setando o progresso da progressBar de acordo com o xp atual + xp de captura
-            xpNumber = Integer.toString(progressStatus) + "/" + Integer.toString(xpMaxBar);   //Criando a string da textView do xp
-            txtXp.setText(xpNumber);                                                          //Setando a textView do xp para xpAtual/xpMáximo
+            xpNumber = Integer.toString(progressStatus) + "/" + Integer.toString(xpMaxBar);   // Criando a string da textView do xp
+
+            txtXp.setText(xpNumber);                                                                                //Setando a textView do xp para xpAtual/xpMáximo
+            txtNivel.setText("Nível " + ControladoraFachadaSingleton.getInstance().getUsuario().getNivel());        //Setando a textView do nível para o nível atual do usuário
 
             Log.d("usuario","XP banco: " + user.getInt(idxp));
             Log.d("usuario","Nivel banco: " + user.getInt(idnivel));
         }
 
-        //obtem referências das views
+        // Obtem referências das views
         ImageView imageView = (ImageView) findViewById(R.id.imgTreinadorPerfil);
         TextView txtInicioAventura = (TextView) findViewById(R.id.txtInicioAventuraPerfil);
         TextView txtNumCapturas = (TextView) findViewById(R.id.txtNumCapturasPerfil);
