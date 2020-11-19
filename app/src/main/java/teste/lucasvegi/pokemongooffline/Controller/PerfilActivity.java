@@ -42,10 +42,6 @@ public class PerfilActivity extends Activity {
         Log.d("usuario", "XP: " + ControladoraFachadaSingleton.getInstance().getUsuario().getXp());
         Log.d("usuario", "Nivel: " + ControladoraFachadaSingleton.getInstance().getUsuario().getNivel());
 
-        ControladoraFachadaSingleton.getInstance().aumentaXp("evolui");
-        Toast.makeText(getBaseContext(),"Você ganhou " +
-                ControladoraFachadaSingleton.getInstance().getXpEvento("evolui") + " de XP",Toast.LENGTH_SHORT).show();
-
         Cursor user = BancoDadosSingleton.getInstance().buscar("usuario", new String[]{"nivel", "xp"},
                 "login= '" + ControladoraFachadaSingleton.getInstance().getUsuario().getLogin()+"'", "");
 
