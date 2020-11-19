@@ -1,6 +1,7 @@
 package teste.lucasvegi.pokemongooffline.Model;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -108,13 +109,15 @@ public class Pokemon implements Serializable{
     public int getIdPokemonBase(){return idPokemonBase;}
 
     public Pokemon getEvolucao() {
-        /*
-        Cursor cPkmn = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemon pe",
-                new String[]{"pe.numero idPokemon", "pe.nome nome", "pe.categoria categoria", "pe.foto foto", "pe.icone icone",
-                        "pe.idDoce idDoce", "pe.idPokemonBase idPokemonBase"},
-                "pe.idPokemonBase = '" + this.numero + "'", null);
 
-        cPkmn.moveToNext();
+        Cursor cPkmn = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemon pe",
+                new String[]{"pe.idPokemon idPokemon", "pe.nome nome", "pe.categoria categoria", "pe.foto foto", "pe.icone icone",
+                        "pe.idDoce idDoce", "pe.idPokemonBase idPokemonBase"},
+                "pe.idPokemonBase = p.idPokemon AND pe.idPokemonBase = " + this.numero, "");
+
+        //Se a busca não encontrar nada, já retorna null
+        if(!cPkmn.moveToNext())
+            return null;
 
         int numero = cPkmn.getColumnIndex("idPokemon");
         int nome = cPkmn.getColumnIndex("nome");
@@ -127,7 +130,6 @@ public class Pokemon implements Serializable{
                 cPkmn.getInt(foto),cPkmn.getInt(icone),cPkmn.getInt(idDoce), cPkmn.getInt(idPokemonBase),
                 ControladoraFachadaSingleton.getInstance());
 
-         */
 
         return evolucao;
     }

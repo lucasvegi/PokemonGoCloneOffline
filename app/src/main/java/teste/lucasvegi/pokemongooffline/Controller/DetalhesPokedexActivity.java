@@ -173,18 +173,20 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
         Log.i("EVOLUCAO","Doces obtidos: " + quantObtida);
         Log.i("EVOLUCAO","Doces restantes: " + restante);
 
-        if(quantNecessaria > quantObtida){
-            Toast.makeText(this,"Faltam "+ restante +" doces para evoluir!",Toast.LENGTH_LONG).show();
-        }
-        else if(pkmn.getEvolucao() == null){
+
+        if(pkmn.getEvolucao() == null){
             Toast.makeText(this,"O Pokemon não possui evolução!",Toast.LENGTH_LONG).show();
+        }
+        else if(quantNecessaria > quantObtida){
+            Toast.makeText(this,"Faltam "+ restante +" doces para evoluir!",Toast.LENGTH_LONG).show();
         }
         else{
             Aparecimento ap = new Aparecimento();
             ap.setLatitude(atual.getLatitude());
             ap.setLongitude(atual.getLongitude());
             ap.setPokemon(pkmn.getEvolucao());
-
+            Log.i("EVOLUCAO", "NOME DA EVOLUÇÃO: " + ap.getPokemon().getNome());
+            
             //envia captura para o servidor antes de fechar tela.
             ControladoraFachadaSingleton.getInstance().getUsuario().capturar(ap);
             Log.i("EVOLUCAO","Evolução capturada");
@@ -194,12 +196,11 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
             Log.i("EVOLUCAO","Pokemon evoluído");
 
             Toast.makeText(getBaseContext(),pkmn.getNome() + " foi evoluído! \\o/",Toast.LENGTH_LONG).show();
-/*
-            Intent it = new Intent(this, DetalhesPokedexActivity.class);
-            it.putExtra("pkmnevol", pkmn.getEvolucao());
-            startActivity(it);*/
 
-            //TODO: Evoluir!
+            Intent it = new Intent(this, DetalhesPokedexActivity.class);
+            it.putExtra("pkmn", ap.getPokemon());
+            startActivity(it);
+
         }
 
     }
