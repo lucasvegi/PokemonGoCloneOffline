@@ -1,6 +1,7 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.session.MediaSessionManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.wallet.NotifyTransactionStatusRequest;
 
 import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
@@ -31,6 +34,7 @@ import teste.lucasvegi.pokemongooffline.Model.Pokemon;
 import teste.lucasvegi.pokemongooffline.Model.PokemonCapturado;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
+import teste.lucasvegi.pokemongooffline.View.AdapterPokedex;
 
 public class DetalhesPokedexActivity extends Activity implements LocationListener {
 
@@ -192,15 +196,15 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
             Log.i("EVOLUCAO","Evolução capturada");
 
             //Subtrai os doces utilizados na evolução
-            ControladoraFachadaSingleton.getInstance().getUsuario().somarDoces(pkmn, -quantNecessaria);
+            ControladoraFachadaSingleton.getInstance().getUsuario().somarDoces(pkmn, -quantNecessaria-3);
             Log.i("EVOLUCAO","Pokemon evoluído");
 
             Toast.makeText(getBaseContext(),pkmn.getNome() + " foi evoluído! \\o/",Toast.LENGTH_LONG).show();
 
             Intent it = new Intent(this, DetalhesPokedexActivity.class);
             it.putExtra("pkmn", ap.getPokemon());
+            finish();
             startActivity(it);
-
         }
 
     }
