@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import java.util.List;
 import java.util.Map;
@@ -20,13 +21,22 @@ import teste.lucasvegi.pokemongooffline.Model.Usuario;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
+
 public class PerfilActivity extends Activity {
+
+    private ProgressBar progressBar;
+    private int progressStatus = 0;
+    private int xpMaxBar = 0;
+    private String xpNumber = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
-        /*
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);     //Referência da barra de xp
+        TextView txtXp = (TextView) findViewById(R.id.txtXp);           //Referência da textView de xp
+
         Usuario usuario = ControladoraFachadaSingleton.getInstance().getUsuario();
         Log.d("usuario", "XP: " + usuario.getXp());
         Log.d("usuario", "Nivel: " + usuario.getNivel());
@@ -40,10 +50,19 @@ public class PerfilActivity extends Activity {
         while(user.moveToNext()) {
             int idxp = user.getColumnIndex("xp");
             int idnivel = user.getColumnIndex("nivel");
+
+            progressStatus = user.getInt(idxp);                         //Armazena o xp atual do usuário após a captura
+            xpMaxBar = user.getInt(idnivel);
+            xpMaxBar *= 1000;                                           //Calcula o valor máximo da barra (importante para que ela termine quando o usuário upar)
+            progressBar.setMax(xpMaxBar);                               //Setando o valor máximo da progressBar
+            progressBar.setProgress(progressStatus);                    //Setando o progresso da progressBar de acordo com o xp atual + xp de captura
+            xpNumber = Integer.toString(progressStatus) + "/" + Integer.toString(xpMaxBar);   //Criando a string da textView do xp
+            txtXp.setText(xpNumber);                                                          //Setando a textView do xp para xpAtual/xpMáximo
+
             Log.d("usuario","XP banco: " + user.getInt(idxp));
             Log.d("usuario","Nivel banco: " + user.getInt(idnivel));
         }
-        */
+
         //obtem referências das views
         ImageView imageView = (ImageView) findViewById(R.id.imgTreinadorPerfil);
         TextView txtInicioAventura = (TextView) findViewById(R.id.txtInicioAventuraPerfil);
