@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class NearbySearch {
 
-    public PlacesSearchResponse run( LatLng latlng) {
+    public static PlacesSearchResponse run( LatLng latlng) {
         PlacesSearchResponse request = new PlacesSearchResponse();
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey("AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU")
