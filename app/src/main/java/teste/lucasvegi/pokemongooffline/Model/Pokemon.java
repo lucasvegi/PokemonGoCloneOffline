@@ -151,28 +151,6 @@ public class Pokemon implements Serializable{
         }
     }
 
-    public void evoluir() {
-        // Caso o pokemon não evolua
-        if (evolucao == null) {
-            return;
-        }
-        Cursor c = BancoDadosSingleton.getInstance().buscar("doce",new String[]{"idDoce","nome","quant"},"idDoce = " + String.valueOf(this.idDoce),"");
-        Doce doce = new Doce();
-        doce.setIdDoce(c.getInt(c.getColumnIndex("idDoce")));
-        doce.setNomePkm(c.getString(c.getColumnIndex("nome")));
-        doce.setQuantidade(c.getInt(c.getColumnIndex("quant")));
-        if (doce.getQuantidade() < getQuantidadeDoces()) {
-            return;
-        }
-        setNome(evolucao.getNome());
-        setNumero(evolucao.getNumero());
-        setCategoria(evolucao.getCategoria());
-        setFoto(evolucao.getFoto());
-        setIcone(evolucao.getIcone());
-        // TODO VER COMO ATUALIZAR OS TIPOS DOS POKEMONS
-        setEvolucao(evolucao.getEvolucao());
-    }
-
     @Override
     public boolean equals(Object obj) {
         try {
