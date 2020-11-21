@@ -202,38 +202,38 @@ public final class ControladoraFachadaSingleton {
         return pkmn;
     }
 
-    public List<Pokestop> getPokestops(Marker eu){
-
+    public List<Pokestop> getPokestops(double latitude, double longitude){
         List<Pokestop> list = new ArrayList<Pokestop>();
 
-        PlacesSearchResult[] placesSearchResults = NearbySearch.run(new com.google.maps.model.LatLng(eu.getPosition().latitude, eu.getPosition().longitude)).results;
-        for (int i = 0; i < placesSearchResults.length / 2; i++) {
-            double lat = placesSearchResults[i].geometry.location.lat;
-            double lng = placesSearchResults[i].geometry.location.lng;
+        PlacesSearchResult[] placesSearchResults = NearbySearch.run(new com.google.maps.model.LatLng(latitude, longitude)).results;
+        if(placesSearchResults != null) {
+            for (int i = 0; placesSearchResults != null && i < placesSearchResults.length / 2; i++) {
+                double lat = placesSearchResults[i].geometry.location.lat;
+                double lng = placesSearchResults[i].geometry.location.lng;
 
-            Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
-            pokestop.setlat(lat);
-            pokestop.setlong(lng);
-            if (placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
-                pokestop.setDescri(placesSearchResults[i].types[0]);
+                Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
+                pokestop.setlat(lat);
+                pokestop.setlong(lng);
+                if (placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
+                    pokestop.setDescri(placesSearchResults[i].types[0]);
 
-            //TODO : setar imagem do pokestop dentro da classe do pokestop
-            if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
-                getPlaceImage(pokestop);
-            //atualizar se eh possivel interagir em questao de tempo
-            if (pokestop.getUltimoAcesso() != null) {
-                Date TempoAtual = Calendar.getInstance().getTime();
-                double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
-                double diffMinuto = diff / (1000);
-                if (diffMinuto > 300) {
-                    pokestop.setDisponivel(true);
+                //TODO : setar imagem do pokestop dentro da classe do pokestop
+                if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
+                    getPlaceImage(pokestop);
+                //atualizar se eh possivel interagir em questao de tempo
+                if (pokestop.getUltimoAcesso() != null) {
+                    Date TempoAtual = Calendar.getInstance().getTime();
+                    double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
+                    double diffMinuto = diff / (1000);
+                    if (diffMinuto > 300) {
+                        pokestop.setDisponivel(true);
+                    }
                 }
+
+                list.add(pokestop);
+
             }
-
-            list.add(pokestop);
-
         }
-
         return list;
     }
 
