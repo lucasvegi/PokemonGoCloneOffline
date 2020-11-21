@@ -236,6 +236,16 @@ public final class ControladoraFachadaSingleton {
                         pokestop.setUltimoAcesso(data);
                     }
                 }
+                else{
+                    ContentValues valores = new ContentValues();
+                    valores.put("idPokestop",pokestop.getID());
+                    valores.put("latitude",pokestop.getlat());
+                    valores.put("longitude",pokestop.getlongi());
+                    valores.put("disponivel",true);
+
+                    long id = BancoDadosSingleton.getInstance().inserir("Pokestop",valores);
+                    Log.d("POKEACTIVITY","CADASTROU NO BD OU ATUALIZOU COM ID = "+id);
+                }
 
                 //atualizar se eh possivel interagir em questao de tempo
                 if (pokestop.getUltimoAcesso() != null) {
