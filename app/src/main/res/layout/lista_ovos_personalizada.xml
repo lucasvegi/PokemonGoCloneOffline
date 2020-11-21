@@ -24,14 +24,12 @@
 
     <Button
         android:id="@+id/botaoIncubar"
-        android:layout_width="60dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="121dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="48dp"
-        android:layout_toEndOf="@+id/kmAndou"
+        android:layout_marginEnd="50dp"
         android:onClick="clickIncubar"
         android:text="Incubar"
         android:textAlignment="center" />
