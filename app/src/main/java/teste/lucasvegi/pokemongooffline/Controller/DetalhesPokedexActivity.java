@@ -46,6 +46,10 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
     public int DIST = 0;
     public Location atual;
 
+    // Constantes auxiliares para o método startActivityForResult()
+    private final int COD_REQUISICAO = 7;
+    private final int ATUALIZAR_TELA = 1;
+
     public void configuraCriterioLocation() {
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
@@ -212,6 +216,8 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
 
         // Verificando se existe pokemon desta espécie que ainda não foi evoluido
         else if (pkmn.estaDisponivel(true)){ //se sim já atualiza a tabela pokemonusuario no Banco
+            Intent it = new Intent();
+            setResult(ATUALIZAR_TELA,it);
             evoluir();
         }
         else{
