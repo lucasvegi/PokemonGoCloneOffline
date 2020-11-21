@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
@@ -26,7 +27,7 @@ public class PokestopActivity extends Activity {
     private Date tempoPkstop;
     private Pokestop Pkstp;
     private boolean Pegou = false;
-
+    public String Portuga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +37,26 @@ public class PokestopActivity extends Activity {
         placeName = (TextView) findViewById(R.id.placeName);
         placeInfo = (TextView) findViewById(R.id.placeInfo);
         imgPokestopIcon = (ImageView) findViewById(R.id.imgPokestopIcon);
-
+        ContentValues valores = new ContentValues();
+        BancoDadosSingleton.getInstance().inserir("Pokestop",valores);
         Intent it = getIntent();
         Pokestop pokestop = (Pokestop) it.getSerializableExtra("pokestop");
         byte[] byteArray = it.getByteArrayExtra("foto");
         Pkstp = pokestop;
-
+        Cursor cTradutor = BancoDadosSingleton.getInstance().buscar("traducao trad",
+                new String[]{"trad.portugues portugues"},
+                "trad.ingles = '" + pokestop.getDescri() + "'",
+                "");
+        while (cTradutor.moveToNext()) {
+            int coluna = cTradutor.getColumnIndex("portugues");
+            Portuga = cTradutor.getString(coluna);
+        }
         placeName.setText(pokestop.getNome());
-        placeInfo.setText(pokestop.getDescri());
+        placeInfo.setText(Portuga);
         if(byteArray != null)
             imgPokestopIcon.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
         tempoPkstop = pokestop.getUltimoAcesso();
+        cTradutor.close();
     }
 
     public void clickReturnBtn(View btnReturn){
@@ -78,7 +88,7 @@ public class PokestopActivity extends Activity {
 
         //Toast.makeText(this,TempoAtual.toString(),Toast.LENGTH_SHORT).show();
         if (tempoPkstop==null && Pegou==false) {
-            Log.d("PEGA OVOO", "ENTROUU NO PRIMEIRO CASO");
+            //Log.d("PEGA OVOO", "ENTROUU NO PRIMEIRO CASO");
             //atualiza o acesso da Pokestop (passao tempo novo com setUltimoAcesso e passa false pro setDisponivel)
             tempoPkstop = TempoAtual;
             Pkstp.setUltimoAcesso(TempoAtual);
@@ -100,7 +110,7 @@ public class PokestopActivity extends Activity {
                 Toast.makeText(this,"Pegou Ovo ",Toast.LENGTH_LONG).show();
                 Pegou = true;
             }
-            else Toast.makeText(this,"Espere mais "+ String.valueOf(300-diffSec) +" segundos",Toast.LENGTH_LONG).show();
+            else Toast.makeText(this,"Espere mais "+ String.valueOf(300-diffSec) +" segundos",Toast.LENGTH_SHORT).show();
         }
         Log.i("VALOR QUE E PRA PASSAR ", String.valueOf(TempoAtual.getTime()));
 

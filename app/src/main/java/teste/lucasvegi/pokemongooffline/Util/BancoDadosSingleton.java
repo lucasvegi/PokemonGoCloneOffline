@@ -454,12 +454,114 @@ public final class BancoDadosSingleton {
                     "  disponivel BOOLEAN NOT NULL," +
                     "  acesso TEXT," +
                     "  PRIMARY KEY  (idPokestop)" +
-                    ");"
+                    ");",
+            "CREATE TABLE traducao (" +
+                    "  ingles TEXT NOT NULL," +
+                    "  portugues TEXT NOT NULL," +
+                    "  PRIMARY KEY  (ingles)" +
+                    ");",
+            "INSERT INTO traducao (ingles, portugues) VALUES" +
+                    "('accounting','Agência de Contabilidade'),"+
+                    "('airport','aeroporto'),"+
+                    "('amusement_park','Parque de Diversões'),"+
+                    "('aquarium','Aquário'),"+
+                    "('art_gallery','Galeria de Arte'),"+
+                    "('atm','Caixa 24h'),"+
+                    "('bakery','Padaria'),"+
+                    "('bank','Banco'),"+
+                    "('bar','Bar'),"+
+                    "('beauty_salon','Salão de Beleza'),"+
+                    "('bicycle_store','Loja de Bicicleta'),"+
+                    "('book_store','Livraria'),"+
+                    "('bowling_alley','Boliche'),"+
+                    "('bus_station','Ponto de Ônibus'),"+
+                    "('cafe','Café'),"+
+                    "('campground','Área de Acampamento'),"+
+                    "('car_dealer','Concecionária de Carros'),"+
+                    "('car_rental','Aluguel de Carros'),"+
+                    "('car_repair','Mecânico'),"+
+                    "('car_wash','Lava Jato'),"+
+                    "('casino','Cassino'),"+
+                    "('cemetery','Cemitério'),"+
+                    "('church','Igreja'),"+
+                    "('city_hall','Câmara Municipal'),"+
+                    "('clothing_store','Loja de Roupas'),"+
+                    "('convenience_store','Loja de Conveniência'),"+
+                    "('courthouse','Tribunal'),"+
+                    "('dentist','Dentista'),"+
+                    "('department_store','Loja de Departamento'),"+
+                    "('doctor','Doutor'),"+
+                    "('drugstore','Farmácia'),"+
+                    "('electrician','Eletricista'),"+
+                    "('embassy','Embaixada'),"+
+                    "('fire_station','Corpo de Bombeiros'),"+
+                    "('florist','Floricultura'),"+
+                    "('funeral_home','Funerária'),"+
+                    "('furniture_store','Loja de Móveis'),"+
+                    "('gas_station','Posto de Gasolina'),"+
+                    "('gym','Academia'),"+
+                    "('hair_care','Cabeleleiro'),"+
+                    "('hardware_store','Loja de Material de Construção'),"+
+                    "('hindu_temple','Templo Hindu'),"+
+                    "('home_goods_store','Loja de Artigos Domésticos'),"+
+                    "('hospital','Hospital'),"+
+                    "('insurance_agency','Agência de Seguros'),"+
+                    "('jewelry_store','Joaleria'),"+
+                    "('laundry','Lavanderia'),"+
+                    "('lawyer','Advocacia'),"+
+                    "('library','Biblioteca'),"+
+                    "('light_rail_station','Estação de Metro Leve'),"+
+                    "('liquor_store','Distribuidora de Bebidas'),"+
+                    "('local_government_office','Escritório do Governo Local'),"+
+                    "('locksmith','chaveiro'),"+
+                    "('lodging','Pousada'),"+
+                    "('meal_delivery','Entrega de Refeições'),"+
+                    "('meal_takeaway','Refeições para Viagem'),"+
+                    "('mosque','Mosqueiro'),"+
+                    "('movie_rental','Locadora de Filmes'),"+
+                    "('movie_theater','Cinema'),"+
+                    "('moving_company','Fretista'),"+
+                    "('museum','Museu'),"+
+                    "('night_club','Balada'),"+
+                    "('painter','Pintor'),"+
+                    "('park','Parque'),"+
+                    "('parking','Estacionamento'),"+
+                    "('pet_store','Petshop'),"+
+                    "('pharmacy','Farmácia'),"+
+                    "('physiotherapist','Fisioterapeuta'),"+
+                    "('plumber','Encanador'),"+
+                    "('police','Estação de Polícia'),"+
+                    "('post_office','Agência dos Correios'),"+
+                    "('primary_school','Escola'),"+
+                    "('real_estate_agency','Imobiliária'),"+
+                    "('restaurant','Restaurante'),"+
+                    "('roofing_contractor','Empreiteiro de Telhados'),"+
+                    "('rv_park','Parque de Trailers'),"+
+                    "('school','Escola'),"+
+                    "('secondary_school','Colégio'),"+
+                    "('shoe_store','Loja de Sapatos'),"+
+                    "('shopping_mall','Shopping'),"+
+                    "('spa','Spa'),"+
+                    "('stadium','Estadio'),"+
+                    "('storage','Depósito'),"+
+                    "('store','Loja'),"+
+                    "('subway_station','Estação de Metro'),"+
+                    "('supermarket','Supermercado'),"+
+                    "('synagogue','Sinagoga'),"+
+                    "('taxi_stand','Ponto de Táxi'),"+
+                    "('tourist_attraction','Atração Turística'),"+
+                    "('train_station','Estação de Trem'),"+
+                    "('transit_station','Estação de Trânsito'),"+
+                    "('travel_agency','Agência de Viagens'),"+
+                    "('university','Universidade'),"+
+                    "('veterinary_care','Veterinária'),"+
+                    "('zoo','Zoológico');"
             };
 
     private BancoDadosSingleton() {
         Context ctx = MyApp.getAppContext();
         // Abre o banco de dados já existente ou então cria um banco novo
+
         db = ctx.openOrCreateDatabase(NOME_BANCO, Context.MODE_PRIVATE, null);
 
         //busca por tabelas existentes no banco = "show tables" do MySQL

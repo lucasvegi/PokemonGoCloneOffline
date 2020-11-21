@@ -180,7 +180,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         super.onResume();
         try {
             if (LastPkstopMarker!=null) {
-                Log.i("VOLTA DA POKESTOP","INTERAGIU");
                 Pokestop Pkstp = pokestopMap.get(LastPkstopMarker);
 
                 Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
