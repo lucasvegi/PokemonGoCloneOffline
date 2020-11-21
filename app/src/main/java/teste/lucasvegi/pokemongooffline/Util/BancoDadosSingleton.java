@@ -445,20 +445,34 @@ public final class BancoDadosSingleton {
                     "  CONSTRAINT fk_usuariopokemon_login FOREIGN KEY (login) REFERENCES usuario (login)," +
                     "  CONSTRAINT fk_usuariopokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES pokemon (idPokemon)" +
                     ");",
-            "CREATE TABLE ovo (" +
-                    "  idOvo INTEGER PRIMARY KEY," +
-                    "  cor TEXT NOT NULL," +
-                    "  categoria TEXT NOT NULL," +
+            "CREATE TABLE tipoovo (" +
+                    "  idTipoOvo INTEGER PRIMARY KEY," +
                     "  foto INTEGER NOT NULL," +
                     "  fotoIncubadora INTEGER NOT NULL" +
                     ");",
-            "INSERT INTO ovo (idOvo, cor, categoria, foto, fotoIncubadora) VALUES" +
-                    "(1, 'Verde', 'C', "+R.drawable.ovo_verde+", "+R.drawable.incubadora_verde+")," +
-                    "(2, 'Laranja', 'I', "+R.drawable.ovo_laranja+", "+R.drawable.incubadora_laranja+")," +
-                    "(3, 'Azul', 'R', "+R.drawable.ovo_azul+", "+R.drawable.incubadora_azul+")," +
-                    "(4, 'Vermelho', 'L', "+R.drawable.ovo_vermelho+", "+R.drawable.incubadora_vermelha+");",
+            "INSERT INTO tipoovo (idTipoOvo, foto, fotoIncubadora) VALUES" +
+                    "(1, "+R.drawable.ovo_verde+", "+R.drawable.incubadora_verde+")," +
+                    "(2, "+R.drawable.ovo_laranja+", "+R.drawable.incubadora_laranja+")," +
+                    "(3, "+R.drawable.ovo_azul+", "+R.drawable.incubadora_azul+")," +
+                    "(4, "+R.drawable.ovo_vermelho+", "+R.drawable.incubadora_vermelha+");",
+            "CREATE TABLE ovo (" +
+                    "  idOvo INTEGER NOT NULL," +
+                    "  idPokemon INTEGER NOT NULL," +
+                    "  idTipoOvo INTEGER NOT NULL," +
+                    "  cor TEXT NOT NULL," +
+                    "  PRIMARY KEY  (idOvo,idPokemon,idTipoOvo)," +
+                    "  CONSTRAINT fk_usuariopokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES pokemon (idPokemon)," +
+                    "  CONSTRAINT fk_tipoovo FOREIGN KEY (idTipoOvo) REFERENCES tipoovo (idTipoOvo)" +
+                    ");",
+            "INSERT INTO ovo (idOvo, idPokemon, idTipoOvo, cor) VALUES" +
+                    "(1, 16, 1, 'Verde')," +
+                    "(2, 17, 2, 'Laranja')," +
+                    "(3, 18, 3, 'Azul')," +
+                    "(4, 19, 4, 'Vermelho');",
 
     };
+
+
 
 
     private BancoDadosSingleton() {

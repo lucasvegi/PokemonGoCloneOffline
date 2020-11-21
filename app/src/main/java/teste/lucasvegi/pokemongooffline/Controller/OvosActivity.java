@@ -1,10 +1,8 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -28,17 +26,16 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         setContentView(R.layout.activity_ovos);
 
 
-        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","cor","categoria","foto","fotoIncubadora"},"","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","cor"},"","");
         ListView listView = (ListView) findViewById(R.id.listaOvos);
 
         while(c.moveToNext()){
             int idO = c.getColumnIndex("idOvo");
+            int idP = c.getColumnIndex("idPokemon");
+            int idTO = c.getColumnIndex("idTipoOvo");
             int cor = c.getColumnIndex("cor");
-            int categoria = c.getColumnIndex("categoria");
-            int foto = c.getColumnIndex("foto");
-            int fotoIncubadora = c.getColumnIndex("fotoIncubadora");
 
-            ovos.add(new Ovo(c.getInt(idO),c.getString(cor), c.getString(categoria), c.getInt(foto),c.getInt(fotoIncubadora)));
+            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getInt(idTO), c.getString(cor)));
         }
 
         AdapterOvos adapterOvos = new AdapterOvos(ovos, this);

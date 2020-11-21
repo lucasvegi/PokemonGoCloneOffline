@@ -8,11 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
-import teste.lucasvegi.pokemongooffline.Controller.OvosActivity;
 import teste.lucasvegi.pokemongooffline.Model.Ovo;
 import teste.lucasvegi.pokemongooffline.R;
 
@@ -20,6 +18,7 @@ public class AdapterOvos extends BaseAdapter {
 
     private List<Ovo> ovos;
     private Activity act;
+    private Ovo ovo;
 
     public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
@@ -49,7 +48,7 @@ public class AdapterOvos extends BaseAdapter {
         try {
             View view = act.getLayoutInflater().inflate(R.layout.lista_ovos_personalizada, parent, false);
 
-            final Ovo ovo = ovos.get(position);
+            ovo = ovos.get(position);
 
             Log.i("OVOS", "Montando lista de ovos para " + ovo.getCor());
 
@@ -65,17 +64,17 @@ public class AdapterOvos extends BaseAdapter {
 
             if(ovo.getIncubado()) {
                 //kmAndou.setText("0km");
-                imagem.setImageResource(ovo.getFotoIncubadora());
-                incubar.setEnabled(false);
+                //imagem.setImageResource(ovo.getFotoIncubadora());
+                //incubar.setEnabled(false);
 
             }else {
                 //kmAndou.setText("");
-                imagem.setImageResource(ovo.getFoto());
+                imagem.setImageResource(ovo.getIdTipoOvo());
 
                 incubar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        imagem.setImageResource(ovo.getFotoIncubadora());
+                        imagem.setImageResource(ovo.getIdTipoOvo());
                         incubar.setEnabled(false);
                         ovo.setIncubado(true);
                     }
@@ -89,4 +88,5 @@ public class AdapterOvos extends BaseAdapter {
             return null;
         }
     }
+
 }
