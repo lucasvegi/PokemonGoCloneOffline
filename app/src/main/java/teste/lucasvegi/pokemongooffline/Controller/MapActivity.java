@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -58,6 +59,7 @@ import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
+import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
 //import android.support.v4.app.FragmentActivity;
 
@@ -184,6 +186,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             if (LastPkstopMarker!=null) {
                 Log.i("VOLTA DA POKESTOP","INTERAGIU");
                 Pokestop Pkstp = pokestopMap.get(LastPkstopMarker);
+
+                pokestopMap.remove(LastPkstopMarker);
                 Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
                         new String[]{"pkstp.disponivel disponivel","pkstp.acesso acesso"},
                         "pkstp.idPokestop = '" + Pkstp.getID() + "'",
@@ -199,6 +203,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     Date data = new Date(cPokestop.getLong(coluna));
                     Pkstp.setUltimoAcesso(data);
                     Log.i("SALVOU NO MAP", String.valueOf(Pkstp.getUltimoAcesso().getTime()));
+                    LastPkstopMarker.remove();
+                    LastPkstopMarker = map.addMarker(Pkstp.getMarkerOptions(true));
                     pokestopMap.put(LastPkstopMarker, Pkstp);
                 }
                 cPokestop.close();
@@ -569,8 +575,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             Log.e("PlotarMarker","ERRO: " + e.getMessage());
         }
 
-        //TODO : transformar esse for em um método da classe Pokestop
-        PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude,eu.getPosition().longitude)).results;
+        //DONE: transformar esse for em um método da fachada para retornar pokestops
+        /*PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude,eu.getPosition().longitude)).results;
         if (placesSearchResults != null) {
             for (int i = 0; i < placesSearchResults.length / 2; i++) {
                 double lat = placesSearchResults[i].geometry.location.lat;
@@ -626,7 +632,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     pokestopMap.put(pokestopMarker, pokestop);
                 else Toast.makeText(this, "NAO TEM UM", Toast.LENGTH_LONG).show();
             }
-        }
+        }*/
     }
  
     public double getDistanciaPkmn(Marker treinador, Marker pkmn){
