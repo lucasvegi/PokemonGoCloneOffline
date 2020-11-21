@@ -22,6 +22,7 @@ public class AdapterOvos extends BaseAdapter {
     private Activity act;
     private Ovo ovo;
 
+
     public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
             this.ovos = ovos;
@@ -46,17 +47,17 @@ public class AdapterOvos extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         try {
             View view = act.getLayoutInflater().inflate(R.layout.lista_ovos_personalizada, parent, false);
 
             ovo = ovos.get(position);
 
-            //Log.i("OVOS", "Montando lista de ovos para " + ovo.getCor());
+            Log.i("OVOS", "Montando lista de ovos para " + ovo.getIdOvo());
 
             final ImageView imagem = (ImageView)
                     view.findViewById(R.id.imagemOvoOvos);
-
+            //Log.i("OVOS", "Montando lista de ovos para " + ovo.getIdOvo());
             TextView kmAndou = (TextView)
                     view.findViewById(R.id.kmAndou);
 
@@ -64,22 +65,24 @@ public class AdapterOvos extends BaseAdapter {
                     view.findViewById(R.id.botaoIncubar);
 
 
-            if(ovo.getIncubado() == 1) {
+            if(ovos.get(position).getIncubado() == 1) {
                 //kmAndou.setText("0km");
-                //imagem.setImageResource(ovo.getFotoIncubadora());
-                //incubar.setEnabled(false);
+                Log.i("OVOS", "Entrou no if " + ovos.get(position).getIdOvo());
+                imagem.setImageResource(ovos.get(position).getFotoIncubado());
+                incubar.setEnabled(false);
 
             }else {
                 //kmAndou.setText("");
-
-                    imagem.setImageResource(ovo.getFoto());
+                Log.i("OVOS", "Entrou no else " + ovos.get(position).getIdOvo());
+                    imagem.setImageResource(ovos.get(position).getFoto());
 
                     incubar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            imagem.setImageResource(ovo.getFotoIncubado());
+                            imagem.setImageResource(ovos.get(position).getFotoIncubado());
                             incubar.setEnabled(false);
-                            ovo.setIncubado(1);
+                            Log.i("OVOS", "Incubar ovo: " + ovos.get(position).getIdOvo());
+                            ovos.get(position).setIncubado(1);
                         }
                     });
             }

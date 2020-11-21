@@ -2,6 +2,7 @@ package teste.lucasvegi.pokemongooffline.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.io.Serializable;
 
@@ -57,10 +58,11 @@ public class Ovo implements Serializable {
 
     public void setIdTipoOvo(String idTipoOvo) { this.idTipoOvo = idTipoOvo; }
 
-    public void setIncubado(int incubado){
+    public void setIncubado(int inc){
         ContentValues valores = new ContentValues();
-        valores.put("incubado", incubado);
+        valores.put("incubado", inc);
+        Log.i("OVOS", "idOvo: " + idOvo);
         BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
-        this.incubado = incubado;
+        this.incubado = inc;
     }
 }
