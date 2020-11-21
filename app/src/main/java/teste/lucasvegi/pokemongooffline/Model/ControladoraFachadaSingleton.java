@@ -219,6 +219,24 @@ public final class ControladoraFachadaSingleton {
                 //TODO : setar imagem do pokestop dentro da classe do pokestop
                 if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
                     getPlaceImage(pokestop);
+
+                Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
+                        new String[]{"pkstp.disponivel disponivel", "pkstp.acesso acesso"},
+                        "pkstp.idPokestop = '" + pokestop.getID() + "'",
+                        "");
+                if (cPokestop.getCount() > 0) {
+                    while (cPokestop.moveToNext()) {
+                        int coluna = cPokestop.getColumnIndex("disponivel");
+                        if (cPokestop.getInt(coluna) == 0) {
+                            pokestop.setDisponivel(false);
+                        } else
+                            pokestop.setDisponivel(true);
+                        coluna = cPokestop.getColumnIndex("acesso");
+                        Date data = new Date(cPokestop.getLong(coluna));
+                        pokestop.setUltimoAcesso(data);
+                    }
+                }
+
                 //atualizar se eh possivel interagir em questao de tempo
                 if (pokestop.getUltimoAcesso() != null) {
                     Date TempoAtual = Calendar.getInstance().getTime();
