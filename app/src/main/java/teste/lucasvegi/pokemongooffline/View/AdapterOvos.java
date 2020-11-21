@@ -1,6 +1,7 @@
 package teste.lucasvegi.pokemongooffline.View;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,15 @@ import java.util.List;
 
 import teste.lucasvegi.pokemongooffline.Model.Ovo;
 import teste.lucasvegi.pokemongooffline.R;
+import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
 public class AdapterOvos extends BaseAdapter {
 
     private List<Ovo> ovos;
     private Activity act;
     private Ovo ovo;
+    Cursor c;
+    int idFotoInc;
 
     public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
@@ -50,7 +54,7 @@ public class AdapterOvos extends BaseAdapter {
 
             ovo = ovos.get(position);
 
-            Log.i("OVOS", "Montando lista de ovos para " + ovo.getCor());
+            //Log.i("OVOS", "Montando lista de ovos para " + ovo.getCor());
 
             final ImageView imagem = (ImageView)
                     view.findViewById(R.id.imagemOvoOvos);
@@ -62,23 +66,28 @@ public class AdapterOvos extends BaseAdapter {
                     view.findViewById(R.id.botaoIncubar);
 
 
-            if(ovo.getIncubado()) {
+            if(ovo.getIncubado() == 1) {
                 //kmAndou.setText("0km");
                 //imagem.setImageResource(ovo.getFotoIncubadora());
                 //incubar.setEnabled(false);
 
             }else {
                 //kmAndou.setText("");
-                imagem.setImageResource(ovo.getIdTipoOvo());
+                c = BancoDadosSingleton.getInstance().buscar("ovo o, tipoovo t", new String[]{"t.foto ft","t.fotoIncubadora ftInc"}, "o.idTipoOvo = t.idTipoOvo AND o.IdTipoOvo = '" + ovo.getIdTipoOvo() + "'", "");
+                while (c.moveToNext()) {
+                    int idFoto = c.getColumnIndex("ft");
+                    idFotoInc = c.getColumnIndex("ftInc");
+                    imagem.setImageResource(c.getInt(idFoto));
 
-                incubar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        imagem.setImageResource(ovo.getIdTipoOvo());
-                        incubar.setEnabled(false);
-                        ovo.setIncubado(true);
-                    }
-                });
+                    incubar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //imagem.setImageResource(c.getInt(idFotoInc));
+                            incubar.setEnabled(false);
+                            ovo.setIncubado(1);
+                        }
+                    });
+                }
             }
 
 

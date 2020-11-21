@@ -26,16 +26,16 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         setContentView(R.layout.activity_ovos);
 
 
-        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","cor"},"","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado"},"","");
         ListView listView = (ListView) findViewById(R.id.listaOvos);
 
         while(c.moveToNext()){
             int idO = c.getColumnIndex("idOvo");
             int idP = c.getColumnIndex("idPokemon");
             int idTO = c.getColumnIndex("idTipoOvo");
-            int cor = c.getColumnIndex("cor");
+            int idInc = c.getColumnIndex("incubado");
 
-            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getInt(idTO), c.getString(cor)));
+            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc)));
         }
 
         AdapterOvos adapterOvos = new AdapterOvos(ovos, this);

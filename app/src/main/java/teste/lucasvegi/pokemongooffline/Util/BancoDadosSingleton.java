@@ -460,15 +460,16 @@ public final class BancoDadosSingleton {
                     "  idOvo INTEGER NOT NULL," +
                     "  idPokemon INTEGER NOT NULL," +
                     "  idTipoOvo TEXT NOT NULL," +
+                    "  incubado INTEGER NOT NULL," +
                     "  PRIMARY KEY  (idOvo,idPokemon,idTipoOvo)," +
                     "  CONSTRAINT fk_usuariopokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES pokemon (idPokemon)," +
                     "  CONSTRAINT fk_tipoovo FOREIGN KEY (idTipoOvo) REFERENCES tipoovo (idTipoOvo)" +
                     ");",
-            "INSERT INTO ovo (idOvo, idPokemon, idTipoOvo) VALUES" +
-                    "(1, 16, 'C')," +
-                    "(2, 17, 'I')," +
-                    "(3, 18, 'R')," +
-                    "(4, 19, 'L');",
+            "INSERT INTO ovo (idOvo, idPokemon, idTipoOvo, incubado) VALUES" +
+                    "(1, 16, 'C', 0)," +
+                    "(2, 17, 'I', 0)," +
+                    "(3, 18, 'R', 0)," +
+                    "(4, 19, 'L', 0);",
 
     };
 
