@@ -1,27 +1,16 @@
 package teste.lucasvegi.pokemongooffline.Model;
 
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.util.Log;
 
-import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import teste.lucasvegi.pokemongooffline.R;
-import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
 /**
  * Created by Lucas on 02/12/2016.
@@ -112,7 +101,25 @@ public class Pokestop implements Serializable{
         this.disponivel = disp;
     }
 
+    public BitmapDescriptor getIcon(boolean interactionPossible){
+        BitmapDescriptor bitmapDescriptor = null;
 
+        if (interactionPossible && this.disponivel) {
+            bitmapDescriptor = BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_perto);
+        } else if (!interactionPossible && this.disponivel){
+            bitmapDescriptor=BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_longe);
+        } else if (interactionPossible && !this.disponivel){
+            bitmapDescriptor=BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_perto_unable);
+        } else if (!interactionPossible && !this.disponivel) {
+            bitmapDescriptor=BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_longe_unable);
+        }
+
+        return bitmapDescriptor;
+    }
 
     public MarkerOptions getMarkerOptions(boolean interactionPossible){
         MarkerOptions markeropt = new MarkerOptions();
