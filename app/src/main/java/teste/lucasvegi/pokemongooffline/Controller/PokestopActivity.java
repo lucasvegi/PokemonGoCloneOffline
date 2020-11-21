@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -40,12 +39,13 @@ public class PokestopActivity extends Activity {
 
         Intent it = getIntent();
         Pokestop pokestop = (Pokestop) it.getSerializableExtra("pokestop");
-        byte[] byteArray = (byte[]) it.getByteArrayExtra("foto");
+        byte[] byteArray = it.getByteArrayExtra("foto");
         Pkstp = pokestop;
 
         placeName.setText(pokestop.getNome());
         placeInfo.setText(pokestop.getDescri());
-        imgPokestopIcon.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
+        if(byteArray != null)
+            imgPokestopIcon.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
         tempoPkstop = pokestop.getUltimoAcesso();
     }
 
