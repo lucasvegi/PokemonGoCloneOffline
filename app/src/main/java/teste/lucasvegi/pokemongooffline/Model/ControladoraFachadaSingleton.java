@@ -245,6 +245,8 @@ public final class ControladoraFachadaSingleton {
                     if (diffMinuto > 300) {
                         pokestop.setDisponivel(true);
                     }
+                    else
+                        pokestop.setDisponivel(false);
                 }
 
                 list.add(pokestop);
