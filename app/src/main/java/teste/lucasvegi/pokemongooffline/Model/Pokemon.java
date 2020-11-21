@@ -2,11 +2,16 @@ package teste.lucasvegi.pokemongooffline.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Random;
 
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
@@ -119,6 +124,16 @@ public class Pokemon implements Serializable{
         if(!cPkmn.moveToNext()) {
             cPkmn.close();
             return null;
+        }
+
+        //Caso especial: Eevee (possui 3 evoluções diretas)
+        if(this.nome.equals("Eevee")) {
+            Random evolEeve = new Random();
+            int n = evolEeve.nextInt(3);
+            while (n>0){
+                cPkmn.moveToNext();
+                n--;
+            }
         }
 
         int numero = cPkmn.getColumnIndex("idPokemon");
