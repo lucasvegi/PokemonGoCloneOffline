@@ -452,7 +452,7 @@ public final class BancoDadosSingleton {
                     "  latitude REAL NOT NULL," +
                     "  longitude REAL NOT NULL," +
                     "  disponivel BOOLEAN NOT NULL," +
-                    "  acesso TEXT NOT NULL," +
+                    "  acesso TEXT," +
                     "  PRIMARY KEY  (idPokestop)" +
                     ");"
             };
