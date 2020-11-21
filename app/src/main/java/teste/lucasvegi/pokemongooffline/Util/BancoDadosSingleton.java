@@ -563,8 +563,7 @@ public final class BancoDadosSingleton {
         // Abre o banco de dados já existente ou então cria um banco novo
 
         db = ctx.openOrCreateDatabase(NOME_BANCO, Context.MODE_PRIVATE, null);
-        db.execSQL(SCRIPT_DATABASE_CREATE[SCRIPT_DATABASE_CREATE.length-2]);
-        db.execSQL(SCRIPT_DATABASE_CREATE[SCRIPT_DATABASE_CREATE.length-1]);
+
         //busca por tabelas existentes no banco = "show tables" do MySQL
         //SELECT * FROM sqlite_master WHERE type = "table"
         Cursor c = buscar("sqlite_master", null, "type = 'table'", "");
