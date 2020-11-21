@@ -10,13 +10,14 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Ovo;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 import teste.lucasvegi.pokemongooffline.View.AdapterOvos;
 
 public class OvosActivity extends Activity implements AdapterView.OnItemClickListener {
-    private List<Ovo> ovos = new ArrayList<Ovo>();
+    private List<Ovo> ovos;
 
 
 
@@ -26,22 +27,12 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         setContentView(R.layout.activity_ovos);
 
 
-        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado"},"","");
+        ovos = ControladoraFachadaSingleton.getInstance().getOvos();
         ListView listView = (ListView) findViewById(R.id.listaOvos);
-
-        while(c.moveToNext()){
-            int idO = c.getColumnIndex("idOvo");
-            int idP = c.getColumnIndex("idPokemon");
-            int idTO = c.getColumnIndex("idTipoOvo");
-            int idInc = c.getColumnIndex("incubado");
-
-            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc)));
-        }
 
         AdapterOvos adapterOvos = new AdapterOvos(ovos, this);
         listView.setAdapter(adapterOvos);
         listView.setOnItemClickListener(this);
-        c.close();
     }
 
     public void clickVoltar(View v){

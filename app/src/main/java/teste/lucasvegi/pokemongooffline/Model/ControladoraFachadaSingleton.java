@@ -23,14 +23,34 @@ public final class ControladoraFachadaSingleton {
     private Map<String,List<Pokemon>> pokemons;
     private Aparecimento[] aparecimentos = new Aparecimento[10];
     private List<Tipo> tiposPokemon;
+    private List<Ovo> ovos;
     private static ControladoraFachadaSingleton INSTANCE = new ControladoraFachadaSingleton();
     private boolean sorteouLendario = false;
 
     private ControladoraFachadaSingleton() {
         daoTipo();
         daoPokemons(this);
+        daoOvo();
     }
 
+
+    private void daoOvo(){
+         this.ovos = new ArrayList<Ovo>();
+
+         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado"},"","");
+
+        while(c.moveToNext()){
+            int idO = c.getColumnIndex("idOvo");
+            int idP = c.getColumnIndex("idPokemon");
+            int idTO = c.getColumnIndex("idTipoOvo");
+            int idInc = c.getColumnIndex("incubado");
+
+            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc)));
+        }
+
+        c.close();
+
+    }
     private void daoTipo(){
         this.tiposPokemon = new ArrayList<Tipo>();
 
@@ -149,6 +169,8 @@ public final class ControladoraFachadaSingleton {
 
     }
 
+
+
     public static ControladoraFachadaSingleton getInstance(){
         return INSTANCE;
     }
@@ -193,6 +215,8 @@ public final class ControladoraFachadaSingleton {
     protected List<Tipo> getTipos(){
         return tiposPokemon;
     }
+
+    public List<Ovo> getOvos(){ return ovos; }
 
     public void sorteiaAparecimentos(double LatMin, double LatMax, double LongMin, double LongMax){
 
