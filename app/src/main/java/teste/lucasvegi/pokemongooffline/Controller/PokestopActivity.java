@@ -47,9 +47,13 @@ public class PokestopActivity extends Activity {
                 new String[]{"trad.portugues portugues"},
                 "trad.ingles = '" + pokestop.getDescri() + "'",
                 "");
-        while (cTradutor.moveToNext()) {
-            int coluna = cTradutor.getColumnIndex("portugues");
-            Portuga = cTradutor.getString(coluna);
+        if (cTradutor.getCount()>0) {
+            while (cTradutor.moveToNext()) {
+                int coluna = cTradutor.getColumnIndex("portugues");
+                Portuga = cTradutor.getString(coluna);
+            }
+        } else {
+            Portuga = " ";
         }
         placeName.setText(pokestop.getNome());
         placeInfo.setText(Portuga);
@@ -87,7 +91,7 @@ public class PokestopActivity extends Activity {
                 "");
 
         //Toast.makeText(this,TempoAtual.toString(),Toast.LENGTH_SHORT).show();
-        if (tempoPkstop==null && Pegou==false) {
+        if (tempoPkstop==null && !Pegou) {
             //Log.d("PEGA OVOO", "ENTROUU NO PRIMEIRO CASO");
             //atualiza o acesso da Pokestop (passao tempo novo com setUltimoAcesso e passa false pro setDisponivel)
             tempoPkstop = TempoAtual;
@@ -101,7 +105,7 @@ public class PokestopActivity extends Activity {
             double diff = TempoAtual.getTime() - tempoPkstop.getTime();
             int diffSec = (int)diff / (1000);
             if (diffSec>300) Pegou = false;
-            if (diffSec>300 && Pegou==false){
+            if (diffSec>300 && !Pegou){
                 //atualiza o acesso da Pokestop (passao tempo novo com setUltimoAcesso e passa false pro setDisponivel)
                 tempoPkstop = TempoAtual;
                 Pkstp.setUltimoAcesso(TempoAtual);
@@ -125,7 +129,7 @@ public class PokestopActivity extends Activity {
                 valores.put("idPokestop",pkstp.getID());
                 valores.put("latitude",pkstp.getlat());
                 valores.put("longitude",pkstp.getlongi());
-                valores.put("disponivel",pkstp.getDisponivel());
+                valores.put("disponivel",false);
                 valores.put("acesso",date.getTime());
 
             BancoDadosSingleton.getInstance().inserir("Pokestop",valores);
