@@ -470,11 +470,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             case CAMERA_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissao_cam = true;
-                    Toast.makeText(this, "Permissão concedida", 5000);
+                    Toast.makeText(this, "Permissão concedida", Toast.LENGTH_LONG).show();
                 }
                 else {
                     permissao_cam = true;
-                    Toast.makeText(this, "Permissão Necessária para usar a camera", 5000);
+                    Toast.makeText(this, "Permissão Necessária para usar a camera", Toast.LENGTH_LONG).show();
                     Log.d("PERMISSAO", "NAO DEIXOUUUUUUU");
                 }
             }
