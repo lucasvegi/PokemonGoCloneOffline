@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,9 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ovos);
 
+        TextView txtTotal = (TextView) findViewById(R.id.txtOvosTotal);
+        int total = ControladoraFachadaSingleton.getInstance().getOvos().size();
+        txtTotal.setText("Ovos: " + total + "/9");
 
         ovos = ControladoraFachadaSingleton.getInstance().getOvos();
         ListView listView = (ListView) findViewById(R.id.listaOvos);
