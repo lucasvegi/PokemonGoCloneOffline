@@ -534,8 +534,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     pokestopMap.put(marker, p);
                 }
             }
-            //limpa o dicionário de marcadores de aparecimentos
-            pokestopMap.clear();
 
         } catch (Exception e) {
             Log.e("LimparMarker", "ERRO: " + e.getMessage());
