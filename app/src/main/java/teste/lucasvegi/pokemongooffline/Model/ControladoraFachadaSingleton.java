@@ -356,6 +356,9 @@ public final class ControladoraFachadaSingleton {
         return true;
     }
 
+    //public void capturaOvo()    chama o método cadastrar ovo, e sorteia qual ovo vai vir
+    //public void cadastraOvo()
+
     public boolean cadastrarUser(String login, String senha, String nome, String sexo, String foto){
 
         Map<String,String> timeStamp = TimeUtil.getHoraMinutoSegundoDiaMesAno();

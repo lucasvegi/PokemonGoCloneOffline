@@ -21,8 +21,6 @@ public class AdapterOvos extends BaseAdapter {
     private List<Ovo> ovos;
     private Activity act;
     private Ovo ovo;
-    Cursor c;
-    int idFotoInc;
 
     public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
@@ -73,23 +71,18 @@ public class AdapterOvos extends BaseAdapter {
 
             }else {
                 //kmAndou.setText("");
-                c = BancoDadosSingleton.getInstance().buscar("ovo o, tipoovo t", new String[]{"t.foto ft","t.fotoIncubadora ftInc"}, "o.idTipoOvo = t.idTipoOvo AND o.IdTipoOvo = '" + ovo.getIdTipoOvo() + "'", "");
-                while (c.moveToNext()) {
-                    int idFoto = c.getColumnIndex("ft");
-                    idFotoInc = c.getColumnIndex("ftInc");
-                    imagem.setImageResource(c.getInt(idFoto));
+
+                    imagem.setImageResource(ovo.getFoto());
 
                     incubar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //imagem.setImageResource(c.getInt(idFotoInc));
+                            imagem.setImageResource(ovo.getFotoIncubado());
                             incubar.setEnabled(false);
                             ovo.setIncubado(1);
                         }
                     });
-                }
             }
-
 
             return view;
         }catch (Exception e){
