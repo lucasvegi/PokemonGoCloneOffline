@@ -2,6 +2,7 @@ package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -205,6 +206,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     Log.i("SALVOU NO MAP", String.valueOf(Pkstp.getUltimoAcesso().getTime()));
                     LastPkstopMarker.remove();
                     LastPkstopMarker = map.addMarker(Pkstp.getMarkerOptions(true));
+                    LastPkstopMarker.setTag("pokestop");
                     pokestopMap.put(LastPkstopMarker, Pkstp);
                 }
                 cPokestop.close();
@@ -501,6 +503,45 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
     }
 
+    public void atualizaPokestops(){
+        try {
+            for (Map.Entry<Marker, Pokestop> entry : pokestopMap.entrySet()) {
+                Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
+                Marker marker = entry.getKey();
+                Pokestop p = entry.getValue();
+
+                if(!p.getDisponivel()) {
+                    marker.remove();
+                    Date TempoAtual = Calendar.getInstance().getTime();
+                    double diff = TempoAtual.getTime() - p.getUltimoAcesso().getTime();
+                    int diffSec = (int) diff / (1000);
+                    if (diffSec > 300) {
+                        p.setDisponivel(true);
+                        ContentValues valores = new ContentValues();
+                        valores.put("disponivel", true);
+                        BancoDadosSingleton.getInstance().atualizar("Pokestop", valores, "idPokestop = '" + p.getID() + "'");
+                    }
+
+                    Location pkstp = new Location(provider);
+                    pkstp.setLongitude(p.getlongi());
+                    pkstp.setLatitude(p.getlat());
+
+                    double distancia = getDistanciaPkStop(eu, pkstp);
+                    double distanciaMin = distanciaMinimaParaBatalhar;
+
+                    marker = map.addMarker(p.getMarkerOptions(distancia < distanciaMin));
+                    marker.setTag("pokestop");
+                    pokestopMap.put(marker, p);
+                }
+            }
+            //limpa o dicionário de marcadores de aparecimentos
+            pokestopMap.clear();
+
+        } catch (Exception e) {
+            Log.e("LimparMarker", "ERRO: " + e.getMessage());
+        }
+    }
+
     public void limparMarcadores(){
         try {
             //itera no dicionário de marcadores de aparecimentos
@@ -511,12 +552,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             //limpa o dicionário de marcadores de aparecimentos
             aparecimentoMap.clear();
 
-            /*for (Map.Entry<Marker, Pokestop> entry : pokestopMap.entrySet()) {
-                Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
-                entry.getKey().remove();
-            }
-            //limpa o dicionário de marcadores de aparecimentos
-            pokestopMap.clear();*/
+            atualizaPokestops();
 
         }catch (Exception e){
             Log.e("LimparMarker","ERRO: " + e.getMessage());
