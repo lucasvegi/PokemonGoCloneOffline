@@ -13,8 +13,9 @@ public class Ovo implements Serializable {
     private int idPokemon;
     private String idTipoOvo;
     private int incubado;
-    private int idFoto, Foto;
-    private int idFotoInc, FotoInc;
+    private int Foto;
+    private int FotoInc;
+    private int Km;
 
     public Ovo(int idOvo, int idPokemon, String idTipoOvo, int incubado) {
         this.idOvo = idOvo;
@@ -31,7 +32,7 @@ public class Ovo implements Serializable {
     public int getFoto(){
         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, tipoovo t", new String[]{"t.foto ft"}, "o.idTipoOvo = t.idTipoOvo AND o.idOvo = '"+idOvo+"'","");
         while (c.moveToNext()) {
-            idFoto = c.getColumnIndex("ft");
+            int idFoto = c.getColumnIndex("ft");
             Foto = c.getInt(idFoto);
         }
         c.close();
@@ -41,13 +42,22 @@ public class Ovo implements Serializable {
     public int getFotoIncubado(){
         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, tipoovo t", new String[]{"t.fotoIncubadora ftInc"}, "o.idTipoOvo = t.idTipoOvo AND o.idOvo = '"+idOvo+"'","");
         while (c.moveToNext()) {
-            idFotoInc = c.getColumnIndex("ftInc");
+            int idFotoInc = c.getColumnIndex("ftInc");
             FotoInc = c.getInt(idFotoInc);
         }
         c.close();
         return FotoInc;
     }
 
+    public int getKm(){
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, tipoovo t", new String[]{"t.quilometragem km"}, "o.idTipoOvo = t.idTipoOvo AND o.idOvo = '"+idOvo+"'","");
+        while (c.moveToNext()) {
+            int idKm = c.getColumnIndex("km");
+            Km = c.getInt(idKm);
+        }
+        c.close();
+        return Km;
+    }
     public void setIdOvo(int idOvo) {
         this.idOvo = idOvo;
     }

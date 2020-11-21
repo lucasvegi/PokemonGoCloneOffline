@@ -19,8 +19,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
-        android:layout_toEndOf="@+id/imagemOvoOvos"
-        android:text="0km/5km" />
+        android:layout_toEndOf="@+id/imagemOvoOvos" />
 
     <Button
         android:id="@+id/botaoIncubar"

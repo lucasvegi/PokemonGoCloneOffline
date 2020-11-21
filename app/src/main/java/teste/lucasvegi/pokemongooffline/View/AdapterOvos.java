@@ -58,7 +58,7 @@ public class AdapterOvos extends BaseAdapter {
             final ImageView imagem = (ImageView)
                     view.findViewById(R.id.imagemOvoOvos);
             //Log.i("OVOS", "Montando lista de ovos para " + ovo.getIdOvo());
-            TextView kmAndou = (TextView)
+            final TextView kmAndou = (TextView)
                     view.findViewById(R.id.kmAndou);
 
             final Button incubar = (Button)
@@ -66,13 +66,13 @@ public class AdapterOvos extends BaseAdapter {
 
 
             if(ovos.get(position).getIncubado() == 1) {
-                //kmAndou.setText("0km");
+                kmAndou.setText("0" + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
                 Log.i("OVOS", "Entrou no if " + ovos.get(position).getIdOvo());
                 imagem.setImageResource(ovos.get(position).getFotoIncubado());
                 incubar.setEnabled(false);
 
             }else {
-                //kmAndou.setText("");
+                kmAndou.setText(String.valueOf(ovos.get(position).getKm()) + "km");
                 Log.i("OVOS", "Entrou no else " + ovos.get(position).getIdOvo());
                     imagem.setImageResource(ovos.get(position).getFoto());
 
@@ -81,6 +81,7 @@ public class AdapterOvos extends BaseAdapter {
                         public void onClick(View view) {
                             imagem.setImageResource(ovos.get(position).getFotoIncubado());
                             incubar.setEnabled(false);
+                            kmAndou.setText("0" + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
                             Log.i("OVOS", "Incubar ovo: " + ovos.get(position).getIdOvo());
                             ovos.get(position).setIncubado(1);
                         }

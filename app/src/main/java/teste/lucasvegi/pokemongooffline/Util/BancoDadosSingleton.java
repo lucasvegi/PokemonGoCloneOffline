@@ -449,13 +449,14 @@ public final class BancoDadosSingleton {
                     "  idTipoOvo TEXT PRIMARY KEY," +
                     "  foto INTEGER NOT NULL," +
                     "  fotoIncubadora INTEGER NOT NULL," +
+                    "  quilometragem INTEGER NOT NULL," +
                     "  cor TEXT NOT NULL" +
                     ");",
-            "INSERT INTO tipoovo (idTipoOvo, foto, fotoIncubadora,cor) VALUES" +
-                    "('C', "+R.drawable.ovo_verde+", "+R.drawable.incubadora_verde+",'Verde')," +
-                    "('I', "+R.drawable.ovo_laranja+", "+R.drawable.incubadora_laranja+",'Laranja')," +
-                    "('R', "+R.drawable.ovo_azul+", "+R.drawable.incubadora_azul+",'Azul')," +
-                    "('L', "+R.drawable.ovo_vermelho+", "+R.drawable.incubadora_vermelha+",'Vermelho');",
+            "INSERT INTO tipoovo (idTipoOvo, foto, fotoIncubadora,quilometragem,cor) VALUES" +
+                    "('C', "+R.drawable.ovo_verde+", "+R.drawable.incubadora_verde+",2,'Verde')," +
+                    "('I', "+R.drawable.ovo_laranja+", "+R.drawable.incubadora_laranja+",5,'Laranja')," +
+                    "('R', "+R.drawable.ovo_azul+", "+R.drawable.incubadora_azul+",7,'Azul')," +
+                    "('L', "+R.drawable.ovo_vermelho+", "+R.drawable.incubadora_vermelha+",10,'Vermelho');",
             "CREATE TABLE ovo (" +
                     "  idOvo INTEGER NOT NULL," +
                     "  idPokemon INTEGER NOT NULL," +
