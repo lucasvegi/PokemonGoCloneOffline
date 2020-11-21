@@ -1,5 +1,6 @@
 package teste.lucasvegi.pokemongooffline.Model;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
@@ -109,15 +110,16 @@ public class Pokemon implements Serializable{
     public int getIdPokemonBase(){return idPokemonBase;}
 
     public Pokemon getEvolucao() {
-
         Cursor cPkmn = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemon pe",
                 new String[]{"pe.idPokemon idPokemon", "pe.nome nome", "pe.categoria categoria", "pe.foto foto", "pe.icone icone",
                         "pe.idDoce idDoce", "pe.idPokemonBase idPokemonBase"},
                 "pe.idPokemonBase = p.idPokemon AND pe.idPokemonBase = " + this.numero, "");
 
         //Se a busca não encontrar nada, já retorna null
-        if(!cPkmn.moveToNext())
+        if(!cPkmn.moveToNext()) {
+            cPkmn.close();
             return null;
+        }
 
         int numero = cPkmn.getColumnIndex("idPokemon");
         int nome = cPkmn.getColumnIndex("nome");
@@ -126,12 +128,53 @@ public class Pokemon implements Serializable{
         int icone = cPkmn.getColumnIndex("icone");
         int idDoce = cPkmn.getColumnIndex("idDoce");
         int idPokemonBase = cPkmn.getColumnIndex("idPokemonBase");
+
         evolucao = new Pokemon(cPkmn.getInt(numero),cPkmn.getString(nome),cPkmn.getString(categoria),
                 cPkmn.getInt(foto),cPkmn.getInt(icone),cPkmn.getInt(idDoce), cPkmn.getInt(idPokemonBase),
                 ControladoraFachadaSingleton.getInstance());
 
+        cPkmn.close();
 
         return evolucao;
+    }
+
+    public boolean estaDisponivel(boolean atualizarBanco){
+        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemonusuario pu",
+                new String[]{"pu.login login", "pu.idPokemon idPokemon", "pu.latitude latitude",
+                        "pu.longitude longitude","pu.dtCaptura dtCaptura" },
+                "pu.evoluido = 0 AND p.idPokemon = pu.idPokemon AND pu.idPokemon = " + this.numero, "");
+
+        //Se a busca não encontrar nada, retorna false
+        if(!c.moveToNext()){
+            c.close();
+            return false;
+        }
+
+        if(atualizarBanco) {
+            int login = c.getColumnIndex("login");
+            int idPokemon = c.getColumnIndex("idPokemon");
+            int latitude = c.getColumnIndex("latitude");
+            int longitude = c.getColumnIndex("longitude");
+            int dtCaptura = c.getColumnIndex("dtCaptura");
+
+
+            //Prepara valores para serem persistidos no banco
+            ContentValues valores = new ContentValues();
+            valores.put("login", c.getString(login));
+            valores.put("idPokemon", c.getInt(idPokemon));
+            valores.put("latitude", c.getDouble(latitude));
+            valores.put("longitude", c.getDouble(longitude));
+            valores.put("dtCaptura", c.getString(dtCaptura));
+            valores.put("evoluido", 1);
+
+            //Atualiza o banco
+            BancoDadosSingleton.getInstance().atualizar("pokemonusuario",valores,"login = '" + c.getString(login) +
+                    "' AND idPokemon = '" + c.getInt(idPokemon) + "' AND dtCaptura = '" + c.getString(dtCaptura) + "'");
+
+        }
+
+        c.close();
+        return true;
     }
 
     public void setEvolucao(Pokemon evolucao) {
