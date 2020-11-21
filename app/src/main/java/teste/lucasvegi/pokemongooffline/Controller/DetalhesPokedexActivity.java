@@ -211,7 +211,7 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
         }
 
         // Verificando se existe pokemon desta espécie que ainda não foi evoluido
-        else if (pkmn.estaDisponivel(true)){
+        else if (pkmn.estaDisponivel(true)){ //se sim já atualiza a tabela pokemonusuario no Banco
             evoluir();
         }
         else{
