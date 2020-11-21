@@ -12,7 +12,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
-//import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -43,7 +42,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.maps.model.PlacesSearchResult;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
@@ -58,10 +56,10 @@ import java.util.concurrent.TimeUnit;
 
 import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
-import teste.lucasvegi.pokemongooffline.Util.NearbySearch;
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
-import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
+
+//import android.support.v4.app.FragmentActivity;
 
 public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback {
     public GoogleMap map;
@@ -100,7 +98,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public Marker LongMin;
     public Marker LongMax;
 
-    public Location posicaoAtual;
+    public Location posicaoAtual, posicaoInit;
 
     MediaPlayer mp; //música do mapa
 
@@ -110,6 +108,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         setContentView(R.layout.activity_map);
 
         frag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa);
+        frag.getMapAsync(this);
+
+
         //aloca lista e Map
         aparecimentos = new ArrayList<Aparecimento>();
         aparecimentoMap = new HashMap<Marker, Aparecimento>();
@@ -143,13 +144,14 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     @Override
     protected void onStart() {
         super.onStart();
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationPermission();
-        }
-        else{
+        } else {
             configuraCriterioLocation();
             iniciaGeolocation(this);
-            frag.getMapAsync(this);
+            if(map != null)
+                map.setMyLocationEnabled(true);
         }
     }
 
@@ -175,7 +177,12 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
     }
 
-//    @Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    //    @Override
 //    protected void onResume() {
 //        super.onResume();
 //        try {
@@ -233,11 +240,13 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
 
         //Escolhe imagem do personagem de acordo com o sexo
-        if (ControladoraFachadaSingleton.getInstance().getUsuario().getSexo().equals("M"))
-            eu = map.addMarker(new MarkerOptions().position(personagem).icon(BitmapDescriptorFactory.fromResource(R.drawable.male)));
-        else
-            eu = map.addMarker(new MarkerOptions().position(personagem).icon(BitmapDescriptorFactory.fromResource(R.drawable.female)));
-
+        //mapa é carregado de forma assincrona
+        if(map != null) {
+            if (ControladoraFachadaSingleton.getInstance().getUsuario().getSexo().equals("M") && map != null)
+                eu = map.addMarker(new MarkerOptions().position(personagem).icon(BitmapDescriptorFactory.fromResource(R.drawable.male)));
+            else
+                eu = map.addMarker(new MarkerOptions().position(personagem).icon(BitmapDescriptorFactory.fromResource(R.drawable.female)));
+        }
         //centraliza a camera na primeira vez que obtiver a posição
         if (primeiraPosicao) {
             //CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(personagem, 18);
@@ -251,7 +260,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
             map.animateCamera(c);
             primeiraPosicao = false;
-
+            posicaoInit = location;
             //inicia a thread de sorteio de pokemon
             new Thread(this).start();
 
@@ -259,6 +268,16 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             mp = MediaPlayer.create(getBaseContext(), R.raw.tema_rota_1);
             mp.setLooping(true);
             mp.start();
+
+            plotarPokestops();
+        }
+
+        //se o treinador se afasta 200m do ultimo ponto onde atualizamos as pokestops
+        //atualizamos as pokestops novamente
+        double deltaDistancia = posicaoAtual.distanceTo(posicaoInit);
+        if (deltaDistancia > 200.00) {
+            limparPokestops();
+            plotarPokestops();
         }
 
     }
@@ -413,25 +432,24 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         return false;
     }
 
-    public void requestLocationPermission(){
+    public void requestLocationPermission() {
         //verifica se precisa explicar a permissão
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-        ){
+        ) {
 
             //pede permissão
             ActivityCompat.requestPermissions(this
-                    ,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}
+                    , new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}
                     , LOCATION_PERMISSION
             );
 
             Toast.makeText(this
-                    ,"Permita o acesso a localização do dispositivo para\n" +
+                    , "Permita o acesso a localização do dispositivo para\n" +
                             "medir a distância até o local selecionado."
-                    ,Toast.LENGTH_LONG).show();
+                    , Toast.LENGTH_LONG).show();
 
-        }
-        else{
+        } else {
             //pede permissão
             ActivityCompat.requestPermissions(this
                     , new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}
@@ -440,6 +458,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -457,9 +476,24 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     configuraCriterioLocation();
                     iniciaGeolocation(this);
-                    frag.getMapAsync(this);
+                    if(map != null)
+                        map.setMyLocationEnabled(true);
                 }
             }
+        }
+    }
+
+    public void limparPokestops() {
+        try {
+            for (Map.Entry<Marker, Pokestop> entry : pokestopMap.entrySet()) {
+                Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
+                entry.getKey().remove();
+            }
+            //limpa o dicionário de marcadores de aparecimentos
+            pokestopMap.clear();
+
+        } catch (Exception e) {
+            Log.e("LimparMarker", "ERRO: " + e.getMessage());
         }
     }
 
@@ -473,16 +507,45 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             //limpa o dicionário de marcadores de aparecimentos
             aparecimentoMap.clear();
 
-            for (Map.Entry<Marker, Pokestop> entry : pokestopMap.entrySet()) {
+            /*for (Map.Entry<Marker, Pokestop> entry : pokestopMap.entrySet()) {
                 Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
                 entry.getKey().remove();
             }
             //limpa o dicionário de marcadores de aparecimentos
-            pokestopMap.clear();
+            pokestopMap.clear();*/
 
         } catch (Exception e) {
             Log.e("LimparMarker", "ERRO: " + e.getMessage());
         }
+    }
+
+    public void plotarPokestops() {
+        List<Pokestop> list = ControladoraFachadaSingleton.getInstance().getPokestops(eu.getPosition().latitude, eu.getPosition().longitude);
+        for (int i = 0; i < list.size(); i++) {
+            Pokestop p = list.get(i);
+            Location pkstp = new Location(provider);
+            pkstp.setLongitude(p.getlongi());
+            pkstp.setLatitude(p.getlat());
+            Marker pokestopMarker;
+
+            double distancia = getDistanciaPkStop(eu, pkstp);
+            double distanciaMin = distanciaMinimaParaBatalhar;
+
+            if (p.getUltimoAcesso() != null) {
+                Date TempoAtual = Calendar.getInstance().getTime();
+                double diff = TempoAtual.getTime() - p.getUltimoAcesso().getTime();
+                double diffMinuto = diff / (1000);
+                if (diffMinuto > 300) {
+                    p.setDisponivel(true);
+                }
+            }
+            pokestopMarker = map.addMarker(p.getMarkerOptions(distancia < distanciaMin));
+            pokestopMarker.setTag("pokestop");
+            if (!pokestopMap.containsKey(pokestopMarker))
+                pokestopMap.put(pokestopMarker, p);
+            else Toast.makeText(this, "NAO TEM UM", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     public void plotarMarcadores() {
@@ -509,7 +572,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
 
         //TODO : transformar esse for em um método da classe Pokestop
-        PlacesSearchResult[] placesSearchResults = NearbySearch.run(new com.google.maps.model.LatLng(eu.getPosition().latitude, eu.getPosition().longitude)).results;
+        /*PlacesSearchResult[] placesSearchResults = NearbySearch.run(new com.google.maps.model.LatLng(eu.getPosition().latitude, eu.getPosition().longitude)).results;
         for (int i = 0; i < placesSearchResults.length / 2; i++) {
             double lat = placesSearchResults[i].geometry.location.lat;
             double lng = placesSearchResults[i].geometry.location.lng;
@@ -544,7 +607,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             if (!pokestopMap.containsKey(pokestopMarker))
                 pokestopMap.put(pokestopMarker, pokestop);
             else Toast.makeText(this, "NAO TEM UM", Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     public double getDistanciaPkmn(Marker treinador, Marker pkmn) {
@@ -684,7 +747,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         map = googleMap;
         //configura o mapa
         map.clear();
-        map.setMyLocationEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            map.setMyLocationEnabled(true);
+
         map.setBuildingsEnabled(true);
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         map.setOnMarkerClickListener(this); //marcadores clicaveis
