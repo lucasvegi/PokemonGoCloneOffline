@@ -168,14 +168,37 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
         startActivity(it);
     }
 
+    private void evoluir(){
+        Aparecimento ap = new Aparecimento();
+        ap.setLatitude(atual.getLatitude());
+        ap.setLongitude(atual.getLongitude());
+        ap.setPokemon(pkmn.getEvolucao());
+        Log.i("EVOLUCAO", "NOME DA EVOLUÇÃO: " + ap.getPokemon().getNome());
+
+        //envia captura para o servidor antes de fechar tela.
+        ControladoraFachadaSingleton.getInstance().getUsuario().capturar(ap);
+        Log.i("EVOLUCAO","Evolução capturada");
+
+        //Subtrai os doces utilizados na evolução
+        ControladoraFachadaSingleton.getInstance().getUsuario().somarDoces(pkmn, -pkmn.getQuantidadeDoces()-3);
+        Log.i("EVOLUCAO","Pokemon evoluído");
+
+        //Exibindo mensagem de sucesso na tela
+        Toast.makeText(getBaseContext(),pkmn.getNome() + " foi evoluído! \\o/",Toast.LENGTH_LONG).show();
+
+        //Iniciando activity do pokemon evoluido
+        Intent it = new Intent(this, DetalhesPokedexActivity.class);
+        it.putExtra("pkmn", ap.getPokemon());
+        startActivity(it);
+
+        //Encerrando activity do pokemon base
+        finish();
+    }
+
     public void clickEvoluir(View v){
         int quantNecessaria = pkmn.getQuantidadeDoces();
         int quantObtida = getQuantDocesObtidos(pkmn);
         int restante = quantNecessaria-quantObtida;
-
-        Log.i("EVOLUCAO","Doces necessários: " + quantNecessaria);
-        Log.i("EVOLUCAO","Doces obtidos: " + quantObtida);
-        Log.i("EVOLUCAO","Doces restantes: " + restante);
 
         // Verificando se o pokemon possui evolução
         if(pkmn.getEvolucao() == null){
@@ -187,35 +210,12 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
             Toast.makeText(this,"Faltam "+ restante +" doces para evoluir!",Toast.LENGTH_LONG).show();
         }
 
-        // verifica se existe pokemon desta espécie que ainda não foi evoluido
+        // Verificando se existe pokemon desta espécie que ainda não foi evoluido
         else if (pkmn.estaDisponivel(true)){
-            Aparecimento ap = new Aparecimento();
-            ap.setLatitude(atual.getLatitude());
-            ap.setLongitude(atual.getLongitude());
-            ap.setPokemon(pkmn.getEvolucao());
-            Log.i("EVOLUCAO", "NOME DA EVOLUÇÃO: " + ap.getPokemon().getNome());
-
-            //envia captura para o servidor antes de fechar tela.
-            ControladoraFachadaSingleton.getInstance().getUsuario().capturar(ap);
-            Log.i("EVOLUCAO","Evolução capturada");
-
-            //Subtrai os doces utilizados na evolução
-            ControladoraFachadaSingleton.getInstance().getUsuario().somarDoces(pkmn, -quantNecessaria-3);
-            Log.i("EVOLUCAO","Pokemon evoluído");
-
-            //Exibindo mensagem de sucesso na tela
-            Toast.makeText(getBaseContext(),pkmn.getNome() + " foi evoluído! \\o/",Toast.LENGTH_LONG).show();
-
-            //Iniciando activity do pokemon evoluido
-            Intent it = new Intent(this, DetalhesPokedexActivity.class);
-            it.putExtra("pkmn", ap.getPokemon());
-            startActivity(it);
-
-            //Encerrando activity do pokemon base
-            finish();
+            evoluir();
         }
         else{
-            // Se chegou até aqui não há pokemon desta espécie que ainda não foi evoluido
+            // Se chegou até aqui, não há pokemon desta espécie que ainda não foi evoluido
             Toast.makeText(getBaseContext(),"Todos os Pokemons de nome " + pkmn.getNome() + " já estão evoluidos!",Toast.LENGTH_LONG).show();
         }
 
