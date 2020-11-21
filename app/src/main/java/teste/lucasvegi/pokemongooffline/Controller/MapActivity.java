@@ -183,7 +183,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 Log.i("VOLTA DA POKESTOP","INTERAGIU");
                 Pokestop Pkstp = pokestopMap.get(LastPkstopMarker);
 
-                pokestopMap.remove(LastPkstopMarker);
                 Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
                         new String[]{"pkstp.disponivel disponivel","pkstp.acesso acesso"},
                         "pkstp.idPokestop = '" + Pkstp.getID() + "'",
@@ -199,10 +198,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     Date data = new Date(cPokestop.getLong(coluna));
                     Pkstp.setUltimoAcesso(data);
                     Log.i("SALVOU NO MAP", String.valueOf(Pkstp.getUltimoAcesso().getTime()));
-                    LastPkstopMarker.remove();
-                    LastPkstopMarker = map.addMarker(Pkstp.getMarkerOptions(true));
-                    LastPkstopMarker.setTag("pokestop");
-                    pokestopMap.put(LastPkstopMarker, Pkstp);
+                    LastPkstopMarker.setIcon(Pkstp.getIcon(true));
                 }
                 cPokestop.close();
             }
@@ -277,11 +273,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         if (deltaDistancia > 200.00) {
             posicaoInit = posicaoAtual;
             limparPokestops();
-            limparMarcadores();
             plotarPokestops();
-            plotarMarcadores();
         }
-
+        else
+            atualizaPokestops();
+        Log.i("GPS", "NOVA LOCALIZAÇÂO");
     }
 
     @Override
@@ -460,22 +456,26 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public void atualizaPokestops(){
         try {
             for (Map.Entry<Marker, Pokestop> entry : pokestopMap.entrySet()) {
-                Log.d("LimparMarker", "PokeStop: " + entry.getKey().getTitle());
+                Log.d("AtualizarMarker", "PokeStop: " + entry.getKey().getTitle());
                 Marker marker = entry.getKey();
-                Pokestop p = entry.getValue();
-                if(!p.getDisponivel()) {
-                    marker.remove();
-                    Date TempoAtual = Calendar.getInstance().getTime();
-                    double diff = TempoAtual.getTime() - p.getUltimoAcesso().getTime();
-                    int diffSec = (int) diff / (1000);
-                    if (diffSec > 300) {
-                        p.setDisponivel(true);
-                        ContentValues valores = new ContentValues();
-                        valores.put("disponivel", true);
-                        BancoDadosSingleton.getInstance().atualizar("Pokestop", valores, "idPokestop = '" + p.getID() + "'");
-                    } else
-                        p.setDisponivel(false);
 
+                //método roda também na thread de pokemons
+                //pode ocorrer da localização alterar e estarmos alterando um marker
+                if(marker != null){
+
+                    Pokestop p = entry.getValue();
+                    if(!p.getDisponivel()) {
+                        Date TempoAtual = Calendar.getInstance().getTime();
+                        double diff = TempoAtual.getTime() - p.getUltimoAcesso().getTime();
+                        int diffSec = (int) diff / (1000);
+                        if (diffSec > 300) {
+                            p.setDisponivel(true);
+                            ContentValues valores = new ContentValues();
+                            valores.put("disponivel", true);
+                            BancoDadosSingleton.getInstance().atualizar("Pokestop", valores, "idPokestop = '" + p.getID() + "'");
+                        } else
+                            p.setDisponivel(false);
+                    }
                     Location pkstp = new Location(provider);
                     pkstp.setLongitude(p.getlongi());
                     pkstp.setLatitude(p.getlat());
@@ -483,12 +483,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     double distancia = getDistanciaPkStop(eu,pkstp);
                     double distanciaMin = distanciaMinimaParaBatalhar;
 
-                    marker = map.addMarker(p.getMarkerOptions(distancia < distanciaMin));
-                    marker.setTag("pokestop");
-                    pokestopMap.put(marker, p);
+                    marker.setIcon(p.getIcon(distancia < distanciaMin));
                 }
             }
-
         } catch (Exception e) {
             Log.e("LimparMarker", "ERRO: " + e.getMessage());
         }
@@ -604,7 +601,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             @Override
             public void run() {
                 limparMarcadores();
-                atualizaPokestops();
+                //atualizaPokestops();
                 plotarMarcadores();
             }
         });
