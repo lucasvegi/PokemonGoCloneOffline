@@ -180,7 +180,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         super.onResume();
         try {
             if (LastPkstopMarker!=null) {
-                Log.i("VOLTA DA POKESTOP","INTERAGIU");
                 Pokestop Pkstp = pokestopMap.get(LastPkstopMarker);
                 Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
                         new String[]{"pkstp.disponivel disponivel","pkstp.acesso acesso"},
@@ -196,7 +195,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     coluna = cPokestop.getColumnIndex("acesso");
                     Date data = new Date(cPokestop.getLong(coluna));
                     Pkstp.setUltimoAcesso(data);
-                    Log.i("SALVOU NO MAP", String.valueOf(Pkstp.getUltimoAcesso().getTime()));
+                    Log.i("SALVOU NO MAP HORARIO: ", String.valueOf(Pkstp.getUltimoAcesso().getTime()));
                     pokestopMap.put(LastPkstopMarker, Pkstp);
                 }
                 cPokestop.close();
@@ -421,11 +420,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             case CAMERA_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     permissao_cam = true;
-                    Toast.makeText(this, "Permissão concedida", 5000);
+                    Toast.makeText(this, "Permissão concedida", Toast.LENGTH_SHORT);
                 }
                 else {
                     permissao_cam = true;
-                    Toast.makeText(this, "Permissão Necessária para usar a camera", 5000);
+                    Toast.makeText(this, "Permissão Necessária para usar a camera", Toast.LENGTH_SHORT);
                     Log.d("PERMISSAO", "NAO DEIXOUUUUUUU");
                 }
             }
@@ -479,61 +478,63 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
         //TODO : transformar esse for em um método da classe Pokestop
         PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude,eu.getPosition().longitude)).results;
-        if (placesSearchResults != null) {
-            for (int i = 0; i < placesSearchResults.length / 2; i++) {
-                double lat = placesSearchResults[i].geometry.location.lat;
-                double lng = placesSearchResults[i].geometry.location.lng;
+        try {
+            if (placesSearchResults != null) {
+                for (int i = 0; i < placesSearchResults.length / 2; i++) {
+                    double lat = placesSearchResults[i].geometry.location.lat;
+                    double lng = placesSearchResults[i].geometry.location.lng;
+                    Location pkstp = new Location(provider);
+                    pkstp.setLatitude(lat);
+                    pkstp.setLongitude(lng);
+                    double DistPkStop = getDistanciaPkStop(eu, pkstp);
+                    double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
+                    Marker pokestopMarker;
 
-                Location pkstp = new Location(provider);
-                pkstp.setLatitude(lat);
-                pkstp.setLongitude(lng);
-                double DistPkStop = getDistanciaPkStop(eu, pkstp);
-                double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
-                Marker pokestopMarker;
+                    Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
+                    pokestop.setlat(lat);
+                    pokestop.setlong(lng);
+                    if (placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
+                        pokestop.setDescri(placesSearchResults[i].types[0]);
 
-                Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
-                pokestop.setlat(lat);
-                pokestop.setlong(lng);
-                if (placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
-                    pokestop.setDescri(placesSearchResults[i].types[0]);
-
-                //TODO : setar imagem do pokestop dentro da classe do pokestop
-                if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
-                    getPlaceImage(pokestop);
-                //atualizar se eh possivel interagir em questao de tempo
-                Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
-                        new String[]{"pkstp.disponivel disponivel", "pkstp.acesso acesso"},
-                        "pkstp.idPokestop = '" + pokestop.getID() + "'",
-                        "");
-                if (cPokestop.getCount() > 0) {
-                    while (cPokestop.moveToNext()) {
-                        int coluna = cPokestop.getColumnIndex("disponivel");
-                        if (cPokestop.getInt(coluna) == 0) {
-                            pokestop.setDisponivel(false);
-                        } else
+                    //TODO : setar imagem do pokestop dentro da classe do pokestop
+                    if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
+                        getPlaceImage(pokestop);
+                    //atualizar se eh possivel interagir em questao de tempo
+                    Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
+                            new String[]{"pkstp.disponivel disponivel", "pkstp.acesso acesso"},
+                            "pkstp.idPokestop = '" + pokestop.getID() + "'",
+                            "");
+                    if (cPokestop.getCount() > 0) {
+                        while (cPokestop.moveToNext()) {
+                            int coluna = cPokestop.getColumnIndex("disponivel");
+                            if (cPokestop.getInt(coluna) == 0) {
+                                pokestop.setDisponivel(false);
+                            } else
+                                pokestop.setDisponivel(true);
+                            coluna = cPokestop.getColumnIndex("acesso");
+                            Date data = new Date(cPokestop.getLong(coluna));
+                            pokestop.setUltimoAcesso(data);
+                        }
+                    }
+                    if (pokestop.getUltimoAcesso() != null) {
+                        Date TempoAtual = Calendar.getInstance().getTime();
+//                        Log.i("PLOTANDO MARCAD PKSTP", String.valueOf(pokestop.getUltimoAcesso().getTime()));
+//                        Log.i("PLOTANDO MARCAD ATUAL", String.valueOf(TempoAtual.getTime()));
+                        double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
+                        double diffMinuto = diff / (1000);
+                        if (diffMinuto > 300) {
                             pokestop.setDisponivel(true);
-                        coluna = cPokestop.getColumnIndex("acesso");
-                        Date data = new Date(cPokestop.getLong(coluna));
-                        pokestop.setUltimoAcesso(data);
+                        }
                     }
+                    pokestopMarker = map.addMarker(pokestop.getMarkerOptions(DistPkStop < distMin));
+                    pokestopMarker.setTag("pokestop");
+                    if (!pokestopMap.containsKey(pokestopMarker))
+                        pokestopMap.put(pokestopMarker, pokestop);
+                    else Toast.makeText(this, "NAO TEM UM", Toast.LENGTH_LONG).show();
                 }
-                if (pokestop.getUltimoAcesso() != null) {
-                    Date TempoAtual = Calendar.getInstance().getTime();
-                    Log.i("PLOTANDO MARCAD PKSTP", String.valueOf(pokestop.getUltimoAcesso().getTime()));
-                    Log.i("PLOTANDO MARCAD ATUAL", String.valueOf(TempoAtual.getTime()));
-                    double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
-                    double diffMinuto = diff / (1000);
-                    if (diffMinuto > 300) {
-                        Log.i("VOLTOU A SER INTERAGIVL", "ABLE");
-                        pokestop.setDisponivel(true);
-                    }
-                }
-                pokestopMarker = map.addMarker(pokestop.getMarkerOptions(DistPkStop < distMin));
-                pokestopMarker.setTag("pokestop");
-                if (!pokestopMap.containsKey(pokestopMarker))
-                    pokestopMap.put(pokestopMarker, pokestop);
-                else Toast.makeText(this, "NAO TEM UM", Toast.LENGTH_LONG).show();
             }
+        } catch (Exception e){
+            Log.e("BUSCA DE LOCAIS","ERRO AO BUSCAR LOCAIS PROXIMOS: " + e.getMessage());
         }
     }
  
