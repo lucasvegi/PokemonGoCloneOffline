@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
@@ -243,7 +242,7 @@ public final class ControladoraFachadaSingleton {
         // Inicializa o SDK
         Places.initialize(MyApp.getAppContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
         // Instancia Placesclient
-        PlacesClient placesClient = Places.createClient(this);
+        PlacesClient placesClient = Places.createClient(MyApp.getAppContext());
 
         List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
 
