@@ -46,9 +46,13 @@ public class PokestopActivity extends Activity {
                 new String[]{"trad.portugues portugues"},
                 "trad.ingles = '" + pokestop.getDescri() + "'",
                 "");
-        while (cTradutor.moveToNext()) {
-            int coluna = cTradutor.getColumnIndex("portugues");
-            Portuga = cTradutor.getString(coluna);
+        if (cTradutor.getCount()>0) {
+            while (cTradutor.moveToNext()) {
+                int coluna = cTradutor.getColumnIndex("portugues");
+                Portuga = cTradutor.getString(coluna);
+            }
+        } else {
+            Portuga = " ";
         }
         placeName.setText(pokestop.getNome());
         placeInfo.setText(Portuga);
