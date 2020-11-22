@@ -130,6 +130,7 @@ public class Pokemon implements Serializable{
         if(this.nome.equals("Eevee")) {
             Random evolEeve = new Random();
             int n = evolEeve.nextInt(3);
+            Log.i("EVOLUCAO EEVVEE", "n = " + n);
             while (n>0){
                 cPkmn.moveToNext();
                 n--;
@@ -153,7 +154,10 @@ public class Pokemon implements Serializable{
         return evolucao;
     }
 
-    public boolean estaDisponivel(boolean atualizarBanco){
+    public boolean estaDisponivel(boolean atualizarFlagEvoluido){
+        // SELECT pu.login login, pu.idPokemon idPokemon, pu.latitude latitude,pu.longitude longitude,pu.dtCaptura dtCaptura
+        // FROM pokemon p, pokemonusuario pu
+        // WHERE pu.evoluido = 0 AND p.idPokemon = pu.idPokemon AND pu.idPokemon = this.numero
         Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemonusuario pu",
                 new String[]{"pu.login login", "pu.idPokemon idPokemon", "pu.latitude latitude",
                         "pu.longitude longitude","pu.dtCaptura dtCaptura" },
@@ -165,13 +169,13 @@ public class Pokemon implements Serializable{
             return false;
         }
 
-        if(atualizarBanco) {
+        // Atualizando a flag evoluido para true
+        if(atualizarFlagEvoluido) {
             int login = c.getColumnIndex("login");
             int idPokemon = c.getColumnIndex("idPokemon");
             int latitude = c.getColumnIndex("latitude");
             int longitude = c.getColumnIndex("longitude");
             int dtCaptura = c.getColumnIndex("dtCaptura");
-
 
             //Prepara valores para serem persistidos no banco
             ContentValues valores = new ContentValues();
@@ -185,14 +189,17 @@ public class Pokemon implements Serializable{
             //Atualiza o banco
             BancoDadosSingleton.getInstance().atualizar("pokemonusuario",valores,"login = '" + c.getString(login) +
                     "' AND idPokemon = '" + c.getInt(idPokemon) + "' AND dtCaptura = '" + c.getString(dtCaptura) + "'");
-
         }
 
         c.close();
         return true;
     }
 
-    public int getQuantidadeDoces() {
+    public void setEvolucao(Pokemon evolucao) {
+        this.evolucao = evolucao;
+    }
+
+    public int getQuantDocesNecessarios() {
         switch (this.categoria) {
             case "C":
                 return 25;
@@ -203,6 +210,15 @@ public class Pokemon implements Serializable{
             default:
                 return 100;
         }
+    }
+
+    public int getQuantDocesObtidos(){
+        Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
+                new String[]{"d.quant quant"},
+                "p.idDoce = d.idDoce and d.idDoce = '" + this.getIdDoce() + "'",null);
+        cDoce.moveToNext(); //obs: fora do while pois deve haver apenas uma linha de resposta
+
+        return cDoce.getInt(cDoce.getColumnIndex("quant"));
     }
 
     @Override
