@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -50,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 
 import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
+import teste.lucasvegi.pokemongooffline.Model.InteracaoPokestop;
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
@@ -182,24 +182,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             if (LastPkstopMarker!=null) {
                 Pokestop Pkstp = pokestopMap.get(LastPkstopMarker);
 
-                Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
-                        new String[]{"pkstp.disponivel disponivel","pkstp.acesso acesso"},
-                        "pkstp.idPokestop = '" + Pkstp.getID() + "'",
-                        "");
-                while (cPokestop.moveToNext()) {
-                    int coluna = cPokestop.getColumnIndex("disponivel");
-                    if (cPokestop.getInt(coluna)==0) {
-                        Pkstp.setDisponivel(false);
-                    }
-                    else
-                        Pkstp.setDisponivel(true);
-                    coluna = cPokestop.getColumnIndex("acesso");
-                    Date data = new Date(cPokestop.getLong(coluna));
-                    Pkstp.setUltimoAcesso(data);
-                    Log.i("SALVOU NO MAP", String.valueOf(Pkstp.getUltimoAcesso().getTime()));
-                    LastPkstopMarker.setIcon(Pkstp.getIcon(true));
-                }
-                cPokestop.close();
+                InteracaoPokestop interc = ControladoraFachadaSingleton.getInstance().getUltimaInteracao(Pkstp);
+
+                //atualizando ícone da pokestop que o usuário acabou de interagir
+                LastPkstopMarker.setIcon(Pkstp.getIcon(true));
+
             }
         }catch (Exception e){
             Log.e("RESUME", "ERRO: " + e.getMessage());
