@@ -33,7 +33,6 @@ public final class ControladoraFachadaSingleton {
         daoOvo();
     }
 
-
     private void daoOvo(){
          this.ovos = new ArrayList<Ovo>();
 
@@ -218,6 +217,72 @@ public final class ControladoraFachadaSingleton {
 
     public List<Ovo> getOvos(){ return ovos; }
 
+    /*public void sorteiaOvo(){
+
+        int tamComum = pokemons.get("C").size();
+        int tamIncomum = pokemons.get("I").size();
+        int tamRaro = pokemons.get("R").size();
+        int tamLendario = pokemons.get("L").size();
+
+        Log.d("SORTEIO","C: " + tamComum + " I: "+ tamIncomum + " R: "+ tamRaro + " L: " + tamLendario);
+
+        int min = 0;
+        int max;
+
+        //obtem hora atual
+        Map<String,String> tempo = TimeUtil.getHoraMinutoSegundoDiaMesAno();
+
+        Log.d("TEMPO",tempo.get("hora") +":"+tempo.get("minuto")+":"+tempo.get("segundo")+" - "+tempo.get("dia")+"/"+tempo.get("mes")+"/"+tempo.get("ano")+" "+tempo.get("timezone"));
+
+        //obtem valores a serem usado no critério de lendários
+        int numIntSorteado = RandomUtil.randomIntInRange(1,101);
+        int numIntSorteado2 = RandomUtil.randomIntInRange(1,101);
+        int somaMinSegAtual = (Integer.parseInt(tempo.get("minuto")) + Integer.parseInt(tempo.get("segundo")));
+
+        Log.d("SORTEIO","NumInt: " + numIntSorteado + " NumInt2: " + numIntSorteado2 + " SomaMinSeg: " + somaMinSegAtual);
+
+        //sorteia OVO LENDÁRIO
+        if(numIntSorteado % 2 == 0 && numIntSorteado2 % 2 == 0 && somaMinSegAtual % 2 != 0){
+            max = tamLendario;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("L").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "L", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("L").get(sorteio).getNome());
+
+        //sorteia OVO RARO
+        } else if(numIntSorteado % 2 != 0 && numIntSorteado2 % 2 != 0){
+            max = tamRaro;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("R").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "R", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("R").get(sorteio).getNome());
+
+        //sorteia OVO INCOMUM
+        } else if(numIntSorteado <= 35){
+            max = tamIncomum;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("I").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "I", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("I").get(sorteio).getNome());
+
+         //Sorteia OVO COMUM
+        } else {
+            max = tamComum;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("C").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "C", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("C").get(sorteio).getNome());
+        }
+    }*/
+
     public void sorteiaAparecimentos(double LatMin, double LatMax, double LongMin, double LongMax){
 
         int tamComum = pokemons.get("C").size();
@@ -356,8 +421,19 @@ public final class ControladoraFachadaSingleton {
         return true;
     }
 
-    //public void capturaOvo()    chama o método cadastrar ovo, e sorteia qual ovo vai vir
-    //public void cadastraOvo()
+    /*public void cadastraOvo(int idOvo, int idPokemon, String idTipoOvo, int incubado){
+
+        ContentValues valores = new ContentValues();
+        valores.put("idOvo",idOvo);
+        valores.put("idPokemon",idPokemon);
+        valores.put("idTipoOvo",idTipoOvo);
+        valores.put("incubado",incubado);
+
+        BancoDadosSingleton.getInstance().inserir("ovo",valores);
+
+        //daoOvos()    CHAMA OU NAO?
+
+    }*/
 
     public boolean cadastrarUser(String login, String senha, String nome, String sexo, String foto){
 
