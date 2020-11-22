@@ -172,6 +172,66 @@ public final class ControladoraFachadaSingleton {
         return this.user;
     }
 
+    public InteracaoPokestop interagePokestop(Pokestop p, Date acesso){
+        ContentValues valores = new ContentValues();
+
+        valores.put("ultimoAcesso",acesso.getTime());
+
+        Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("interacaopokestop ip",
+                new String[]{"ip.idPokestop idPokestop"},
+                "ip.idPokestop = '" + p.getID() + "' and ip.loginUsuario = '"+user.getLogin()+"'",
+                "");
+
+        if(cPokestop.getCount() > 0){
+            BancoDadosSingleton.getInstance().atualizar("interacaopokestop",
+                    valores,
+                    "idPokestop = '"+p.getID()+"' and "+
+                            "loginUsuario='"+user.getLogin()+"'"
+            );
+        }
+        else{
+            valores.put("idPokestop",p.getID());
+            valores.put("loginUsuario",user.getLogin());
+            BancoDadosSingleton.getInstance().inserir("interacaopokestop",valores);
+        }
+
+
+        InteracaoPokestop interacaoPokestop = new InteracaoPokestop(p, user, acesso);
+
+        p.setDisponivel(false);
+
+        return interacaoPokestop;
+    }
+
+    public InteracaoPokestop getUltimaInteracao(Pokestop p){
+        Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("interacaopokestop",
+                new String[]{"ultimoAcesso"},
+                "idPokestop = '" + p.getID() + "' and loginUsuario = '"+user.getLogin()+"'",
+                "");
+
+        Date access = null;
+        while(cPokestop.getCount() > 0 && cPokestop.moveToNext()){
+            int cAcesso = cPokestop.getColumnIndex("ultimoAcesso");
+
+            access = new Date( cPokestop.getLong(cAcesso)) ;
+        }
+
+        if(access == null)
+            p.setDisponivel(true);
+        else{
+            Date TempoAtual = Calendar.getInstance().getTime();
+            double diff = TempoAtual.getTime() - access.getTime();
+            int diffSec = (int)diff/1000;
+            if(diffSec > 300)
+                p.setDisponivel(true);
+            else
+                p.setDisponivel(false);
+        }
+
+        InteracaoPokestop interac = new InteracaoPokestop(p, user, access);
+        return interac;
+    }
+
     public List<Pokemon> getPokemons(){
         //extrai do MAP todos os valores pokemon e junta em uma lista ordenada para retornar.
         List<Pokemon> pkmn = new ArrayList<Pokemon>();
@@ -221,7 +281,7 @@ public final class ControladoraFachadaSingleton {
                     getPlaceImage(pokestop);
 
                 Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
-                        new String[]{"pkstp.disponivel disponivel", "pkstp.acesso acesso"},
+                        new String[]{"pkstp.disponivel disponivel"},
                         "pkstp.idPokestop = '" + pokestop.getID() + "'",
                         "");
                 if (cPokestop.getCount() > 0) {
@@ -231,9 +291,6 @@ public final class ControladoraFachadaSingleton {
                             pokestop.setDisponivel(false);
                         } else
                             pokestop.setDisponivel(true);
-                        coluna = cPokestop.getColumnIndex("acesso");
-                        Date data = new Date(cPokestop.getLong(coluna));
-                        pokestop.setUltimoAcesso(data);
                     }
                 }
                 else{
