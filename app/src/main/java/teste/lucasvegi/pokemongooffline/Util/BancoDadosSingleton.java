@@ -452,8 +452,16 @@ public final class BancoDadosSingleton {
                     "  latitude REAL NOT NULL," +
                     "  longitude REAL NOT NULL," +
                     "  disponivel BOOLEAN NOT NULL," +
-                    "  acesso TEXT," +
+                    //"  ultimoAcesso TEXT," +
                     "  PRIMARY KEY  (idPokestop)" +
+                    ");",
+            "CREATE TABLE interacaopokestop ("+
+                    " idPokestop TEXT NOT NULL,"+
+                    " loginUsuario TEXT NOT NULL,"+
+                    " ultimoAcesso TEXT NOT NULL,"+
+                    " PRIMARY KEY(idPokestop, loginUsuario),"+
+                    " CONSTRAINT fk_interacaopokestop_pokestop FOREIGN KEY (idPokestop) REFERENCES pokestop (idPokestop),"+
+                    " CONSTRAINT fk_interacaopokestop_usuario FOREIGN KEY (loginUsuario) REFERENCES usuario (login)"+
                     ");",
             "CREATE TABLE traducao (" +
                     "  ingles TEXT NOT NULL," +
