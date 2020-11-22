@@ -39,6 +39,7 @@ import teste.lucasvegi.pokemongooffline.View.AdapterPokedex;
 public class DetalhesPokedexActivity extends Activity implements LocationListener {
 
     private Pokemon pkmn;
+    private Pokemon pkmnEvolucao;
     public LocationManager lm;
     public Criteria criteria;
     public String provider;
@@ -46,8 +47,10 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
     public int DIST = 0;
     public Location atual;
 
-    // Constantes auxiliares para o método startActivityForResult()
-    private final int COD_REQUISICAO = 7;
+    private int docesNecessarios;
+    private int docesObtidos;
+
+    // Constante auxiliar para o método setResult()
     private final int ATUALIZAR_TELA = 1;
 
     public void configuraCriterioLocation() {
@@ -66,16 +69,6 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
         }
     }
 
-
-    private int getQuantDocesObtidos(Pokemon p){
-        Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
-                new String[]{"d.quant quant"},
-                "p.idDoce = d.idDoce and d.idDoce = '" + p.getIdDoce() + "'",null);
-        cDoce.moveToNext(); //obs: fora do while pois deve haver apenas uma linha de resposta
-
-        return cDoce.getInt(cDoce.getColumnIndex("quant"));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,11 +76,9 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
 
         Intent it = getIntent();
         pkmn = (Pokemon) it.getSerializableExtra("pkmn");
-
-        //Logs úteis para implementação dos doces
-        /*Log.i("DOCES:","idDoce: " + pkmn.getIdDoce());
-        Log.i("DOCES:","idPokemonBase: " + pkmn.getIdPokemonBase());
-        Log.i("DOCES:","Quantidade de doces: " + getQuantDoces(pkmn));*/
+        pkmnEvolucao = pkmn.getEvolucao();
+        docesNecessarios = pkmn.getQuantDocesNecessarios();
+        docesObtidos = pkmn.getQuantDocesObtidos();
 
         //TODO: RESOLVIDO - procura na lista de pokemons da controladora o pokemon recebido da tela anterior.
         //pkmn = ControladoraFachadaSingleton.getInstance().convertPokemonSerializableToObject(pkmn);
@@ -105,7 +96,7 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
         Button btn_evoluir = (Button) findViewById(R.id.btnEvoluirDetalhes);
 
         //Ajusta cor do botão evoluir
-        if(getQuantDocesObtidos(pkmn) < pkmn.getQuantidadeDoces() || pkmn.getEvolucao() == null || !pkmn.estaDisponivel(false)){
+        if(docesObtidos < docesNecessarios|| pkmnEvolucao == null || !pkmn.estaDisponivel(false)){
             btn_evoluir.setBackgroundResource(R.drawable.roundshape_botao_cinza);
         }
         else
@@ -128,7 +119,7 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
             txtNome.setText(pkmn.getNome());
             txtCapturados.setText("Capturados: " + ControladoraFachadaSingleton.getInstance().getUsuario().getQuantidadeCapturas(pkmn));
 
-            txtQuantDoces.setText("Doces obtidos: " + getQuantDocesObtidos(pkmn));
+            txtQuantDoces.setText("Doces obtidos: " + docesObtidos);
 
             //Ajusta texto e cores dos tipos
             setTextViewBackground(txtTipo1,pkmn.getTipos().get(0).getNome());
@@ -176,55 +167,55 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
         Aparecimento ap = new Aparecimento();
         ap.setLatitude(atual.getLatitude());
         ap.setLongitude(atual.getLongitude());
-        ap.setPokemon(pkmn.getEvolucao());
+        ap.setPokemon(pkmnEvolucao);
         Log.i("EVOLUCAO", "NOME DA EVOLUÇÃO: " + ap.getPokemon().getNome());
 
-        //envia captura para o servidor antes de fechar tela.
+        // Envia captura para o servidor antes de fechar tela.
         ControladoraFachadaSingleton.getInstance().getUsuario().capturar(ap);
         Log.i("EVOLUCAO","Evolução capturada");
 
-        //Subtrai os doces utilizados na evolução
-        ControladoraFachadaSingleton.getInstance().getUsuario().somarDoces(pkmn, -pkmn.getQuantidadeDoces()-3);
+        // Subtrai os doces utilizados na evolução
+        ControladoraFachadaSingleton.getInstance().getUsuario().somarDoces(pkmn, -docesNecessarios-3);
         Log.i("EVOLUCAO","Pokemon evoluído");
 
-        //Exibindo mensagem de sucesso na tela
+        // Exibindo mensagem de sucesso na tela
         Toast.makeText(getBaseContext(),pkmn.getNome() + " foi evoluído! \\o/",Toast.LENGTH_LONG).show();
 
-        //Iniciando activity do pokemon evoluido
+        // Iniciando activity do pokemon evoluido
         Intent it = new Intent(this, DetalhesPokedexActivity.class);
         it.putExtra("pkmn", ap.getPokemon());
         startActivity(it);
 
-        //Encerrando activity do pokemon base
+        // Mandando requisição para atualizar a tela da Pokedex ao término desta activity
+        Intent itResult = new Intent();
+        setResult(ATUALIZAR_TELA,itResult);
+
+        // Encerrando activity
         finish();
     }
 
     public void clickEvoluir(View v){
-        int quantNecessaria = pkmn.getQuantidadeDoces();
-        int quantObtida = getQuantDocesObtidos(pkmn);
-        int restante = quantNecessaria-quantObtida;
+        int restante = docesNecessarios-docesObtidos;
 
         // Verificando se o pokemon possui evolução
-        if(pkmn.getEvolucao() == null){
+        if(pkmnEvolucao == null){
             Toast.makeText(this,"O Pokemon não possui evolução!",Toast.LENGTH_LONG).show();
         }
 
         // Verificando quantidade de doces
-        else if(quantNecessaria > quantObtida){
+        else if(docesNecessarios > docesObtidos){
             Toast.makeText(this,"Faltam "+ restante +" doces para evoluir!",Toast.LENGTH_LONG).show();
         }
 
-        // Verificando se existe pokemon desta espécie que ainda não foi evoluido
-        else if (pkmn.estaDisponivel(true)){ //se sim já atualiza a tabela pokemonusuario no Banco
-            Intent it = new Intent();
-            setResult(ATUALIZAR_TELA,it);
+        // Evoluindo pokemon caso exista pokemon disponível
+        else if (pkmn.estaDisponivel(true)){ // Se isso ocorre, já atualizamos o atributo 'evoluido' da tabela pokemonusuario no Banco
             evoluir();
         }
+
+        // Se não há pokemon disponível, informamos issso via Toast
         else{
-            // Se chegou até aqui, não há pokemon desta espécie que ainda não foi evoluido
             Toast.makeText(getBaseContext(),"Todos os Pokemons de nome " + pkmn.getNome() + " já estão evoluidos!",Toast.LENGTH_LONG).show();
         }
-
     }
 
     private void setTextViewBackground(TextView txt, String tipo){

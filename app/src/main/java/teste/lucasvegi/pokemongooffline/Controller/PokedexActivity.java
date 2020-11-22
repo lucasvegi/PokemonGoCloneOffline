@@ -97,12 +97,12 @@ public class PokedexActivity extends Activity implements AdapterView.OnItemClick
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent it) {
         if(it == null){
-            Log.i("ACTIVITY_RESULT", "Nenhum valor");
+            Log.i("ACTIVITY_RESULT", "Não foi enviado nenhum valor");
             return;
         }
         else if(requestCode == COD_REQUISICAO){
                 if(resultCode == ATUALIZAR_TELA){
-                    Log.i("ACTIVITY_RESULT", "ATUALIZANDO TELA");
+                    Log.i("ACTIVITY_RESULT", "Recebido código para atualizar a tela");
                     //Inicia uma nova pokedex
                     Intent itPokedex = new Intent(this, PokedexActivity.class);
                     startActivity(itPokedex);
@@ -110,7 +110,7 @@ public class PokedexActivity extends Activity implements AdapterView.OnItemClick
                     finish();
                 }
                 else{
-                    Log.i("ACTIVITY_RESULT", "COD. DE REQUISIÇAO INVALIDO");
+                    Log.i("ACTIVITY_RESULT", "Código inválido");
                 }
         }
     }
