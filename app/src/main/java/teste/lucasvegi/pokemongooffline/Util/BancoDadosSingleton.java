@@ -446,7 +446,16 @@ public final class BancoDadosSingleton {
                     "  PRIMARY KEY  (login,idPokemon,dtCaptura)," +
                     "  CONSTRAINT fk_usuariopokemon_login FOREIGN KEY (login) REFERENCES usuario (login)," +
                     "  CONSTRAINT fk_usuariopokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES pokemon (idPokemon)" +
-                    ");"};
+                    ");",
+            "CREATE TABLE pokestop (" +
+                    "  idPokestop TEXT NOT NULL," +
+                    "  latitude REAL NOT NULL," +
+                    "  longitude REAL NOT NULL," +
+                    "  disponivel BOOLEAN NOT NULL," +
+                    "  acesso TEXT NOT NULL," +
+                    "  PRIMARY KEY  (idPokestop)" +
+                    ");"
+            };
 
     private BancoDadosSingleton() {
         Context ctx = MyApp.getAppContext();

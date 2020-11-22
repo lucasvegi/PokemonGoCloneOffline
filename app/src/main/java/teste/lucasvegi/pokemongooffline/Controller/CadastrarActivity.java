@@ -2,12 +2,16 @@ package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.R;
@@ -76,7 +80,6 @@ public class CadastrarActivity extends Activity {
             if (cadOk) {
                 if (ControladoraFachadaSingleton.getInstance().cadastrarUser(user, senha, nome, nomeSexo, "")) {
                     Toast.makeText(this, "Usuário cadastrado!", Toast.LENGTH_SHORT).show();
-
                     Intent it = new Intent(this, MapActivity.class);
                     startActivity(it);
                     finish();
@@ -88,6 +91,5 @@ public class CadastrarActivity extends Activity {
         }catch (Exception e){
             Log.e("CADASTRO", "ERRO: " + e.getMessage());
         }
-
     }
 }

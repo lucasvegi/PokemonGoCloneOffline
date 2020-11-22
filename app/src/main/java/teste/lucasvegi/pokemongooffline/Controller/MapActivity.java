@@ -1,9 +1,11 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -20,6 +22,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.common.api.ApiException;
@@ -47,6 +51,8 @@ import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +64,7 @@ import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.NearbySearch;
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
+import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
 
 public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback {
@@ -66,6 +73,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public Criteria criteria;
     public String provider;
 
+    Marker marcador_Permissao = null;
+    boolean permissao_cam = false;
+    boolean permissao_local = false;
+    private final int CAMERA_PERMISSION = 1;
+    private final int LOCATION_PERMISSION = 1;
     public int TEMPO_REQUISICAO_LATLONG = 5000;
     public int DISTANCIA_MIN_METROS = 0;
     public int intervaloEntreSorteiosEmMinutos = 1;     //USADO PARA DETERMINAR INTERVALO DE TEMPO ENTRE SORTEIOS DE POKEMON
@@ -84,6 +96,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public List<Aparecimento> aparecimentos;
     public Map<Marker,Aparecimento> aparecimentoMap; //dicionário para ajudar no momento de clicar em pontos
     public Map<Marker,Pokestop> pokestopMap; //dicionário para ajudar no momento de clicar em pontos
+    public Marker LastPkstopMarker = null;
 
     public Marker LatMin;
     public Marker LatMax;
@@ -125,7 +138,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //Configura o nome do usuário abaixo do botão de perfil
         TextView txtNomeUser = (TextView) findViewById(R.id.txtNomeUser);
         txtNomeUser.setText(ControladoraFachadaSingleton.getInstance().getUsuario().getLogin());
-
+        PackageManager packageManager = getPackageManager();
+        boolean hasCam = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        if (hasCam)
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION);
     }
 
     @Override
@@ -155,6 +172,37 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             mp.start();
         }catch (Exception e){
             Log.e("MAPA", "ERRO: " + e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            if (LastPkstopMarker!=null) {
+                Log.i("VOLTA DA POKESTOP","INTERAGIU");
+                Pokestop Pkstp = pokestopMap.get(LastPkstopMarker);
+                Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
+                        new String[]{"pkstp.disponivel disponivel","pkstp.acesso acesso"},
+                        "pkstp.idPokestop = '" + Pkstp.getID() + "'",
+                        "");
+                while (cPokestop.moveToNext()) {
+                    int coluna = cPokestop.getColumnIndex("disponivel");
+                    if (cPokestop.getInt(coluna)==0) {
+                        Pkstp.setDisponivel(false);
+                    }
+                    else
+                        Pkstp.setDisponivel(true);
+                    coluna = cPokestop.getColumnIndex("acesso");
+                    Date data = new Date(cPokestop.getLong(coluna));
+                    Pkstp.setUltimoAcesso(data);
+                    Log.i("SALVOU NO MAP", String.valueOf(Pkstp.getUltimoAcesso().getTime()));
+                    pokestopMap.put(LastPkstopMarker, Pkstp);
+                }
+                cPokestop.close();
+            }
+        }catch (Exception e){
+            Log.e("RESUME", "ERRO: " + e.getMessage());
         }
     }
 
@@ -321,7 +369,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                     try {
                         //pausa a música
                         mp.pause();
-
                         Aparecimento ap = aparecimentoMap.get(marker);
                         Intent it = new Intent(this, CapturaActivity.class);
                         it.putExtra("pkmn", ap);
@@ -354,15 +401,35 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 Intent it = new Intent(this, PokestopActivity.class);
                 //salvar a imagem e pokestop para recuperacao dos dados na outra activity
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                pokestop.getFoto().compress(Bitmap.CompressFormat.PNG,80, stream);
+                Bitmap foto = pokestop.getFoto();
+                if(foto != null)
+                    pokestop.getFoto().compress(Bitmap.CompressFormat.PNG,80, stream);
                 byte[] byteArray = stream.toByteArray();
 
+                LastPkstopMarker = marker;
                 it.putExtra("foto", byteArray);
                 it.putExtra("pokestop", pokestop);
                 startActivity(it);
             }
         }
         return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case CAMERA_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permissao_cam = true;
+                    Toast.makeText(this, "Permissão concedida", 5000);
+                }
+                else {
+                    permissao_cam = true;
+                    Toast.makeText(this, "Permissão Necessária para usar a camera", 5000);
+                    Log.d("PERMISSAO", "NAO DEIXOUUUUUUU");
+                }
+            }
+        }
     }
 
     public void limparMarcadores(){
@@ -412,34 +479,64 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
         //TODO : transformar esse for em um método da classe Pokestop
         PlacesSearchResult[] placesSearchResults = new NearbySearch().run(new com.google.maps.model.LatLng(eu.getPosition().latitude,eu.getPosition().longitude)).results;
-        for (int i=0; i< placesSearchResults.length/2; i++){
-            double lat = placesSearchResults[i].geometry.location.lat;
-            double lng = placesSearchResults[i].geometry.location.lng;
+        if (placesSearchResults != null) {
+            for (int i = 0; i < placesSearchResults.length / 2; i++) {
+                double lat = placesSearchResults[i].geometry.location.lat;
+                double lng = placesSearchResults[i].geometry.location.lng;
 
-            Location pkstp= new Location(provider);
-            pkstp.setLatitude(lat);
-            pkstp.setLongitude(lng);
-            double DistPkStop = getDistanciaPkStop(eu, pkstp);
-            double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
-            Marker pokestopMarker;
+                Location pkstp = new Location(provider);
+                pkstp.setLatitude(lat);
+                pkstp.setLongitude(lng);
+                double DistPkStop = getDistanciaPkStop(eu, pkstp);
+                double distMin = distanciaMinimaParaBatalhar; //enquanto nao decidimos deixar a mesma da batalha
+                Marker pokestopMarker;
 
-            Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
-            pokestop.setLat(lat);
-            pokestop.setLongi(lng);
-            if(placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
-                pokestop.setDescri(placesSearchResults[i].types[0]);
+                Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
+                pokestop.setlat(lat);
+                pokestop.setlong(lng);
+                if (placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
+                    pokestop.setDescri(placesSearchResults[i].types[0]);
 
-            //TODO : setar imagem do pokestop dentro da classe do pokestop
-            if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
-                getPlaceImage(pokestop);
-
-            pokestopMarker = map.addMarker(pokestop.getMarkerOptions(DistPkStop < distMin));
-
-            pokestopMarker.setTag("pokestop");
-            pokestopMap.put(pokestopMarker, pokestop);
+                //TODO : setar imagem do pokestop dentro da classe do pokestop
+                if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
+                    getPlaceImage(pokestop);
+                //atualizar se eh possivel interagir em questao de tempo
+                Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
+                        new String[]{"pkstp.disponivel disponivel", "pkstp.acesso acesso"},
+                        "pkstp.idPokestop = '" + pokestop.getID() + "'",
+                        "");
+                if (cPokestop.getCount() > 0) {
+                    while (cPokestop.moveToNext()) {
+                        int coluna = cPokestop.getColumnIndex("disponivel");
+                        if (cPokestop.getInt(coluna) == 0) {
+                            pokestop.setDisponivel(false);
+                        } else
+                            pokestop.setDisponivel(true);
+                        coluna = cPokestop.getColumnIndex("acesso");
+                        Date data = new Date(cPokestop.getLong(coluna));
+                        pokestop.setUltimoAcesso(data);
+                    }
+                }
+                if (pokestop.getUltimoAcesso() != null) {
+                    Date TempoAtual = Calendar.getInstance().getTime();
+                    Log.i("PLOTANDO MARCAD PKSTP", String.valueOf(pokestop.getUltimoAcesso().getTime()));
+                    Log.i("PLOTANDO MARCAD ATUAL", String.valueOf(TempoAtual.getTime()));
+                    double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
+                    double diffMinuto = diff / (1000);
+                    if (diffMinuto > 300) {
+                        Log.i("VOLTOU A SER INTERAGIVL", "ABLE");
+                        pokestop.setDisponivel(true);
+                    }
+                }
+                pokestopMarker = map.addMarker(pokestop.getMarkerOptions(DistPkStop < distMin));
+                pokestopMarker.setTag("pokestop");
+                if (!pokestopMap.containsKey(pokestopMarker))
+                    pokestopMap.put(pokestopMarker, pokestop);
+                else Toast.makeText(this, "NAO TEM UM", Toast.LENGTH_LONG).show();
+            }
         }
     }
-
+ 
     public double getDistanciaPkmn(Marker treinador, Marker pkmn){
         //cria location do treinador para ver distância
         Location trainer = new Location(provider);
