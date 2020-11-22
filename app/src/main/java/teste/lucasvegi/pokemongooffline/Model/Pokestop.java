@@ -1,25 +1,16 @@
 package teste.lucasvegi.pokemongooffline.Model;
 
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.util.Log;
 
-import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.Date;
 
 import teste.lucasvegi.pokemongooffline.R;
-import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
 /**
  * Created by Lucas on 02/12/2016.
@@ -31,7 +22,8 @@ public class Pokestop implements Serializable{
     private Double lat;
     private Double longi;
     private String descri;
-    private Map<String,String> UltimoAcesso;
+    private Date acesso;
+    private boolean disponivel;
 
     public Pokestop(){
 
@@ -41,7 +33,8 @@ public class Pokestop implements Serializable{
         this.id = ID;
         this.nome = Name;
         //this.foto = Photo;
-        //this.UltimoAcesso = getActualTime;
+        this.acesso = null;
+        this.disponivel = true;
     }
 
     public String getID() {
@@ -92,53 +85,69 @@ public class Pokestop implements Serializable{
         this.foto = foto;
     }
 
-    public Map<String,String> UltimoAcesso() {
-        return UltimoAcesso;
+    public Date getUltimoAcesso() {
+        return acesso;
     }
 
-    public void setUltimoAcesso(Map<String,String> tempo) {
-        this.UltimoAcesso = tempo;
+    public void setUltimoAcesso(Date tempo) {
+        this.acesso = tempo;
     }
 
-    public String getId() {
-        return id;
+    public boolean getDisponivel() {
+        return disponivel;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setDisponivel(boolean disp) {
+        this.disponivel = disp;
     }
 
-    public Double getLat() {
-        return lat;
-    }
+    public BitmapDescriptor getIcon(boolean interactionPossible){
+        BitmapDescriptor bitmapDescriptor = null;
 
-    public void setLat(Double lat) {
-        this.lat = lat;
-    }
+        if (interactionPossible && this.disponivel) {
+            bitmapDescriptor = BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_perto);
+        } else if (!interactionPossible && this.disponivel){
+            bitmapDescriptor=BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_longe);
+        } else if (interactionPossible && !this.disponivel){
+            bitmapDescriptor=BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_perto_unable);
+        } else if (!interactionPossible && !this.disponivel) {
+            bitmapDescriptor=BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_longe_unable);
+        }
 
-    public Double getLongi() {
-        return longi;
-    }
-
-    public void setLongi(Double longi) {
-        this.longi = longi;
+        return bitmapDescriptor;
     }
 
     public MarkerOptions getMarkerOptions(boolean interactionPossible){
         MarkerOptions markeropt = new MarkerOptions();
 
-        if (interactionPossible) {
+        if (interactionPossible && this.disponivel) {
             markeropt.icon(BitmapDescriptorFactory
                 .fromResource(R.drawable.pokestop_perto))
                 .position(new LatLng(lat, longi))
                 .title(nome)
                 .alpha(3);
-        } else {
+        } else if (!interactionPossible && this.disponivel){
             markeropt.icon(BitmapDescriptorFactory
                 .fromResource(R.drawable.pokestop_longe))
                 .position(new LatLng(lat, longi))
                 .title(nome)
                 .alpha(3);
+        } else if (interactionPossible && !this.disponivel){
+            markeropt.icon(BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_perto_unable))
+                    .position(new LatLng(lat, longi))
+                    .title(nome)
+                    .alpha(3);
+        } else if (!interactionPossible && !this.disponivel) {
+            markeropt.icon(BitmapDescriptorFactory
+                    .fromResource(R.drawable.pokestop_longe_unable))
+                    .position(new LatLng(lat, longi))
+                    .title(nome)
+                    .alpha(3);
         }
         return markeropt;
     }

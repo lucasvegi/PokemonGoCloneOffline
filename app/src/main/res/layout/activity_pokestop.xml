@@ -76,7 +76,8 @@
         app:cardCornerRadius="128dp"
         app:cardBackgroundColor="@color/pokestopBorder"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:onClick="PegaOvo">
 
         <androidx.cardview.widget.CardView
             android:layout_width="250dp"
