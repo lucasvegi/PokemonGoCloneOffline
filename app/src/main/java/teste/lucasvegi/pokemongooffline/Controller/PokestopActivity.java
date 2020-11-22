@@ -1,12 +1,10 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,8 +12,9 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
+import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
+import teste.lucasvegi.pokemongooffline.Model.InteracaoPokestop;
 import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
@@ -37,8 +36,8 @@ public class PokestopActivity extends Activity {
         placeName = (TextView) findViewById(R.id.placeName);
         placeInfo = (TextView) findViewById(R.id.placeInfo);
         imgPokestopIcon = (ImageView) findViewById(R.id.imgPokestopIcon);
-        ContentValues valores = new ContentValues();
-        BancoDadosSingleton.getInstance().inserir("Pokestop",valores);
+        //ContentValues valores = new ContentValues();
+        //BancoDadosSingleton.getInstance().inserir("Pokestop",valores);
         Intent it = getIntent();
         Pokestop pokestop = (Pokestop) it.getSerializableExtra("pokestop");
         byte[] byteArray = it.getByteArrayExtra("foto");
@@ -85,63 +84,31 @@ public class PokestopActivity extends Activity {
     public void PegaOvo(View view) {
         Date TempoAtual = Calendar.getInstance().getTime();
 
-        Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
-                new String[]{"pkstp.idPokestop idPokestop"},
-                "pkstp.idPokestop = '" + Pkstp.getID() + "'",
-                "");
+        InteracaoPokestop inter = ControladoraFachadaSingleton.getInstance().getUltimaInteracao(Pkstp);
 
-        //Toast.makeText(this,TempoAtual.toString(),Toast.LENGTH_SHORT).show();
-        if (tempoPkstop==null && !Pegou) {
-            //Log.d("PEGA OVOO", "ENTROUU NO PRIMEIRO CASO");
-            //atualiza o acesso da Pokestop (passao tempo novo com setUltimoAcesso e passa false pro setDisponivel)
-            tempoPkstop = TempoAtual;
-            Pkstp.setUltimoAcesso(TempoAtual);
-            Atualiza(cPokestop,Pkstp);
-            //pega ovo
-            Toast.makeText(this,"Pegou Ovo ",Toast.LENGTH_LONG).show();
+        if(inter.getUltimoAcesso() == null){
+            ControladoraFachadaSingleton.getInstance().interagePokestop(Pkstp, TempoAtual);
             Pegou = true;
+        }
+        else{
+            double diff = TempoAtual.getTime() - inter.getUltimoAcesso().getTime();
+            int diffSec = (int)diff/1000;
+            if(diffSec > 300){
 
-        } else {
-            double diff = TempoAtual.getTime() - tempoPkstop.getTime();
-            int diffSec = (int)diff / (1000);
-            if (diffSec>300) Pegou = false;
-            if (diffSec>300 && !Pegou){
-                //atualiza o acesso da Pokestop (passao tempo novo com setUltimoAcesso e passa false pro setDisponivel)
-                tempoPkstop = TempoAtual;
-                Pkstp.setUltimoAcesso(TempoAtual);
-                Atualiza(cPokestop,Pkstp);
-                //pega ovo
-                Toast.makeText(this,"Pegou Ovo ",Toast.LENGTH_LONG).show();
+                ControladoraFachadaSingleton.getInstance().interagePokestop(Pkstp, TempoAtual);
+                Toast.makeText(this,"Pegou Ovo ", Toast.LENGTH_LONG).show();
+
+                //Pega o ovo
                 Pegou = true;
             }
-            else Toast.makeText(this,"Espere mais "+ String.valueOf(300-diffSec) +" segundos",Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(this,"Espere mais "+ String.valueOf(300-diffSec) +" segundos",Toast.LENGTH_SHORT).show();
         }
-        Log.i("VALOR QUE E PRA PASSAR ", String.valueOf(TempoAtual.getTime()));
 
-        cPokestop.close();
+        if(Pegou)
+            Toast.makeText(this,"Pegou Ovo ",Toast.LENGTH_LONG).show();
+
     }
 
-    public void Atualiza(Cursor cPokestop, Pokestop pkstp){
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = Calendar.getInstance().getTime();
-        if (cPokestop.getCount()==0){
-            ContentValues valores = new ContentValues();
-                valores.put("idPokestop",pkstp.getID());
-                valores.put("latitude",pkstp.getlat());
-                valores.put("longitude",pkstp.getlongi());
-                valores.put("disponivel",false);
-                valores.put("acesso",date.getTime());
-
-            BancoDadosSingleton.getInstance().inserir("Pokestop",valores);
-            Log.i("PASSADO O VALOR NOVO D ", String.valueOf(date.getTime()));
-            Log.d("POKEACTIVITY","CADASTROU NO BD OU ATUALIZOU");
-        } else {
-            ContentValues valores = new ContentValues();
-                valores.put("disponivel",false);
-                valores.put("acesso",String.valueOf(date.getTime()));
-            BancoDadosSingleton.getInstance().atualizar("Pokestop",valores,"idPokestop = '"+pkstp.getID()+"'");
-            Log.d("POKEACTIVITY","CADASTROU NO BD OU ATUALIZOU");
-        }
-    }
 }
 
