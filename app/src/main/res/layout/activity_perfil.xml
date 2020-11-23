@@ -59,12 +59,46 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/txtNomeTreinadorPerfil"/>
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="2dp"
+                android:layout_centerHorizontal="true"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="1" />
+
+            <TextView
+                android:id="@+id/txtNivel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nível 40"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="20dp"
+                android:layout_alignParentLeft="true" />
+
+            <TextView
+                android:id="@+id/txtXp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/1000"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="280dp"
                 android:scaleType="centerInside"
                 android:adjustViewBounds="true"
                 android:layout_marginBottom="5dp"
+                android:layout_marginTop="10dp"
                 android:id="@+id/imgTreinadorPerfil"
                 android:layout_below="@+id/txtNomeTreinadorPerfil"
                 android:layout_centerHorizontal="true"
