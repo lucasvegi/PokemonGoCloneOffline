@@ -6,8 +6,12 @@ import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,8 +56,24 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
                         if (ovos.get(i).getKmAndado() >= ovos.get(i).getKm()) {
                             ovos.get(i).setChocado(1);
                             ControladoraFachadaSingleton.getInstance().setChocado(ovos.get(i).getIdOvo(), 1);
+                            //Toast.makeText(this, "Chocou um " + nome, Toast.LENGTH_LONG).show();
+                            LayoutInflater inflater = getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.toast_pkmn_chocado,(ViewGroup) findViewById(R.id.toast_pkmn_chocado));
+
+                            TextView nomePkmnOVo = (TextView) layout.findViewById(R.id.txtPokemon);
+                            ImageView fotoPkmnOvo = (ImageView) layout.findViewById(R.id.imgPokemon);
+
                             String nome = ControladoraFachadaSingleton.getInstance().getNomePokemonOvo(ovos.get(i).getIdOvo());
-                            Toast.makeText(this, "Chocou um " + nome, Toast.LENGTH_LONG).show();
+                            nomePkmnOVo.setText("Oba! " + nome + " foi chocado!");
+
+                            int foto = ControladoraFachadaSingleton.getInstance().getFotoPokemonOvo(ovos.get(i).getIdOvo());
+                            fotoPkmnOvo.setImageResource(foto);
+
+                            Toast toast = new Toast(getApplicationContext());
+                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 100);
+                            toast.setDuration(Toast.LENGTH_LONG);
+                            toast.setView(layout);
+                            toast.show();
 
                             //ovo já foi exibido
                             ControladoraFachadaSingleton.getInstance().setExibido(ovos.get(i).getIdOvo(), 1);

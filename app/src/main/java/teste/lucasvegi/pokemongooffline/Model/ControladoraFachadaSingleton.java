@@ -238,9 +238,9 @@ public final class ControladoraFachadaSingleton {
 
     public int getFotoPokemonOvo(int idOvo){
         int FotopokemonOvo = 0;
-        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, pokemon p", new String[]{"p.icone icone"}, "o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, pokemon p", new String[]{"p.foto foto"}, "o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
         while (c.moveToNext()) {
-            int idP = c.getColumnIndex("icone");
+            int idP = c.getColumnIndex("foto");
             FotopokemonOvo = c.getInt(idP);
         }
         c.close();
