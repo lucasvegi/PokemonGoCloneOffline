@@ -18,7 +18,7 @@ public class Ovo implements Serializable {
     private int exibido;
     private int Foto;
     private int FotoInc;
-    private int Km;
+    private double Km;
     private double KmAndado;
     Location localizacao = null;
 
@@ -57,11 +57,11 @@ public class Ovo implements Serializable {
         return FotoInc;
     }
 
-    public int getKm(){
+    public double getKm(){
         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, tipoovo t", new String[]{"t.quilometragem km"}, "o.idTipoOvo = t.idTipoOvo AND o.idOvo = '"+idOvo+"'","");
         while (c.moveToNext()) {
             int idKm = c.getColumnIndex("km");
-            Km = c.getInt(idKm);
+            Km = c.getDouble(idKm);
         }
         c.close();
         return Km;

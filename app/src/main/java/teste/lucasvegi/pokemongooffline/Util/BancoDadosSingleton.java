@@ -449,7 +449,7 @@ public final class BancoDadosSingleton {
                     "  idTipoOvo TEXT PRIMARY KEY," +
                     "  foto INTEGER NOT NULL," +
                     "  fotoIncubadora INTEGER NOT NULL," +
-                    "  quilometragem INTEGER NOT NULL," +
+                    "  quilometragem DOUBLE NOT NULL," +
                     "  cor TEXT NOT NULL" +
                     ");",
             "INSERT INTO tipoovo (idTipoOvo, foto, fotoIncubadora,quilometragem,cor) VALUES" +

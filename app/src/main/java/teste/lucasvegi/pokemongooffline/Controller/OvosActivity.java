@@ -56,17 +56,20 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
                         if (ovos.get(i).getKmAndado() >= ovos.get(i).getKm()) {
                             ovos.get(i).setChocado(1);
                             ControladoraFachadaSingleton.getInstance().setChocado(ovos.get(i).getIdOvo(), 1);
-                            //Toast.makeText(this, "Chocou um " + nome, Toast.LENGTH_LONG).show();
+
+                            ControladoraFachadaSingleton.getInstance().getUsuario().Chocar(ovos.get(i).getLocalizacao(),ovos.get(i).getIdOvo());
+
+                            //Toast exibindo o pokemon chocado
                             LayoutInflater inflater = getLayoutInflater();
                             View layout = inflater.inflate(R.layout.toast_pkmn_chocado,(ViewGroup) findViewById(R.id.toast_pkmn_chocado));
 
                             TextView nomePkmnOVo = (TextView) layout.findViewById(R.id.txtPokemon);
                             ImageView fotoPkmnOvo = (ImageView) layout.findViewById(R.id.imgPokemon);
 
-                            String nome = ControladoraFachadaSingleton.getInstance().getNomePokemonOvo(ovos.get(i).getIdOvo());
+                            String nome = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovos.get(i).getIdOvo()).getNome();
                             nomePkmnOVo.setText("Oba! " + nome + " foi chocado!");
 
-                            int foto = ControladoraFachadaSingleton.getInstance().getFotoPokemonOvo(ovos.get(i).getIdOvo());
+                            int foto = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovos.get(i).getIdOvo()).getFoto();
                             fotoPkmnOvo.setImageResource(foto);
 
                             Toast toast = new Toast(getApplicationContext());
