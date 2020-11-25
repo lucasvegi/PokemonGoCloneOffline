@@ -81,7 +81,6 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         finish();
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 

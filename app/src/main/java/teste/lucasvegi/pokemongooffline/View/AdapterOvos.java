@@ -49,19 +49,6 @@ public class AdapterOvos extends BaseAdapter {
         return ovos.get(position).getIdOvo();
     }
 
-    /*public boolean TestaChocou(int position) {
-        //testa se ovo chocou
-        if(ovos.get(position).getKmAndado() >= ovos.get(position).getKm()){
-            ovos.get(position).setChocado(1);
-            ControladoraFachadaSingleton.getInstance().setChocado(ovos.get(position).getIdOvo(),1);
-            Toast.makeText(this, "Chocou um  " + ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovos.get(position).getIdOvo()),Toast.LENGTH_LONG).show();
-            //remove da lista de ovos
-            Ovo o = ovos.get(position);
-            ovos.remove(o);
-        }
-
-    }*/
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         try {
