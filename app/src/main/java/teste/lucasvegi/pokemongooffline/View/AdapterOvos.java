@@ -82,12 +82,12 @@ public class AdapterOvos extends BaseAdapter {
             if(ovos.get(position).getIncubado() == 1) {
                 if(ovos.get(position).getChocado() == 0) {
                     imagem.setImageResource(ovos.get(position).getFotoIncubado());
-                        kmAndou.setText(String.format("%.2f", ovos.get(position).getKmAndado()) + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
+                    kmAndou.setText(String.format("%.2f", ovos.get(position).getKmAndado()) + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
                     incubar.setEnabled(false);
                 }
+
             }else {
                 kmAndou.setText(String.valueOf(ovos.get(position).getKm()) + "km");
-                //Log.i("OVOS", "Entrou no else " + ovos.get(position).getIdOvo());
                     imagem.setImageResource(ovos.get(position).getFoto());
 
                     incubar.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +96,7 @@ public class AdapterOvos extends BaseAdapter {
                             imagem.setImageResource(ovos.get(position).getFotoIncubado());
                             incubar.setEnabled(false);
                             kmAndou.setText("0" + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
+
                             //Log.i("OVOS", "Incubar ovo: " + ovos.get(position).getIdOvo());
                             ovos.get(position).setIncubado(1);
                             ControladoraFachadaSingleton.getInstance().setIncubado(ovos.get(position).getIdOvo(),1);

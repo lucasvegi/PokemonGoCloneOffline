@@ -36,7 +36,7 @@ public final class ControladoraFachadaSingleton {
     private void daoOvo(){
          this.ovos = new ArrayList<Ovo>();
 
-         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado","chocado","exibido"},"exibido = 0","");
+         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado","chocado","exibido","KmAndado"},"exibido = 0","");
 
         while(c.moveToNext()){
             int idO = c.getColumnIndex("idOvo");
@@ -45,8 +45,9 @@ public final class ControladoraFachadaSingleton {
             int idInc = c.getColumnIndex("incubado");
             int idCho = c.getColumnIndex ("chocado");
             int idExi = c.getColumnIndex ("exibido");
+            int idKmAnd = c.getColumnIndex ("KmAndado");
 
-            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc),c.getInt(idCho),c.getInt(idExi)));
+            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc),c.getInt(idCho),c.getInt(idExi),c.getDouble(idKmAnd)));
         }
 
         c.close();
@@ -268,6 +269,12 @@ public final class ControladoraFachadaSingleton {
         valores.put("chocado",chocado);
         BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
 
+    }
+
+    public void setKmAndado(int idOvo, double kmAndado){
+        ContentValues valores = new ContentValues();
+        valores.put("kmAndado",kmAndado);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
     }
 
     /*public void sorteiaOvo(){

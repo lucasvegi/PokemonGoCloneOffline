@@ -22,7 +22,6 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
     private List<Ovo> ovos;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +37,8 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         Location localizacaoAtual = it.getParcelableExtra("location");
 
 
-        for(int i = 0; i < ovos.size(); i++) {
-            if(ovos.get(i).getLocalizacao() == null) {
+        for (int i = 0; i < ovos.size(); i++) {
+            if (ovos.get(i).getLocalizacao() == null) {
                 ovos.get(i).setLocalizacao(localizacaoAtual);
             } else {
                 if (ovos.get(i).getIncubado() == 1) {
@@ -47,6 +46,7 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
                     Log.i("OVOS", "Distância: " + distancia);
                     ovos.get(i).setKmAndado(ovos.get(i).getKmAndado() + distancia);
                     ovos.get(i).setLocalizacao(localizacaoAtual);
+                    ControladoraFachadaSingleton.getInstance().setKmAndado(ovos.get(i).getIdOvo(), ovos.get(i).getKmAndado());
 
                     //testa se ovo chocou
                     if (ovos.get(i).getKmAndado() >= ovos.get(i).getKm()) {
@@ -75,6 +75,7 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         listView.setAdapter(adapterOvos);
         listView.setOnItemClickListener(this);
     }
+
 
     public void clickVoltar(View v){
         finish();
