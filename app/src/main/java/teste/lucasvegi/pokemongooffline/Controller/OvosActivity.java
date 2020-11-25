@@ -3,6 +3,7 @@ package teste.lucasvegi.pokemongooffline.Controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +21,7 @@ import teste.lucasvegi.pokemongooffline.View.AdapterOvos;
 
 public class OvosActivity extends Activity implements AdapterView.OnItemClickListener {
     private List<Ovo> ovos;
-
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,6 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
 
         Intent it = getIntent();
         Location localizacaoAtual = it.getParcelableExtra("location");
-
 
         for (int i = 0; i < ovos.size(); i++) {
             if (ovos.get(i).getLocalizacao() == null) {
@@ -74,6 +74,21 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         AdapterOvos adapterOvos = new AdapterOvos(ovos, this, localizacaoAtual);
         listView.setAdapter(adapterOvos);
         listView.setOnItemClickListener(this);
+        mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.tema_menu);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        try {
+            //para a música tema do menu e devolve o recurso para o sistema
+            mediaPlayer.pause();
+            mediaPlayer.release();
+        }catch (Exception e){
+            Log.e("OVOS", "ERRO: " + e.getMessage());
+        }
     }
 
 
