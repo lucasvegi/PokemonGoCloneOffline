@@ -470,7 +470,7 @@ public final class BancoDadosSingleton {
                     ");",
             "INSERT INTO ovo (idOvo, idPokemon, idTipoOvo, incubado, chocado, exibido) VALUES" +
                     "(1, 16, 'C', 0, 0, 0)," +
-                    "(2, 17, 'I', 0, 0, 0)," +
+                    "(2, 16, 'C', 0, 0, 0)," +
                     "(3, 18, 'R', 0, 0, 0)," +
                     "(4, 19, 'L', 0, 0, 0);",
 

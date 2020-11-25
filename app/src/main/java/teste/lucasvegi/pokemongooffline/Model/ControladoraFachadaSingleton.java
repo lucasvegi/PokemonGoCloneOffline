@@ -36,7 +36,7 @@ public final class ControladoraFachadaSingleton {
     private void daoOvo(){
          this.ovos = new ArrayList<Ovo>();
 
-         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado","chocado","exibido"},"","");
+         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado","chocado","exibido"},"exibido = 0","");
 
         while(c.moveToNext()){
             int idO = c.getColumnIndex("idOvo");
@@ -219,16 +219,31 @@ public final class ControladoraFachadaSingleton {
 
     public List<Ovo> getOvos(){ return ovos; }
 
+    public void removeOvo(int i){
+        Ovo o = ovos.get(i);
+        ovos.remove(o);
+    }
 
-    public String getPokemonOvo(int idOvo){
-        String pokemonOvo = "";
+    public String getNomePokemonOvo(int idOvo){
+        String NomepokemonOvo = "";
         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, pokemon p", new String[]{"p.nome nome"}, "o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
         while (c.moveToNext()) {
             int idP = c.getColumnIndex("nome");
-             pokemonOvo = c.getString(idP);
+             NomepokemonOvo = c.getString(idP);
         }
         c.close();
-        return pokemonOvo;
+        return NomepokemonOvo;
+    }
+
+    public int getFotoPokemonOvo(int idOvo){
+        int FotopokemonOvo = 0;
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, pokemon p", new String[]{"p.icone icone"}, "o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
+        while (c.moveToNext()) {
+            int idP = c.getColumnIndex("icone");
+            FotopokemonOvo = c.getInt(idP);
+        }
+        c.close();
+        return FotopokemonOvo;
     }
 
     public void setIncubado(int idOvo,int incubado){

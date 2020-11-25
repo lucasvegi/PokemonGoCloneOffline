@@ -9,9 +9,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Ovo;
 import teste.lucasvegi.pokemongooffline.R;
 
@@ -38,7 +40,7 @@ public class AdapterOvos extends BaseAdapter {
     public int getCount() { return ovos.size(); }
 
     @Override
-    public Object getItem(int position) {
+    public Ovo getItem(int position) {
         return ovos.get(position);
     }
 
@@ -46,6 +48,19 @@ public class AdapterOvos extends BaseAdapter {
     public long getItemId(int position) {
         return ovos.get(position).getIdOvo();
     }
+
+    /*public boolean TestaChocou(int position) {
+        //testa se ovo chocou
+        if(ovos.get(position).getKmAndado() >= ovos.get(position).getKm()){
+            ovos.get(position).setChocado(1);
+            ControladoraFachadaSingleton.getInstance().setChocado(ovos.get(position).getIdOvo(),1);
+            Toast.makeText(this, "Chocou um  " + ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovos.get(position).getIdOvo()),Toast.LENGTH_LONG).show();
+            //remove da lista de ovos
+            Ovo o = ovos.get(position);
+            ovos.remove(o);
+        }
+
+    }*/
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -65,25 +80,11 @@ public class AdapterOvos extends BaseAdapter {
 
 
             if(ovos.get(position).getIncubado() == 1) {
-                imagem.setImageResource(ovos.get(position).getFotoIncubado());
-
-                //se a localização for nula i.e. acabou de ser incubado, setto uma localizacao pra ele
-                //caso a localização não seja nula, eu att a localização e faço um delta distancia pra settar em kmAndou
-                if(ovos.get(position).getLocalizacao() == null) {
-                    kmAndou.setText("0" + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
-                    ovos.get(position).setLocalizacao(localizacaoRecebida);
-                    Log.i("OVOS", "Acabou de ser incubado, localização: " + ovos.get(position).getLocalizacao());
-                } else {
-                    double distancia = localizacaoRecebida.distanceTo(ovos.get(position).getLocalizacao()) / 1000;
-                    Log.i("OVOS", "Distância: " + distancia);
-                    ovos.get(position).setKmAndado(ovos.get(position).getKmAndado() + distancia);
-                    ovos.get(position).setLocalizacao(localizacaoRecebida);
-
-                    kmAndou.setText(String.format("%.2f", ovos.get(position).getKmAndado()) + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
-                    Log.i("OVOS", "Ja estava incubado, localização: " + ovos.get(position).getLocalizacao());
+                if(ovos.get(position).getChocado() == 0) {
+                    imagem.setImageResource(ovos.get(position).getFotoIncubado());
+                        kmAndou.setText(String.format("%.2f", ovos.get(position).getKmAndado()) + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
+                    incubar.setEnabled(false);
                 }
-                incubar.setEnabled(false);
-
             }else {
                 kmAndou.setText(String.valueOf(ovos.get(position).getKm()) + "km");
                 //Log.i("OVOS", "Entrou no else " + ovos.get(position).getIdOvo());
@@ -97,6 +98,7 @@ public class AdapterOvos extends BaseAdapter {
                             kmAndou.setText("0" + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
                             //Log.i("OVOS", "Incubar ovo: " + ovos.get(position).getIdOvo());
                             ovos.get(position).setIncubado(1);
+                            ControladoraFachadaSingleton.getInstance().setIncubado(ovos.get(position).getIdOvo(),1);
                         }
                     });
             }
