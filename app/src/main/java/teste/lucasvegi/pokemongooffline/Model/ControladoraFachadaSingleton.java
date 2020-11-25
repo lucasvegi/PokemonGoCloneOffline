@@ -273,6 +273,15 @@ public final class ControladoraFachadaSingleton {
         BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
     }
 
+    public int quantidadeOvosIncubado(){
+        int quantidadeOvosIncubado = 0;
+        for(int i = 0; i < ovos.size(); i++){
+            if(ovos.get(i).getIncubado() == 1) quantidadeOvosIncubado++;
+        }
+        Log.i("INCUBADO:","Quantidade de ovos incubados: "+ quantidadeOvosIncubado);
+        return quantidadeOvosIncubado;
+    }
+
     /*public void sorteiaOvo(){
 
         int tamComum = pokemons.get("C").size();

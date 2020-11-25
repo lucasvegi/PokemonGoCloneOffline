@@ -44,8 +44,11 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
             for (int i = 0; i < ovos.size(); i++) {
                 if (ovos.get(i).getLocalizacao() == null) {
                     ovos.get(i).setLocalizacao(localizacaoAtual);
+
                 } else {
+
                     if (ovos.get(i).getIncubado() == 1) {
+
                         double distancia = localizacaoAtual.distanceTo(ovos.get(i).getLocalizacao()) / 1000;
                         Log.i("OVOS", "Distância: " + distancia);
                         ovos.get(i).setKmAndado(ovos.get(i).getKmAndado() + distancia);
@@ -93,7 +96,7 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
             int total = ControladoraFachadaSingleton.getInstance().getOvos().size();
             txtTotal.setText("Ovos: " + total + "/9");
 
-            AdapterOvos adapterOvos = new AdapterOvos(ovos, this, localizacaoAtual);
+            AdapterOvos adapterOvos = new AdapterOvos(ovos, this);
             listView.setAdapter(adapterOvos);
             listView.setOnItemClickListener(this);
             mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.tema_menu);

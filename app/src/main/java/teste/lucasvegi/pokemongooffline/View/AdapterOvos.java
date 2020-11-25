@@ -22,14 +22,11 @@ public class AdapterOvos extends BaseAdapter {
     private List<Ovo> ovos;
     private Activity act;
     private Ovo ovo;
-    private Location localizacaoRecebida;
 
-
-    public AdapterOvos(List<Ovo> ovos, Activity act, Location localizacaoAtual) {
+    public AdapterOvos(List<Ovo> ovos, Activity act) {
         try {
             this.ovos = ovos;
             this.act = act;
-            this.localizacaoRecebida = localizacaoAtual;
         } catch (Exception e) {
             Log.e("OVO", "ERRO: " + e.getMessage());
         }
@@ -80,13 +77,18 @@ public class AdapterOvos extends BaseAdapter {
                     incubar.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            imagem.setImageResource(ovos.get(position).getFotoIncubado());
-                            incubar.setEnabled(false);
-                            kmAndou.setText("0" + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
+                            if(ControladoraFachadaSingleton.getInstance().quantidadeOvosIncubado() < 3) {
+                                imagem.setImageResource(ovos.get(position).getFotoIncubado());
+                                incubar.setEnabled(false);
+                                kmAndou.setText("0" + "/" + String.valueOf(ovos.get(position).getKm()) + "km");
 
-                            //Log.i("OVOS", "Incubar ovo: " + ovos.get(position).getIdOvo());
-                            ovos.get(position).setIncubado(1);
-                            ControladoraFachadaSingleton.getInstance().setIncubado(ovos.get(position).getIdOvo(),1);
+                                //Log.i("OVOS", "Incubar ovo: " + ovos.get(position).getIdOvo());
+                                ovos.get(position).setIncubado(1);
+                                ControladoraFachadaSingleton.getInstance().setIncubado(ovos.get(position).getIdOvo(), 1);
+                            }
+                            else{
+                                Toast.makeText(act, "Suas incubadoras estão ocupadas. ", Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
             }
