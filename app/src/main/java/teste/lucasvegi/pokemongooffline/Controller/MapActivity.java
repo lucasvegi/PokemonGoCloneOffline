@@ -9,8 +9,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -389,6 +389,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //Toast.makeText(this,"Ovo",Toast.LENGTH_SHORT).show();
 
         Intent it = new Intent(this, OvosActivity.class);
+        it.putExtra("location", posicaoAtual);
         startActivityForResult(it, MENU_OVOS);
     }
 

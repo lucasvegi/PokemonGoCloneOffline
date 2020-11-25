@@ -2,6 +2,7 @@ package teste.lucasvegi.pokemongooffline.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.location.Location;
 import android.util.Log;
 
 import java.io.Serializable;
@@ -13,15 +14,21 @@ public class Ovo implements Serializable {
     private int idPokemon;
     private String idTipoOvo;
     private int incubado;
+    private int chocado;
+    private int exibido;
     private int Foto;
     private int FotoInc;
     private int Km;
+    private double KmAndado = 0;
+    Location localizacao = null;
 
-    public Ovo(int idOvo, int idPokemon, String idTipoOvo, int incubado) {
+    public Ovo(int idOvo, int idPokemon, String idTipoOvo, int incubado, int chocado, int exibido) {
         this.idOvo = idOvo;
         this.idPokemon = idPokemon;
         this.idTipoOvo = idTipoOvo;
         this.incubado = incubado;
+        this.chocado = chocado;
+        this.exibido = exibido;
     }
 
     public int getIdOvo(){ return idOvo; }
@@ -58,6 +65,13 @@ public class Ovo implements Serializable {
         c.close();
         return Km;
     }
+
+    public Location getLocalizacao(){
+        return localizacao;
+    }
+    public double getKmAndado(){
+        return KmAndado;
+    }
     public void setIdOvo(int idOvo) {
         this.idOvo = idOvo;
     }
@@ -74,5 +88,27 @@ public class Ovo implements Serializable {
         Log.i("OVOS", "idOvo: " + idOvo);
         BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
         this.incubado = inc;
+    }
+    public void setLocalizacao(Location localizacao){
+        this.localizacao = localizacao;
+    }
+    public void setKmAndado(double KmAndado){
+        this.KmAndado = KmAndado;
+    }
+
+    public int getChocado() {
+        return chocado;
+    }
+
+    public void setChocado(int chocado){
+        this.chocado = chocado;
+    }
+
+    public int getExibido() {
+        return exibido;
+    }
+
+    public void setExibido(int exibido) {
+        this.exibido = exibido;
     }
 }

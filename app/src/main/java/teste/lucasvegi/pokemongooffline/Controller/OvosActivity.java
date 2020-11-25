@@ -1,20 +1,19 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
 import android.app.Activity;
-import android.database.Cursor;
+import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Ovo;
 import teste.lucasvegi.pokemongooffline.R;
-import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 import teste.lucasvegi.pokemongooffline.View.AdapterOvos;
 
 public class OvosActivity extends Activity implements AdapterView.OnItemClickListener {
@@ -34,7 +33,10 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
         ovos = ControladoraFachadaSingleton.getInstance().getOvos();
         ListView listView = (ListView) findViewById(R.id.listaOvos);
 
-        AdapterOvos adapterOvos = new AdapterOvos(ovos, this);
+        Intent it = getIntent();
+        Location localizacaoAtual = it.getParcelableExtra("location");
+
+        AdapterOvos adapterOvos = new AdapterOvos(ovos, this, localizacaoAtual);
         listView.setAdapter(adapterOvos);
         listView.setOnItemClickListener(this);
     }

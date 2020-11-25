@@ -36,15 +36,17 @@ public final class ControladoraFachadaSingleton {
     private void daoOvo(){
          this.ovos = new ArrayList<Ovo>();
 
-         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado"},"","");
+         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado","chocado","exibido"},"","");
 
         while(c.moveToNext()){
             int idO = c.getColumnIndex("idOvo");
             int idP = c.getColumnIndex("idPokemon");
             int idTO = c.getColumnIndex("idTipoOvo");
             int idInc = c.getColumnIndex("incubado");
+            int idCho = c.getColumnIndex ("chocado");
+            int idExi = c.getColumnIndex ("exibido");
 
-            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc)));
+            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc),c.getInt(idCho),c.getInt(idExi)));
         }
 
         c.close();
@@ -216,6 +218,42 @@ public final class ControladoraFachadaSingleton {
     }
 
     public List<Ovo> getOvos(){ return ovos; }
+
+
+    public String getPokemonOvo(int idOvo){
+        String pokemonOvo = "";
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo o, pokemon p", new String[]{"p.nome nome"}, "o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
+        while (c.moveToNext()) {
+            int idP = c.getColumnIndex("nome");
+             pokemonOvo = c.getString(idP);
+        }
+        c.close();
+        return pokemonOvo;
+    }
+
+    public void setIncubado(int idOvo,int incubado){
+
+        ContentValues valores = new ContentValues();
+        valores.put("incubado",incubado);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
+
+    }
+
+    public void setExibido(int idOvo,int exibido){
+
+        ContentValues valores = new ContentValues();
+        valores.put("exibido",exibido);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
+
+    }
+
+    public void setChocado(int idOvo,int chocado){
+
+        ContentValues valores = new ContentValues();
+        valores.put("chocado",chocado);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
+
+    }
 
     /*public void sorteiaOvo(){
 
