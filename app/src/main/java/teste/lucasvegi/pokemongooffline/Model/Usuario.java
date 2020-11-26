@@ -24,6 +24,8 @@ public class Usuario {
     private String foto;
     private String dtCadastro;
     private Map<Pokemon,List<PokemonCapturado>> pokemons;
+    private int nivel;
+    private int xp;
 
     public Usuario(){
 
@@ -86,6 +88,22 @@ public class Usuario {
 
     public Map<Pokemon, List<PokemonCapturado>> getPokemons() {
         return pokemons;
+    }
+
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 
     private void preencherCapturas(){

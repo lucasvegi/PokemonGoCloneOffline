@@ -28,6 +28,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import teste.lucasvegi.pokemongooffline.Util.directionshelpers.FetchURL;
+import teste.lucasvegi.pokemongooffline.Util.directionshelpers.TaskLoadedCallback;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,11 +44,14 @@ import teste.lucasvegi.pokemongooffline.Model.Aparecimento;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.R;
 
-public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener,Runnable {
+public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener,Runnable , TaskLoadedCallback {
     public GoogleMap map;
     public LocationManager lm;
     public Criteria criteria;
     public String provider;
+
+    public Polyline currentPolyline;
+    public Marker targetPkmn;
 
     public int TEMPO_REQUISICAO_LATLONG = 5000;
     public int DISTANCIA_MIN_METROS = 0;
@@ -90,6 +98,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //aloca lista e Map
         aparecimentos = new ArrayList<Aparecimento>();
         aparecimentoMap = new HashMap<Marker, Aparecimento>();
+
+        targetPkmn = null;
 
         //Configura web view loader sorteio de pokemon
         webViewLoader = (WebView) findViewById(R.id.imgLoader);
@@ -165,6 +175,15 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //Remove o personagem para atualizar a sua posição
         if(eu != null) {
             eu.remove();
+        }
+
+        if(targetPkmn != null){
+            double distanciaPkmn = getDistanciaPkmn(eu, targetPkmn);
+            double distanciaMin = distanciaMinimaParaBatalhar;
+            if(distanciaPkmn <= distanciaMin){
+                Toast.makeText(this,"Você já está perto do " + targetPkmn.getTitle() + "!\n" +
+                        "Tente capturá-lo agora! ", Toast.LENGTH_LONG).show();
+            }
         }
 
         //Escolhe imagem do personagem de acordo com o sexo
@@ -261,6 +280,11 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
                     startActivity(it);
 
+                    if(marker.equals(targetPkmn)){
+                        if(currentPolyline != null)
+                            currentPolyline.remove();
+                        targetPkmn = null;
+                    }
                     marker.remove();
                 }catch (Exception e){
                     Log.e("CliqueMarker","Erro: " + e.getMessage());
@@ -269,9 +293,29 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 DecimalFormat df = new DecimalFormat("0.##");
                 Toast.makeText(this,"Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
                         "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
+
+                targetPkmn = marker;
+                String url = getDirectionsUrl(eu.getPosition(), marker.getPosition());
+                new FetchURL(MapActivity.this).execute(url);
             }
         }
         return false;
+    }
+
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
+        // Origem da rota
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destino da rota
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=walking";
+        // Parametros para web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Formato do output
+        String output = "json";
+        // Url
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.directions_key);
+        return url;
     }
 
     public void limparMarcadores(){
@@ -284,6 +328,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
             //limpa o dicionário de marcadores de aparecimentos
             aparecimentoMap.clear();
+            currentPolyline.remove();
+            targetPkmn = null;
         }catch (Exception e){
             Log.e("LimparMarker","ERRO: " + e.getMessage());
         }
@@ -439,5 +485,13 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             finish();
         }
 
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+        if(currentPolyline!=null) {
+            currentPolyline.remove();
+        }
+        currentPolyline = map.addPolyline((PolylineOptions) values[0]);
     }
 }

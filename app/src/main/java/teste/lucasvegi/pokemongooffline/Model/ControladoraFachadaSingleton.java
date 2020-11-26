@@ -148,7 +148,7 @@ public final class ControladoraFachadaSingleton {
 
     private void daoUsuario(){
 
-        Cursor c = BancoDadosSingleton.getInstance().buscar("usuario",new String[]{"login","senha","nome","sexo","foto","dtCadastro"},"","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("usuario",new String[]{"login","senha","nome","sexo","foto","dtCadastro","xp","nivel"},"","");
 
         while(c.moveToNext()){
             int login = c.getColumnIndex("login");
@@ -157,6 +157,8 @@ public final class ControladoraFachadaSingleton {
             int sexo = c.getColumnIndex("sexo");
             int foto = c.getColumnIndex("foto");
             int dtCad = c.getColumnIndex("dtCadastro");
+            int xp = c.getColumnIndex("xp");
+            int nivel = c.getColumnIndex("nivel");
 
             user = new Usuario(c.getString(login));
 
@@ -165,6 +167,8 @@ public final class ControladoraFachadaSingleton {
             user.setSexo(c.getString(sexo));
             user.setFoto(c.getString(foto)); //IMPLEMENTAR RETIRAR FOTO DE USUÁRIO NO CADASTRO
             user.setDtCadastro(c.getString(dtCad));
+            user.setXp(c.getInt(xp));
+            user.setNivel(c.getInt(nivel));
         }
 
         c.close();
@@ -557,4 +561,62 @@ public final class ControladoraFachadaSingleton {
         return pkmnAux;
     }*/
 
+    public boolean aumentaXp(String evento) {
+        final int xpRecebido = getXpEvento(evento);
+        final int nivelAtual = getUsuario().getNivel();
+        final int xpAtual = getUsuario().getXp();
+        final int xpMax = xpMaximo(nivelAtual);
+        int xpFinal = xpAtual, nivelFinal = nivelAtual;
+
+        if((xpAtual + xpRecebido) >= xpMax) {
+            xpFinal = (xpAtual + xpRecebido) - xpMax;
+            nivelFinal++;
+
+            if(nivelFinal > 40) {
+                nivelFinal = 40;
+                xpFinal = xpMaximo(nivelFinal);
+            }
+
+            getUsuario().setNivel(nivelFinal);
+        } else {
+            xpFinal = xpAtual + xpRecebido;
+        }
+
+        getUsuario().setXp(xpFinal);
+
+        ContentValues valores = new ContentValues();
+
+        valores.put("login", getUsuario().getLogin());
+        valores.put("senha", getUsuario().getSenha());
+        valores.put("nome", getUsuario().getNome());
+        valores.put("sexo", getUsuario().getSexo());
+        valores.put("foto", getUsuario().getFoto());
+        valores.put("dtCadastro", getUsuario().getDtCadastro());
+        valores.put("temSessao", "SIM");
+        valores.put("nivel", nivelFinal);
+        valores.put("xp", xpFinal);
+
+        int count = BancoDadosSingleton.getInstance().atualizar("usuario", valores, "login='"+getUsuario().getLogin()+"'");
+
+        return count == 1;
+    }
+
+    public int xpMaximo(int nivelUsuario) {
+        return nivelUsuario*1000;
+    }
+
+    public int getXpEvento(String evento) {
+        switch(evento) {
+            case "captura":
+                return 20;
+            case "evolui":
+                return 200;
+            case "pokestop":
+                return 50;
+            case "choca":
+                return 100;
+            default:
+                return 0;
+        }
+    }
 }

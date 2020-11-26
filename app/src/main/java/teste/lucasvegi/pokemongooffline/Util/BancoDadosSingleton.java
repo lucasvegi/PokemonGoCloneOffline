@@ -433,7 +433,9 @@ public final class BancoDadosSingleton {
                     "  sexo TEXT NOT NULL," +
                     "  foto TEXT," +
                     "  dtCadastro TEXT NOT NULL," +
-                    "  temSessao TEXT NOT NULL" +
+                    "  temSessao TEXT NOT NULL," +
+                    "  nivel INTEGER DEFAULT 1 NOT NULL," +
+                    "  xp INTEGER DEFAULT 0 NOT NULL" +
                     ");",
             "CREATE TABLE pokemonusuario (" +
                     "  login TEXT NOT NULL," +
