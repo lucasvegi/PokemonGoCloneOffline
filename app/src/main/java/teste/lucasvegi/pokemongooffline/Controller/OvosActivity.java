@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
@@ -26,7 +30,8 @@ import teste.lucasvegi.pokemongooffline.View.AdapterOvos;
 public class OvosActivity extends Activity implements AdapterView.OnItemClickListener {
     private List<Ovo> ovos;
     private MediaPlayer mediaPlayer;
-
+    private Toast toastChocado;
+    private List<Ovo> ovosChocados = new ArrayList<Ovo>();;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,31 +66,12 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
                             ControladoraFachadaSingleton.getInstance().setChocado(ovos.get(i).getIdOvo(), 1);
 
                             ControladoraFachadaSingleton.getInstance().getUsuario().Chocar(ovos.get(i).getLocalizacao(),ovos.get(i).getIdOvo());
-
-                            //Toast exibindo o pokemon chocado
-                            LayoutInflater inflater = getLayoutInflater();
-                            View layout = inflater.inflate(R.layout.toast_pkmn_chocado,(ViewGroup) findViewById(R.id.toast_pkmn_chocado));
-
-                            TextView nomePkmnOVo = (TextView) layout.findViewById(R.id.txtPokemon);
-                            ImageView fotoPkmnOvo = (ImageView) layout.findViewById(R.id.imgPokemon);
-
-                            String nome = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovos.get(i).getIdOvo()).getNome();
-                            nomePkmnOVo.setText("Oba! " + nome + " foi chocado!");
-
-                            int foto = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovos.get(i).getIdOvo()).getFoto();
-                            fotoPkmnOvo.setImageResource(foto);
-
-                            Toast toast = new Toast(getApplicationContext());
-                            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 100);
-                            toast.setDuration(Toast.LENGTH_LONG);
-                            toast.setView(layout);
-                            toast.show();
-
                             //ovo já foi exibido
                             ControladoraFachadaSingleton.getInstance().setExibido(ovos.get(i).getIdOvo(), 1);
 
                             //remove ovo da lista de ovos
                             Ovo o = ovos.get(i);
+                            ovosChocados.add(new Ovo(o.getIdOvo(), o.getidPokemon(), o.getIdTipoOvo(),o.getIncubado(),o.getChocado(),o.getExibido(),o.getKmAndado()));
                             ovos.remove(o);
 
                         }
@@ -102,6 +88,7 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
             mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.tema_menu);
             mediaPlayer.setLooping(true);
             mediaPlayer.start();
+            exibirChocados();
         }catch (Exception e){
             Log.e("OVOS", "ERRO: " + e.getMessage());
         }
@@ -123,6 +110,82 @@ public class OvosActivity extends Activity implements AdapterView.OnItemClickLis
     public void clickVoltar(View v){
         finish();
     }
+
+    public void exibirChocados(){
+        Ovo o;
+        if(ovosChocados.size() == 1) {
+            LayoutInflater inflater = getLayoutInflater();
+            final View layout = inflater.inflate(R.layout.toast_pkmn_chocado, (ViewGroup) findViewById(R.id.toast_pkmn_chocado));
+            TextView nomePkmnOvo = (TextView) layout.findViewById(R.id.txtPokemon);
+            ImageView fotoPkmnOvo = (ImageView) layout.findViewById(R.id.imgPokemon);
+            final String nome = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(0).getIdOvo()).getNome();
+            nomePkmnOvo.setText("Oba! " + nome + " foi chocado!");
+            int foto = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(0).getIdOvo()).getFoto();
+            fotoPkmnOvo.setImageResource(foto);
+            toastChocado = new Toast(getApplicationContext());
+            toastChocado.setGravity(Gravity.CENTER_VERTICAL, 0, 100);
+            toastChocado.setDuration(Toast.LENGTH_LONG);
+            toastChocado.setView(layout);
+            toastChocado.show();
+            o = ovosChocados.get(0);
+            ovosChocados.remove(o);
+
+        }
+        if(ovosChocados.size() == 2) {
+            LayoutInflater inflater = getLayoutInflater();
+            final View layout = inflater.inflate(R.layout.toast_pkmn_chocado2, (ViewGroup) findViewById(R.id.toast_pkmn_chocado2));
+            TextView nomePkmnOvo = (TextView) layout.findViewById(R.id.txtPokemon);
+            ImageView fotoPkmnOvo = (ImageView) layout.findViewById(R.id.imgPokemon);
+            ImageView fotoPkmnOvo2 = (ImageView) layout.findViewById(R.id.imgPokemon2);
+            final String nome = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(0).getIdOvo()).getNome();
+            final String nome2 = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(1).getIdOvo()).getNome();
+            nomePkmnOvo.setText("Oba! " + nome +" e " + nome2 + " foram chocados!");
+            int foto = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(0).getIdOvo()).getFoto();
+            int foto2 = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(1).getIdOvo()).getFoto();
+            fotoPkmnOvo.setImageResource(foto);
+            fotoPkmnOvo2.setImageResource(foto2);
+            toastChocado = new Toast(getApplicationContext());
+            toastChocado.setGravity(Gravity.CENTER_VERTICAL, 0, 100);
+            toastChocado.setDuration(Toast.LENGTH_LONG);
+            toastChocado.setView(layout);
+            toastChocado.show();
+            o = ovosChocados.get(0);
+            ovosChocados.remove(o);
+            o = ovosChocados.get(0);
+            ovosChocados.remove(o);
+        }
+        if(ovosChocados.size() == 3) {
+            LayoutInflater inflater = getLayoutInflater();
+            final View layout = inflater.inflate(R.layout.toast_pkmn_chocado3, (ViewGroup) findViewById(R.id.toast_pkmn_chocado3));
+            TextView nomePkmnOvo = (TextView) layout.findViewById(R.id.txtPokemon);
+            ImageView fotoPkmnOvo = (ImageView) layout.findViewById(R.id.imgPokemon);
+            ImageView fotoPkmnOvo2 = (ImageView) layout.findViewById(R.id.imgPokemon2);
+            ImageView fotoPkmnOvo3 = (ImageView) layout.findViewById(R.id.imgPokemon3);
+            final String nome = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(0).getIdOvo()).getNome();
+            final String nome2 = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(1).getIdOvo()).getNome();
+            final String nome3 = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(2).getIdOvo()).getNome();
+            nomePkmnOvo.setText("Oba! " + nome + ", " + nome2 + " e " + nome3);
+            int foto = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(0).getIdOvo()).getFoto();
+            int foto2 = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(1).getIdOvo()).getFoto();
+            int foto3 = ControladoraFachadaSingleton.getInstance().getPokemonOvo(ovosChocados.get(2).getIdOvo()).getFoto();
+            fotoPkmnOvo.setImageResource(foto);
+            fotoPkmnOvo2.setImageResource(foto2);
+            fotoPkmnOvo3.setImageResource(foto3);
+            toastChocado = new Toast(getApplicationContext());
+            toastChocado.setGravity(Gravity.CENTER_VERTICAL, 0, 100);
+            toastChocado.setDuration(Toast.LENGTH_LONG);
+            toastChocado.setView(layout);
+            toastChocado.show();
+            o = ovosChocados.get(0);
+            ovosChocados.remove(o);
+            o = ovosChocados.get(0);
+            ovosChocados.remove(o);
+            o = ovosChocados.get(0);
+            ovosChocados.remove(o);
+        }
+
+    }
+
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

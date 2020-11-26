@@ -470,10 +470,12 @@ public final class BancoDadosSingleton {
                     "  CONSTRAINT fk_tipoovo FOREIGN KEY (idTipoOvo) REFERENCES tipoovo (idTipoOvo)" +
                     ");",
             "INSERT INTO ovo (idOvo, idPokemon, idTipoOvo, incubado, chocado, exibido,KmAndado) VALUES" +
-                    "(1, 16, 'C', 0, 0, 0, 0)," +
-                    "(2, 16, 'C', 0, 0, 0, 0)," +
-                    "(3, 18, 'R', 0, 0, 0, 0)," +
-                    "(4, 19, 'L', 0, 0, 0, 0);",
+                    "(1, 23, 'C', 0, 0, 0, 0)," +
+                    "(2, 18, 'R', 0, 0, 0, 0)," +
+                    "(3, 50, 'C', 0, 0, 0, 0)," +
+                    "(4, 19, 'L', 0, 0, 0, 0)," +
+                    "(5, 16, 'C', 0, 0, 0, 0)," +
+                    "(6, 22, 'I', 0, 0, 0, 0);",
 
     };
 
