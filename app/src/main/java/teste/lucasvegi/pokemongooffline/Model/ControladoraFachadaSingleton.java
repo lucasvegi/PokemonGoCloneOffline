@@ -23,14 +23,36 @@ public final class ControladoraFachadaSingleton {
     private Map<String,List<Pokemon>> pokemons;
     private Aparecimento[] aparecimentos = new Aparecimento[10];
     private List<Tipo> tiposPokemon;
+    private List<Ovo> ovos;
     private static ControladoraFachadaSingleton INSTANCE = new ControladoraFachadaSingleton();
     private boolean sorteouLendario = false;
 
     private ControladoraFachadaSingleton() {
         daoTipo();
         daoPokemons(this);
+        daoOvo();
     }
 
+    private void daoOvo(){
+         this.ovos = new ArrayList<Ovo>();
+
+         Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo","idPokemon","idTipoOvo","incubado","chocado","exibido","KmAndado"},"exibido = 0","");
+
+        while(c.moveToNext()){
+            int idO = c.getColumnIndex("idOvo");
+            int idP = c.getColumnIndex("idPokemon");
+            int idTO = c.getColumnIndex("idTipoOvo");
+            int idInc = c.getColumnIndex("incubado");
+            int idCho = c.getColumnIndex ("chocado");
+            int idExi = c.getColumnIndex ("exibido");
+            int idKmAnd = c.getColumnIndex ("KmAndado");
+
+            ovos.add(new Ovo(c.getInt(idO), c.getInt(idP), c.getString(idTO),c.getInt(idInc),c.getInt(idCho),c.getInt(idExi),c.getDouble(idKmAnd)));
+        }
+
+        c.close();
+
+    }
     private void daoTipo(){
         this.tiposPokemon = new ArrayList<Tipo>();
 
@@ -153,6 +175,8 @@ public final class ControladoraFachadaSingleton {
 
     }
 
+
+
     public static ControladoraFachadaSingleton getInstance(){
         return INSTANCE;
     }
@@ -197,6 +221,136 @@ public final class ControladoraFachadaSingleton {
     protected List<Tipo> getTipos(){
         return tiposPokemon;
     }
+
+    public List<Ovo> getOvos(){ return ovos; }
+
+    public void removeOvo(int i){
+        Ovo o = ovos.get(i);
+        ovos.remove(o);
+    }
+
+    public Pokemon getPokemonOvo(int idOvo){
+        Pokemon p = null;
+        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon p, ovo o",new String[]{"p.idPokemon idPokemon","p.nome nome","p.categoria categoria","p.foto foto","p.icone icone"},"o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
+        while (c.moveToNext()) {
+            int idP = c.getColumnIndex("idPokemon");
+            int name = c.getColumnIndex("nome");
+            int cat = c.getColumnIndex("categoria");
+            int foto = c.getColumnIndex("foto");
+            int icone = c.getColumnIndex("icone");
+
+            p = new Pokemon(c.getInt(idP),c.getString(name),c.getString(cat),c.getInt(foto),c.getInt(icone),this);
+            Log.i("GET", "Nome: " + p.getNome());
+
+        }
+        c.close();
+        return p;
+    }
+
+    public void setIncubado(int idOvo,int incubado){
+
+        ContentValues valores = new ContentValues();
+        valores.put("incubado",incubado);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
+
+    }
+
+    public void setExibido(int idOvo,int exibido){
+
+        ContentValues valores = new ContentValues();
+        valores.put("exibido",exibido);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
+
+    }
+
+    public void setChocado(int idOvo,int chocado){
+
+        ContentValues valores = new ContentValues();
+        valores.put("chocado",chocado);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
+
+    }
+
+    public void setKmAndado(int idOvo, double kmAndado){
+        ContentValues valores = new ContentValues();
+        valores.put("kmAndado",kmAndado);
+        BancoDadosSingleton.getInstance().atualizar("ovo",valores,"idOvo = '"+idOvo+"'");
+    }
+
+    public int quantidadeOvosIncubado(){
+        int quantidadeOvosIncubado = 0;
+        for(int i = 0; i < ovos.size(); i++){
+            if(ovos.get(i).getIncubado() == 1) quantidadeOvosIncubado++;
+        }
+        Log.i("INCUBADO:","Quantidade de ovos incubados: "+ quantidadeOvosIncubado);
+        return quantidadeOvosIncubado;
+    }
+
+    /*public void sorteiaOvo(){
+
+        int tamComum = pokemons.get("C").size();
+        int tamIncomum = pokemons.get("I").size();
+        int tamRaro = pokemons.get("R").size();
+        int tamLendario = pokemons.get("L").size();
+
+        Log.d("SORTEIO","C: " + tamComum + " I: "+ tamIncomum + " R: "+ tamRaro + " L: " + tamLendario);
+
+        int min = 0;
+        int max;
+
+        //obtem hora atual
+        Map<String,String> tempo = TimeUtil.getHoraMinutoSegundoDiaMesAno();
+
+        Log.d("TEMPO",tempo.get("hora") +":"+tempo.get("minuto")+":"+tempo.get("segundo")+" - "+tempo.get("dia")+"/"+tempo.get("mes")+"/"+tempo.get("ano")+" "+tempo.get("timezone"));
+
+        //obtem valores a serem usado no critério de lendários
+        int numIntSorteado = RandomUtil.randomIntInRange(1,101);
+        int numIntSorteado2 = RandomUtil.randomIntInRange(1,101);
+        int somaMinSegAtual = (Integer.parseInt(tempo.get("minuto")) + Integer.parseInt(tempo.get("segundo")));
+
+        Log.d("SORTEIO","NumInt: " + numIntSorteado + " NumInt2: " + numIntSorteado2 + " SomaMinSeg: " + somaMinSegAtual);
+
+        //sorteia OVO LENDÁRIO
+        if(numIntSorteado % 2 == 0 && numIntSorteado2 % 2 == 0 && somaMinSegAtual % 2 != 0){
+            max = tamLendario;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("L").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "L", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("L").get(sorteio).getNome());
+
+        //sorteia OVO RARO
+        } else if(numIntSorteado % 2 != 0 && numIntSorteado2 % 2 != 0){
+            max = tamRaro;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("R").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "R", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("R").get(sorteio).getNome());
+
+        //sorteia OVO INCOMUM
+        } else if(numIntSorteado <= 35){
+            max = tamIncomum;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("I").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "I", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("I").get(sorteio).getNome());
+
+         //Sorteia OVO COMUM
+        } else {
+            max = tamComum;
+            int sorteio = RandomUtil.randomIntInRange(min,max);
+            int idP = pokemons.get("C").get(sorteio).getNumero();
+
+            //cadastraOvo(idOvo, idP, "C", 0);   //colocar idOvo auto incremento?
+
+            Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("C").get(sorteio).getNome());
+        }
+    }*/
 
     public void sorteiaAparecimentos(double LatMin, double LatMax, double LongMin, double LongMax){
 
@@ -335,6 +489,20 @@ public final class ControladoraFachadaSingleton {
         BancoDadosSingleton.getInstance().atualizar("usuario",valores,"login = '"+this.user.getLogin()+"'");
         return true;
     }
+
+    /*public void cadastraOvo(int idOvo, int idPokemon, String idTipoOvo, int incubado){
+
+        ContentValues valores = new ContentValues();
+        valores.put("idOvo",idOvo);
+        valores.put("idPokemon",idPokemon);
+        valores.put("idTipoOvo",idTipoOvo);
+        valores.put("incubado",incubado);
+
+        BancoDadosSingleton.getInstance().inserir("ovo",valores);
+
+        //daoOvos()    CHAMA OU NAO?
+
+    }*/
 
     public boolean cadastrarUser(String login, String senha, String nome, String sexo, String foto){
 

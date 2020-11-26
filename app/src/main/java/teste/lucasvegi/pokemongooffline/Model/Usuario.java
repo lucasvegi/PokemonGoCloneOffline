@@ -2,6 +2,7 @@ package teste.lucasvegi.pokemongooffline.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.location.Location;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -205,6 +206,52 @@ public class Usuario {
             Log.e("CAPTURA", "ERRO: " + e.getMessage());
             return false;
         }
+    }
+
+    public void Chocar(Location location, int idOvo){
+        try {
+            Log.i("CHOCAR", "Chocando " + ControladoraFachadaSingleton.getInstance().getPokemonOvo(idOvo).getNome());
+
+
+            Pokemon pkmnAux = ControladoraFachadaSingleton.getInstance().getPokemonOvo(idOvo);
+
+            //Obtem timeStamp da captura
+            Map<String, String> ts = TimeUtil.getHoraMinutoSegundoDiaMesAno();
+            String dtCap = ts.get("dia") + "/" + ts.get("mes") + "/" + ts.get("ano") + " " + ts.get("hora") + ":" + ts.get("minuto") + ":" + ts.get("segundo");
+
+            //Prepara valores para serem persistidos no banco
+            ContentValues valores = new ContentValues();
+            valores.put("login", this.login);
+            valores.put("idPokemon", pkmnAux.getNumero());
+            valores.put("dtCaptura", dtCap);
+            valores.put("latitude", location.getLatitude());
+            valores.put("longitude", location.getLongitude());
+
+            //Persiste captura no banco
+            BancoDadosSingleton.getInstance().inserir("pokemonusuario", valores);
+
+
+            //cria objeto PokemonCapturado com informações vindas do objeto Aparecimento parâmetro
+            PokemonCapturado pc = new PokemonCapturado();
+            pc.setLatitude(location.getLatitude());
+            pc.setLongitude(location.getLongitude());
+            pc.setDtCaptura(dtCap);
+
+            //verifica se lista de algum pokemon ainda não existe
+            if (pokemons.get(pkmnAux) == null) {
+                pokemons.put(pkmnAux, new ArrayList<PokemonCapturado>());
+                Log.d("CAPTURA", "Pokemon novo");
+            } else {
+                Log.d("CAPTURA", "Pokemon conhecido");
+            }
+
+            //adiciona o pokemon na lista da sua especie
+            pokemons.get(pkmnAux).add(pc);
+
+        }catch (Exception e){
+            Log.e("CHOCAR", "ERRO: " + e.getMessage());
+        }
+
     }
 
     public int getQuantidadeCapturas(Pokemon pkmn){

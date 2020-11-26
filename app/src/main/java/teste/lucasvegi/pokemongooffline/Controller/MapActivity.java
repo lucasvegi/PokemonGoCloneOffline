@@ -9,8 +9,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -67,6 +67,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public final static int MENU_PERFIL = 1;
     public final static int MENU_MAPA = 2;
     public final static int MENU_POKEDEX = 3;
+    public final static int MENU_OVOS = 4;
 
     public List<Aparecimento> aparecimentos;
     public Map<Marker,Aparecimento> aparecimentoMap; //dicionário para ajudar no momento de clicar em pontos
@@ -428,6 +429,14 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
         Intent it = new Intent(this, MapCapturasActivity.class);
         startActivityForResult(it, MENU_MAPA);
+    }
+
+    public void clickOvo(View v){
+        //Toast.makeText(this,"Ovo",Toast.LENGTH_SHORT).show();
+
+        Intent it = new Intent(this, OvosActivity.class);
+        it.putExtra("location", posicaoAtual);
+        startActivityForResult(it, MENU_OVOS);
     }
 
     @Override
