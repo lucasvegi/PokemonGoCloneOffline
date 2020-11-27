@@ -14,29 +14,29 @@
         android:id="@+id/barraVoltarPokedex">
 
         <ImageButton
-            android:id="@+id/voltarPokedex"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:onClick="clickVoltar"
+            android:layout_centerVertical="true"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_action_back" />
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_action_back"
+            android:background="@android:color/transparent"
+            android:id="@+id/voltarPokedex"
+            android:onClick="clickVoltar"/>
 
         <TextView
-            android:id="@+id/txtTituloPokedex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/voltarPokedex"
-            android:text="Pokédex"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Pokédex"
+            android:textStyle="normal"
             android:textColor="#FFFFFF"
-            android:textStyle="normal" />
+            android:layout_marginLeft="10dp"
+            android:id="@+id/txtTituloPokedex"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/voltarPokedex" />
 
         <TextView
             android:layout_width="wrap_content"
