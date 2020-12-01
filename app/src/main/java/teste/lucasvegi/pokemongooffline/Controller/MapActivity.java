@@ -37,6 +37,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import teste.lucasvegi.pokemongooffline.Util.directionshelpers.FetchURL;
+import teste.lucasvegi.pokemongooffline.Util.directionshelpers.TaskLoadedCallback;
+
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -54,9 +59,7 @@ import teste.lucasvegi.pokemongooffline.Model.Pokestop;
 import teste.lucasvegi.pokemongooffline.R;
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
-//import android.support.v4.app.FragmentActivity;
-
-public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener, Runnable, OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements LocationListener, GoogleMap.OnMarkerClickListener,Runnable , TaskLoadedCallback {
     public GoogleMap map;
     public LocationManager lm;
     public Criteria criteria;
@@ -68,6 +71,9 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     boolean permissao_local = false;
     private final int CAMERA_PERMISSION = 1;
     private final int LOCATION_PERMISSION = 2;
+    public Polyline currentPolyline;
+    public Marker targetPkmn;
+
     public int TEMPO_REQUISICAO_LATLONG = 5000;
     public int DISTANCIA_MIN_METROS = 0;
     public int intervaloEntreSorteiosEmMinutos = 1;     //USADO PARA DETERMINAR INTERVALO DE TEMPO ENTRE SORTEIOS DE POKEMON
@@ -113,6 +119,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
         //aloca map de pokestops
         pokestopMap = new HashMap<Marker, Pokestop>();
+
+        targetPkmn = null;
 
         //Configura web view loader sorteio de pokemon
         webViewLoader = (WebView) findViewById(R.id.imgLoader);
@@ -219,6 +227,15 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         //Remove o personagem para atualizar a sua posição
         if(eu != null) {
             eu.remove();
+        }
+
+        if(targetPkmn != null){
+            double distanciaPkmn = getDistanciaPkmn(eu, targetPkmn);
+            double distanciaMin = distanciaMinimaParaBatalhar;
+            if(distanciaPkmn <= distanciaMin){
+                Toast.makeText(this,"Você já está perto do " + targetPkmn.getTitle() + "!\n" +
+                        "Tente capturá-lo agora! ", Toast.LENGTH_LONG).show();
+            }
         }
 
         //Escolhe imagem do personagem de acordo com o sexo
@@ -333,15 +350,23 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
                         startActivity(it);
 
-                        marker.remove();
-                    } catch (Exception e) {
-                        Log.e("CliqueMarker", "Erro: " + e.getMessage());
+                    if(marker.equals(targetPkmn)){
+                        if(currentPolyline != null)
+                            currentPolyline.remove();
+                        targetPkmn = null;
                     }
-                } else {
-                    DecimalFormat df = new DecimalFormat("0.##");
-                    Toast.makeText(this, "Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
-                            "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
+                    marker.remove();
+                }catch (Exception e){
+                    Log.e("CliqueMarker","Erro: " + e.getMessage());
                 }
+            }else{
+                DecimalFormat df = new DecimalFormat("0.##");
+                Toast.makeText(this,"Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
+                        "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
+
+                targetPkmn = marker;
+                String url = getDirectionsUrl(eu.getPosition(), marker.getPosition());
+                new FetchURL(MapActivity.this).execute(url);
             }
         }
         if(tag == "pokestop")  {
@@ -477,15 +502,33 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }
     }
 
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
+        // Origem da rota
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destino da rota
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=walking";
+        // Parametros para web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Formato do output
+        String output = "json";
+        // Url
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.directions_key);
+        return url;
+    }
+
     public void limparMarcadores(){
-        try {
+        try{
             //itera no dicionário de marcadores de aparecimentos
-            for (Map.Entry<Marker, Aparecimento> entry : aparecimentoMap.entrySet()) {
+            for (Map.Entry<Marker, Aparecimento> entry : aparecimentoMap.entrySet()){
                 Log.d("LimparMarker", "Pokemon: " + entry.getKey().getTitle());
                 entry.getKey().remove();
             }
             //limpa o dicionário de marcadores de aparecimentos
             aparecimentoMap.clear();
+            currentPolyline.remove();
+            targetPkmn = null;
 
         }catch (Exception e){
             Log.e("LimparMarker","ERRO: " + e.getMessage());
@@ -528,10 +571,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             for(int i = 0; i < apVet.length; i++){
                 Log.d("PlotarMarker", "Pokemon: " + apVet[i].getPokemon().getNome() + " Lat: " + apVet[i].getLatitude() + " Long: " + apVet[i].getLongitude());
 
-                BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(apVet[i].getPokemon().getIcone());
-
                 Marker pokePonto = map.addMarker(new MarkerOptions().
-                        icon(icon).
+                        icon(BitmapDescriptorFactory.fromResource(apVet[i].getPokemon().getIcone())).
                         position(new LatLng(apVet[i].getLatitude(), apVet[i].getLongitude())).
                         title(apVet[i].getPokemon().getNome()));
                 pokePonto.setTag("pokemon");
@@ -542,9 +583,8 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         }catch (Exception e){
             Log.e("PlotarMarker","ERRO: " + e.getMessage());
         }
-
     }
- 
+
     public double getDistanciaPkmn(Marker treinador, Marker pkmn){
         //cria location do treinador para ver distância
         Location trainer = new Location(provider);
@@ -587,7 +627,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             @Override
             public void run() {
                 limparMarcadores();
-                //atualizaPokestops();
                 plotarMarcadores();
             }
         });
@@ -690,5 +729,13 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         map.setOnMarkerClickListener(this); //marcadores clicaveis
         //map.setOnPoiClickListener(this); //label do maps clicavel
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+        if(currentPolyline!=null) {
+            currentPolyline.remove();
+        }
+        currentPolyline = map.addPolyline((PolylineOptions) values[0]);
     }
 }
