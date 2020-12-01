@@ -109,13 +109,13 @@ public class SplashActivity extends Activity {
             case LOCATION_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permissão concedida", 5000);
-                    Log.d("PERMISSAO", "DEIXOUUUUUUU");
+                    Log.d("PERMISSAO", "DEIXOU USAR CAMERA");
                     permissao_local=true;
                     configuraSomAbertura();
                 }
                 else {
                     Toast.makeText(this, "Permissão Necessária para saber seu local", 5000);
-                    Log.d("PERMISSAO", "NAO DEIXOUUUUUUU");
+                    Log.d("PERMISSAO", "NAO DEIXOU USAR GPS");
                     permissao_local=true;
                     configuraSomAbertura();
                 }

@@ -1,18 +1,17 @@
-package teste.lucasvegi.pokemongooffline.Model;
+package teste.lucasvegi.pokemongooffline.Util;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.errors.ApiException;
-import com.google.maps.model.Distance;
 import com.google.maps.model.LatLng;
-import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.RankBy;
+
 import java.io.IOException;
 
 public class NearbySearch {
 
-    public PlacesSearchResponse run( LatLng latlng) {
+    public static PlacesSearchResponse run( LatLng latlng) {
         PlacesSearchResponse request = new PlacesSearchResponse();
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey("AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU")

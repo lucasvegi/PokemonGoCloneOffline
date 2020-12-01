@@ -1,12 +1,15 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
+import android.Manifest;
 import android.content.Intent;
 //import android.support.v4.app.FragmentActivity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -43,16 +46,16 @@ public class MapCapturasActivity extends FragmentActivity implements OnMapReadyC
 
     }
 
-    public void clickVoltar(View v){
+    public void clickVoltar(View v) {
         finish();
     }
 
-    public void plotarMarcadoresPokemon(Pokemon pokemon){
+    public void plotarMarcadoresPokemon(Pokemon pokemon) {
         //Plota Marcadores
         try {
             List<PokemonCapturado> listaPc = ControladoraFachadaSingleton.getInstance().getUsuario().getPokemons().get(pokemon);
 
-            for(PokemonCapturado pc : listaPc){
+            for (PokemonCapturado pc : listaPc) {
                 Log.d("PlotarMarker", "Pokemon: " + pokemon.getNome() + " Lat: " + pc.getLatitude() + " Long: " + pc.getLongitude());
 
                 Marker pokePonto = map.addMarker(new MarkerOptions().
@@ -60,20 +63,20 @@ public class MapCapturasActivity extends FragmentActivity implements OnMapReadyC
                         position(new LatLng(pc.getLatitude(), pc.getLongitude())).
                         title(pokemon.getNome()).snippet(pc.getDtCaptura()));
             }
-        }catch (Exception e){
-            Log.e("PlotarMarker","ERRO: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e("PlotarMarker", "ERRO: " + e.getMessage());
         }
     }
 
-    public void plotarMarcadoresTodosPokemon(){
+    public void plotarMarcadoresTodosPokemon() {
         //Plota Todos os Marcadores
         try {
             //recupera o map de todos os pokemons já capturados pelo treinador
-            Map<Pokemon,List<PokemonCapturado>> mapPc = ControladoraFachadaSingleton.getInstance().getUsuario().getPokemons();
+            Map<Pokemon, List<PokemonCapturado>> mapPc = ControladoraFachadaSingleton.getInstance().getUsuario().getPokemons();
 
-            for (Map.Entry<Pokemon,List<PokemonCapturado>> entry : mapPc.entrySet()){
+            for (Map.Entry<Pokemon, List<PokemonCapturado>> entry : mapPc.entrySet()) {
                 //varre a lista da todos os pokemons capturados de uma espécie
-                for(PokemonCapturado pc : entry.getValue()){
+                for (PokemonCapturado pc : entry.getValue()) {
                     Log.d("PlotarMarker", "Pokemon: " + entry.getKey().getNome() + " Lat: " + pc.getLatitude() + " Long: " + pc.getLongitude());
 
                     Marker pokePonto = map.addMarker(new MarkerOptions().
@@ -82,8 +85,8 @@ public class MapCapturasActivity extends FragmentActivity implements OnMapReadyC
                             title(entry.getKey().getNome()).snippet(pc.getDtCaptura()));
                 }
             }
-        }catch (Exception e){
-            Log.e("PlotarMarker","ERRO: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e("PlotarMarker", "ERRO: " + e.getMessage());
         }
     }
 
@@ -91,7 +94,10 @@ public class MapCapturasActivity extends FragmentActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         //configura o mapa
-        map.setMyLocationEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            map.setMyLocationEnabled(true);
+        }
+
         map.setBuildingsEnabled(true);
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
