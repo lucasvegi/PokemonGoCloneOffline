@@ -201,7 +201,6 @@ public final class ControladoraFachadaSingleton {
 
 
         InteracaoPokestop interacaoPokestop = new InteracaoPokestop(p, user, acesso);
-
         p.setDisponivel(false);
 
         return interacaoPokestop;
@@ -308,12 +307,13 @@ public final class ControladoraFachadaSingleton {
                     Log.d("POKEACTIVITY","CADASTROU NO BD OU ATUALIZOU COM ID = "+id);
                 }
 
+                InteracaoPokestop it = getUltimaInteracao(pokestop);
                 //atualizar se eh possivel interagir em questao de tempo
-                if (pokestop.getUltimoAcesso() != null) {
+                if (it.getUltimoAcesso() != null) {
                     Date TempoAtual = Calendar.getInstance().getTime();
-                    double diff = TempoAtual.getTime() - pokestop.getUltimoAcesso().getTime();
-                    double diffMinuto = diff / (1000);
-                    if (diffMinuto > 300) {
+                    double diff = TempoAtual.getTime() - it.getUltimoAcesso().getTime();
+                    int diffSec = (int) diff / (1000);
+                    if (diffSec> 300) {
                         pokestop.setDisponivel(true);
                     }
                     else
