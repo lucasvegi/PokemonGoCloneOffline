@@ -470,14 +470,13 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
                 Log.d("AtualizarMarker", "PokeStop: " + entry.getKey().getTitle());
                 Marker marker = entry.getKey();
 
-                //método roda também na thread de pokemons
-                //pode ocorrer da localização alterar e estarmos alterando um marker
                 if(marker != null){
 
                     Pokestop p = entry.getValue();
                     if(!p.getDisponivel()) {
                         Date TempoAtual = Calendar.getInstance().getTime();
-                        double diff = TempoAtual.getTime() - p.getUltimoAcesso().getTime();
+                        InteracaoPokestop it = ControladoraFachadaSingleton.getInstance().getUltimaInteracao(p);
+                        double diff = TempoAtual.getTime() - it.getUltimoAcesso().getTime();
                         int diffSec = (int) diff / (1000);
                         if (diffSec > 300) {
                             p.setDisponivel(true);
