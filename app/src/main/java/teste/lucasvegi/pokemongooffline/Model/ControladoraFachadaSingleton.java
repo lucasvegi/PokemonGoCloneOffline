@@ -225,7 +225,7 @@ public final class ControladoraFachadaSingleton {
 
         InteracaoPokestop interacaoPokestop = new InteracaoPokestop(p, user, acesso);
         p.setDisponivel(false);
-
+        aumentaXp("pokestop");
         return interacaoPokestop;
     }
 
@@ -463,7 +463,7 @@ public final class ControladoraFachadaSingleton {
         return quantidadeOvosIncubado;
     }
 
-    /*public void sorteiaOvo(){
+    public void sorteiaOvo(){
 
         int tamComum = pokemons.get("C").size();
         int tamIncomum = pokemons.get("I").size();
@@ -493,7 +493,7 @@ public final class ControladoraFachadaSingleton {
             int sorteio = RandomUtil.randomIntInRange(min,max);
             int idP = pokemons.get("L").get(sorteio).getNumero();
 
-            //cadastraOvo(idOvo, idP, "L", 0);   //colocar idOvo auto incremento?
+            cadastraOvo(idOvo, idP, "L", 0);   //colocar idOvo auto incremento?
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("L").get(sorteio).getNome());
 
@@ -503,7 +503,7 @@ public final class ControladoraFachadaSingleton {
             int sorteio = RandomUtil.randomIntInRange(min,max);
             int idP = pokemons.get("R").get(sorteio).getNumero();
 
-            //cadastraOvo(idOvo, idP, "R", 0);   //colocar idOvo auto incremento?
+            cadastraOvo(idOvo, idP, "R", 0);   //colocar idOvo auto incremento?
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("R").get(sorteio).getNome());
 
@@ -513,7 +513,7 @@ public final class ControladoraFachadaSingleton {
             int sorteio = RandomUtil.randomIntInRange(min,max);
             int idP = pokemons.get("I").get(sorteio).getNumero();
 
-            //cadastraOvo(idOvo, idP, "I", 0);   //colocar idOvo auto incremento?
+            cadastraOvo(idOvo, idP, "I", 0);   //colocar idOvo auto incremento?
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("I").get(sorteio).getNome());
 
@@ -527,7 +527,7 @@ public final class ControladoraFachadaSingleton {
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("C").get(sorteio).getNome());
         }
-    }*/
+    }
 
 
     public void sorteiaAparecimentos(double LatMin, double LatMax, double LongMin, double LongMax){
@@ -693,7 +693,7 @@ public final class ControladoraFachadaSingleton {
         return true;
     }
 
-    /*public void cadastraOvo(int idOvo, int idPokemon, String idTipoOvo, int incubado){
+    public void cadastraOvo(int idOvo, int idPokemon, String idTipoOvo, int incubado){
 
         ContentValues valores = new ContentValues();
         valores.put("idOvo",idOvo);
@@ -705,7 +705,7 @@ public final class ControladoraFachadaSingleton {
 
         //daoOvos()    CHAMA OU NAO?
 
-    }*/
+    }
 
     public boolean temSessao(){
 
@@ -723,7 +723,7 @@ public final class ControladoraFachadaSingleton {
         }
     }
 
-    /*public Pokemon convertPokemonSerializableToObject(Pokemon pkmn) {
+    public Pokemon convertPokemonSerializableToObject(Pokemon pkmn) {
         //obtem lista de pokemons da controladora geral
         List<Pokemon> listPkmn = this.getPokemons();
         Pokemon pkmnAux = null;
@@ -737,7 +737,7 @@ public final class ControladoraFachadaSingleton {
         }
 
         return pkmnAux;
-    }*/
+    }
 
     public boolean aumentaXp(String evento) {
         final int xpRecebido = getXpEvento(evento);
