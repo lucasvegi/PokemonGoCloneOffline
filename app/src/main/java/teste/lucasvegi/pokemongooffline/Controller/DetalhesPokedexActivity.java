@@ -100,7 +100,7 @@ public class DetalhesPokedexActivity extends Activity implements LocationListene
             btn_evoluir.setBackgroundResource(R.drawable.roundshape_botao_cinza);
         }
         else
-            btn_evoluir.setBackgroundResource(R.drawable.roundshape_botaopadrao);
+            btn_evoluir.setBackgroundResource(R.drawable.botao_style);
 
         //Tenta colocar valores vindos do pokemon por navegação
         try {
