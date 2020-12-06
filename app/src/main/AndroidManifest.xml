@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="teste.lucasvegi.pokemongooffline" >
+    package="teste.lucasvegi.pokemongooffline">
 
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -28,39 +28,38 @@
 
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="false" />
-
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
+        android:required="false" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
-    <!-- Importante para recuperar o context de forma estática -->
     <application
-        android:name="teste.lucasvegi.pokemongooffline.Util.MyApp"
+        android:name=".Util.MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme" >
-
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".Controller.PokestopActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            ></activity>
         <!-- NECESSÁRIO ADICIONAR ESSA CONFIGURAÇÃO PARA INFORMAR A VERSÃO DO GOOGLE PLAY SERVICES UTILIZADA PARA COMPILAR O APP -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.CapturaActivity"
+            android:name=".Controller.CapturaActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.MapActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:name=".Controller.MapActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.SplashActivity"
-            android:screenOrientation="portrait" >
+            android:name=".Controller.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,35 +67,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.LoginActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:name=".Controller.LoginActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.CadastrarActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:name=".Controller.CadastrarActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.PerfilActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:name=".Controller.PerfilActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.PokedexActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:name=".Controller.PokedexActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.OvosActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:name=".Controller.DetalhesPokedexActivity"
+            android:screenOrientation="portrait"></activity>
+             >
         <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.DetalhesPokedexActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
-            android:name="teste.lucasvegi.pokemongooffline.Controller.MapCapturasActivity"
+            android:name=".Controller.OvosActivity"
             android:screenOrientation="portrait">
         </activity>
 
-        <!-- CHAVE API KEY -->
+        <activity
+            android:name=".Controller.MapCapturasActivity"
+            android:screenOrientation="portrait"></activity> <!-- CHAVE API KEY -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD32K88SnMpmPlsQngbAaL566MOePzWWQY" />

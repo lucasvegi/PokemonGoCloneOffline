@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 28
     defaultConfig {
         applicationId 'teste.lucasvegi.pokemongooffline'
         minSdkVersion 17
-        targetSdkVersion 21
+        targetSdkVersion 28
         versionCode 1
         versionName '0.4'
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -18,11 +18,18 @@ android {
     }
     productFlavors {
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.google.android.gms:play-services:8.3.0'
-    compile 'com.android.support:design:23.1.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.maps:google-maps-services:0.11.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
+    implementation 'com.google.android.libraries.places:places:2.4.0'
 }

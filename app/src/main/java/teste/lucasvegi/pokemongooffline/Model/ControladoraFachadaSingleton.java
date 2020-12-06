@@ -2,16 +2,31 @@ package teste.lucasvegi.pokemongooffline.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPhotoRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.maps.model.PlacesSearchResult;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
+import teste.lucasvegi.pokemongooffline.Util.MyApp;
+import teste.lucasvegi.pokemongooffline.Util.NearbySearch;
 import teste.lucasvegi.pokemongooffline.Util.RandomUtil;
 import teste.lucasvegi.pokemongooffline.Util.TimeUtil;
 
@@ -184,6 +199,66 @@ public final class ControladoraFachadaSingleton {
         return this.user;
     }
 
+    public InteracaoPokestop interagePokestop(Pokestop p, Date acesso){
+        ContentValues valores = new ContentValues();
+
+        valores.put("ultimoAcesso",acesso.getTime());
+
+        Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("interacaopokestop ip",
+                new String[]{"ip.idPokestop idPokestop"},
+                "ip.idPokestop = '" + p.getID() + "' and ip.loginUsuario = '"+user.getLogin()+"'",
+                "");
+
+        if(cPokestop.getCount() > 0){
+            BancoDadosSingleton.getInstance().atualizar("interacaopokestop",
+                    valores,
+                    "idPokestop = '"+p.getID()+"' and "+
+                            "loginUsuario='"+user.getLogin()+"'"
+            );
+        }
+        else{
+            valores.put("idPokestop",p.getID());
+            valores.put("loginUsuario",user.getLogin());
+            BancoDadosSingleton.getInstance().inserir("interacaopokestop",valores);
+        }
+
+
+        InteracaoPokestop interacaoPokestop = new InteracaoPokestop(p, user, acesso);
+        p.setDisponivel(false);
+        aumentaXp("pokestop");
+        sorteiaOvo();
+        return interacaoPokestop;
+    }
+
+    public InteracaoPokestop getUltimaInteracao(Pokestop p){
+        Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("interacaopokestop",
+                new String[]{"ultimoAcesso"},
+                "idPokestop = '" + p.getID() + "' and loginUsuario = '"+user.getLogin()+"'",
+                "");
+
+        Date access = null;
+        while(cPokestop.getCount() > 0 && cPokestop.moveToNext()){
+            int cAcesso = cPokestop.getColumnIndex("ultimoAcesso");
+
+            access = new Date( cPokestop.getLong(cAcesso)) ;
+        }
+
+        if(access == null)
+            p.setDisponivel(true);
+        else{
+            Date TempoAtual = Calendar.getInstance().getTime();
+            double diff = TempoAtual.getTime() - access.getTime();
+            int diffSec = (int)diff/1000;
+            if(diffSec > 300)
+                p.setDisponivel(true);
+            else
+                p.setDisponivel(false);
+        }
+
+        InteracaoPokestop interac = new InteracaoPokestop(p, user, access);
+        return interac;
+    }
+
     public List<Pokemon> getPokemons(){
         //extrai do MAP todos os valores pokemon e junta em uma lista ordenada para retornar.
         List<Pokemon> pkmn = new ArrayList<>();
@@ -211,6 +286,112 @@ public final class ControladoraFachadaSingleton {
         }
 
         return pkmn;
+    }
+
+    public List<Pokestop> getPokestops(double latitude, double longitude){
+        List<Pokestop> list = new ArrayList<Pokestop>();
+
+        PlacesSearchResult[] placesSearchResults = NearbySearch.run(new com.google.maps.model.LatLng(latitude, longitude)).results;
+        if(placesSearchResults != null) {
+            for (int i = 0; placesSearchResults != null && i < placesSearchResults.length / 2; i++) {
+                double lat = placesSearchResults[i].geometry.location.lat;
+                double lng = placesSearchResults[i].geometry.location.lng;
+
+                Pokestop pokestop = new Pokestop(placesSearchResults[i].placeId, placesSearchResults[i].name);
+                pokestop.setlat(lat);
+                pokestop.setlong(lng);
+                if (placesSearchResults[i].types != null && placesSearchResults[i].types.length > 0)
+                    pokestop.setDescri(placesSearchResults[i].types[0]);
+
+                //TODO : setar imagem do pokestop dentro da classe do pokestop
+                if (placesSearchResults[i].photos != null && placesSearchResults[i].photos.length > 0)
+                    getPlaceImage(pokestop);
+
+                Cursor cPokestop = BancoDadosSingleton.getInstance().buscar("pokestop pkstp",
+                        new String[]{"pkstp.disponivel disponivel"},
+                        "pkstp.idPokestop = '" + pokestop.getID() + "'",
+                        "");
+                if (cPokestop.getCount() > 0) {
+                    while (cPokestop.moveToNext()) {
+                        int coluna = cPokestop.getColumnIndex("disponivel");
+                        if (cPokestop.getInt(coluna) == 0) {
+                            pokestop.setDisponivel(false);
+                        } else
+                            pokestop.setDisponivel(true);
+                    }
+                }
+                else{
+                    ContentValues valores = new ContentValues();
+                    valores.put("idPokestop",pokestop.getID());
+                    valores.put("latitude",pokestop.getlat());
+                    valores.put("longitude",pokestop.getlongi());
+                    valores.put("disponivel",true);
+
+                    long id = BancoDadosSingleton.getInstance().inserir("Pokestop",valores);
+                    Log.d("POKEACTIVITY","CADASTROU NO BD OU ATUALIZOU COM ID = "+id);
+                }
+
+                InteracaoPokestop it = getUltimaInteracao(pokestop);
+                //atualizar se eh possivel interagir em questao de tempo
+                if (it.getUltimoAcesso() != null) {
+                    Date TempoAtual = Calendar.getInstance().getTime();
+                    double diff = TempoAtual.getTime() - it.getUltimoAcesso().getTime();
+                    int diffSec = (int) diff / (1000);
+                    if (diffSec> 300) {
+                        pokestop.setDisponivel(true);
+                    }
+                    else
+                        pokestop.setDisponivel(false);
+                }
+
+                list.add(pokestop);
+
+            }
+        }
+        return list;
+    }
+
+    //Recuperar imagem do local usando sdk places
+    private void getPlaceImage(Pokestop pokestop) {
+        //calcula a distancia e ve se eh valido interagir
+        // Inicializa o SDK
+        Places.initialize(MyApp.getAppContext(), "AIzaSyD_82FN8rMIJzMrZyx1l7xZbpW1SYN5pdU");
+        // Instancia Placesclient
+        PlacesClient placesClient = Places.createClient(MyApp.getAppContext());
+
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(pokestop.getID(), fields).build();
+
+        // faz request pra imagem, depois ve um tamanho bom pra padronizar as imagens
+        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+            // Get the photo metadata.
+            List<PhotoMetadata> list = place.getPhotoMetadatas();
+            if (list != null && list.size() > 0) {
+                PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+                // Get the attribution text.
+                String attributions = photoMetadata.getAttributions();
+                // Create a FetchPhotoRequest.
+                FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                        .setMaxWidth(500) // Optional.
+                        .setMaxHeight(300) // Optional.
+                        .build();
+                placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                    // PASSAR A IMAGEM PRO POKESTOP
+                    pokestop.setFoto(bitmap);
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        ApiException apiException = (ApiException) exception;
+                        int statusCode = apiException.getStatusCode();
+                        // Erro
+                        Log.e("TAG", "Lugar nao encontrado: " + exception.getMessage());
+                    }
+                });
+            }
+
+        });
     }
 
     public Aparecimento[] getAparecimentos(){
@@ -283,12 +464,21 @@ public final class ControladoraFachadaSingleton {
         return quantidadeOvosIncubado;
     }
 
-    /*public void sorteiaOvo(){
+    public void sorteiaOvo(){
 
         int tamComum = pokemons.get("C").size();
         int tamIncomum = pokemons.get("I").size();
         int tamRaro = pokemons.get("R").size();
         int tamLendario = pokemons.get("L").size();
+
+        //TO DO: idOvo precisa ser definido de alguma forma dentro deste método
+        int idOvo = 0;
+
+        //Monkey patch para definir id imitando autoincrement
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo"}, "","");
+        while (c.moveToNext()){
+            idOvo++;
+        }
 
         Log.d("SORTEIO","C: " + tamComum + " I: "+ tamIncomum + " R: "+ tamRaro + " L: " + tamLendario);
 
@@ -313,7 +503,7 @@ public final class ControladoraFachadaSingleton {
             int sorteio = RandomUtil.randomIntInRange(min,max);
             int idP = pokemons.get("L").get(sorteio).getNumero();
 
-            //cadastraOvo(idOvo, idP, "L", 0);   //colocar idOvo auto incremento?
+            cadastraOvo(idOvo, idP, "L", 0);   //colocar idOvo auto incremento?
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("L").get(sorteio).getNome());
 
@@ -323,7 +513,7 @@ public final class ControladoraFachadaSingleton {
             int sorteio = RandomUtil.randomIntInRange(min,max);
             int idP = pokemons.get("R").get(sorteio).getNumero();
 
-            //cadastraOvo(idOvo, idP, "R", 0);   //colocar idOvo auto incremento?
+            cadastraOvo(idOvo, idP, "R", 0);   //colocar idOvo auto incremento?
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("R").get(sorteio).getNome());
 
@@ -333,7 +523,7 @@ public final class ControladoraFachadaSingleton {
             int sorteio = RandomUtil.randomIntInRange(min,max);
             int idP = pokemons.get("I").get(sorteio).getNumero();
 
-            //cadastraOvo(idOvo, idP, "I", 0);   //colocar idOvo auto incremento?
+            cadastraOvo(idOvo, idP, "I", 0);   //colocar idOvo auto incremento?
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("I").get(sorteio).getNome());
 
@@ -347,7 +537,7 @@ public final class ControladoraFachadaSingleton {
 
             Log.d("SORTEIO","LENDÁRIO: " + pokemons.get("C").get(sorteio).getNome());
         }
-    }*/
+    }
 
 
     public void sorteiaAparecimentos(double LatMin, double LatMax, double LongMin, double LongMax){
@@ -513,7 +703,7 @@ public final class ControladoraFachadaSingleton {
         return true;
     }
 
-    /*public void cadastraOvo(int idOvo, int idPokemon, String idTipoOvo, int incubado){
+    public void cadastraOvo(int idOvo, int idPokemon, String idTipoOvo, int incubado){
 
         ContentValues valores = new ContentValues();
         valores.put("idOvo",idOvo);
@@ -525,7 +715,7 @@ public final class ControladoraFachadaSingleton {
 
         //daoOvos()    CHAMA OU NAO?
 
-    }*/
+    }
 
     public boolean temSessao(){
 
@@ -543,7 +733,7 @@ public final class ControladoraFachadaSingleton {
         }
     }
 
-    /*public Pokemon convertPokemonSerializableToObject(Pokemon pkmn) {
+    public Pokemon convertPokemonSerializableToObject(Pokemon pkmn) {
         //obtem lista de pokemons da controladora geral
         List<Pokemon> listPkmn = this.getPokemons();
         Pokemon pkmnAux = null;
@@ -557,7 +747,7 @@ public final class ControladoraFachadaSingleton {
         }
 
         return pkmnAux;
-    }*/
+    }
 
     public boolean aumentaXp(String evento) {
         final int xpRecebido = getXpEvento(evento);

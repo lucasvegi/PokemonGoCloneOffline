@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.lang.reflect.Field;
+
 import teste.lucasvegi.pokemongooffline.R;
 
 public final class BancoDadosSingleton {
@@ -478,8 +480,123 @@ public final class BancoDadosSingleton {
                     "(4, 19, 'L', 0, 0, 0, 0)," +
                     "(5, 16, 'C', 0, 0, 0, 0)," +
                     "(6, 22, 'I', 0, 0, 0, 0);",
-
-    };
+            "CREATE TABLE pokestop (" +
+                    "  idPokestop TEXT NOT NULL," +
+                    "  latitude REAL NOT NULL," +
+                    "  longitude REAL NOT NULL," +
+                    "  disponivel BOOLEAN NOT NULL," +
+                    "  PRIMARY KEY  (idPokestop)" +
+                    ");",
+            "CREATE TABLE interacaopokestop ("+
+                    " idPokestop TEXT NOT NULL,"+
+                    " loginUsuario TEXT NOT NULL,"+
+                    " ultimoAcesso TEXT NOT NULL,"+
+                    " PRIMARY KEY(idPokestop, loginUsuario),"+
+                    " CONSTRAINT fk_interacaopokestop_pokestop FOREIGN KEY (idPokestop) REFERENCES pokestop (idPokestop),"+
+                    " CONSTRAINT fk_interacaopokestop_usuario FOREIGN KEY (loginUsuario) REFERENCES usuario (login)"+
+                    ");",
+            "CREATE TABLE traducao (" +
+                    "  ingles TEXT NOT NULL," +
+                    "  portugues TEXT NOT NULL," +
+                    "  PRIMARY KEY  (ingles)" +
+                    ");",
+            "INSERT INTO traducao (ingles, portugues) VALUES" +
+                    "('accounting','Agência de Contabilidade'),"+
+                    "('airport','aeroporto'),"+
+                    "('amusement_park','Parque de Diversões'),"+
+                    "('aquarium','Aquário'),"+
+                    "('art_gallery','Galeria de Arte'),"+
+                    "('atm','Caixa 24h'),"+
+                    "('bakery','Padaria'),"+
+                    "('bank','Banco'),"+
+                    "('bar','Bar'),"+
+                    "('beauty_salon','Salão de Beleza'),"+
+                    "('bicycle_store','Loja de Bicicleta'),"+
+                    "('book_store','Livraria'),"+
+                    "('bowling_alley','Boliche'),"+
+                    "('bus_station','Ponto de Ônibus'),"+
+                    "('cafe','Café'),"+
+                    "('campground','Área de Acampamento'),"+
+                    "('car_dealer','Concecionária de Carros'),"+
+                    "('car_rental','Aluguel de Carros'),"+
+                    "('car_repair','Mecânico'),"+
+                    "('car_wash','Lava Jato'),"+
+                    "('casino','Cassino'),"+
+                    "('cemetery','Cemitério'),"+
+                    "('church','Igreja'),"+
+                    "('city_hall','Câmara Municipal'),"+
+                    "('clothing_store','Loja de Roupas'),"+
+                    "('convenience_store','Loja de Conveniência'),"+
+                    "('courthouse','Tribunal'),"+
+                    "('dentist','Dentista'),"+
+                    "('department_store','Loja de Departamento'),"+
+                    "('doctor','Doutor'),"+
+                    "('drugstore','Farmácia'),"+
+                    "('electrician','Eletricista'),"+
+                    "('embassy','Embaixada'),"+
+                    "('fire_station','Corpo de Bombeiros'),"+
+                    "('florist','Floricultura'),"+
+                    "('funeral_home','Funerária'),"+
+                    "('furniture_store','Loja de Móveis'),"+
+                    "('gas_station','Posto de Gasolina'),"+
+                    "('gym','Academia'),"+
+                    "('hair_care','Cabeleleiro'),"+
+                    "('hardware_store','Loja de Material de Construção'),"+
+                    "('hindu_temple','Templo Hindu'),"+
+                    "('home_goods_store','Loja de Artigos Domésticos'),"+
+                    "('hospital','Hospital'),"+
+                    "('insurance_agency','Agência de Seguros'),"+
+                    "('jewelry_store','Joaleria'),"+
+                    "('laundry','Lavanderia'),"+
+                    "('lawyer','Advocacia'),"+
+                    "('library','Biblioteca'),"+
+                    "('light_rail_station','Estação de Metro Leve'),"+
+                    "('liquor_store','Distribuidora de Bebidas'),"+
+                    "('local_government_office','Escritório do Governo Local'),"+
+                    "('locksmith','chaveiro'),"+
+                    "('lodging','Pousada'),"+
+                    "('meal_delivery','Entrega de Refeições'),"+
+                    "('meal_takeaway','Refeições para Viagem'),"+
+                    "('mosque','Mosqueiro'),"+
+                    "('movie_rental','Locadora de Filmes'),"+
+                    "('movie_theater','Cinema'),"+
+                    "('moving_company','Fretista'),"+
+                    "('museum','Museu'),"+
+                    "('night_club','Balada'),"+
+                    "('painter','Pintor'),"+
+                    "('park','Parque'),"+
+                    "('parking','Estacionamento'),"+
+                    "('pet_store','Petshop'),"+
+                    "('pharmacy','Farmácia'),"+
+                    "('physiotherapist','Fisioterapeuta'),"+
+                    "('plumber','Encanador'),"+
+                    "('police','Estação de Polícia'),"+
+                    "('post_office','Agência dos Correios'),"+
+                    "('primary_school','Escola'),"+
+                    "('real_estate_agency','Imobiliária'),"+
+                    "('restaurant','Restaurante'),"+
+                    "('roofing_contractor','Empreiteiro de Telhados'),"+
+                    "('rv_park','Parque de Trailers'),"+
+                    "('school','Escola'),"+
+                    "('secondary_school','Colégio'),"+
+                    "('shoe_store','Loja de Sapatos'),"+
+                    "('shopping_mall','Shopping'),"+
+                    "('spa','Spa'),"+
+                    "('stadium','Estadio'),"+
+                    "('storage','Depósito'),"+
+                    "('store','Loja'),"+
+                    "('subway_station','Estação de Metro'),"+
+                    "('supermarket','Supermercado'),"+
+                    "('synagogue','Sinagoga'),"+
+                    "('taxi_stand','Ponto de Táxi'),"+
+                    "('tourist_attraction','Atração Turística'),"+
+                    "('train_station','Estação de Trem'),"+
+                    "('transit_station','Estação de Trânsito'),"+
+                    "('travel_agency','Agência de Viagens'),"+
+                    "('university','Universidade'),"+
+                    "('veterinary_care','Veterinária'),"+
+                    "('zoo','Zoológico');"
+            };
 
     private BancoDadosSingleton() {
         Context ctx = MyApp.getAppContext();
@@ -497,6 +614,44 @@ public final class BancoDadosSingleton {
                 db.execSQL(SCRIPT_DATABASE_CREATE[i]);
             }
             Log.i("BANCO_DADOS", "Criou tabelas do banco e as populou.");
+        }
+        else{
+            //Banco já criado
+            //precisamos garantir que os hashes dos resources sejam os mesmos
+
+            //primeiro buscamos no banco os dados dos pokemons
+            c = buscar("pokemon", new String[]{"idPokemon,foto,icone"}, "", "");
+
+            Class res = R.drawable.class;
+            while (c.moveToNext()){
+                int idPokemon = c.getColumnIndex("idPokemon");
+                int fotoCol = c.getColumnIndex("foto");
+                int iconeCol = c.getColumnIndex("icone");
+
+                int id = c.getInt(idPokemon);
+                int foto = c.getInt(fotoCol);
+                int icone = c.getInt(iconeCol);
+                try {
+                    //recuperamos os resources de um pokemon específico
+                    Field idFoto = res.getDeclaredField("p"+id);
+                    Field idIcone = res.getDeclaredField("i"+id);
+
+                    //se o hash do icone ou foto for diferente atualizamos o hash do banco
+                    if(idFoto.getInt(null) != foto || idIcone.getInt(null) != icone ){
+                        ContentValues ct = new ContentValues();
+                        ct.put("foto", idFoto.getInt(null));
+                        ct.put("icone", idIcone.getInt(null));
+                        atualizar("pokemon", ct, "idPokemon="+id);
+                    }
+
+                } catch (NoSuchFieldException e) {
+                    Log.e("BANCO_DADOS", "Imagem de pokemon acessado não existe. idPokemon="+id);
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    Log.e("BANCO_DADOS", "Sistema não pemitiu acesso ao resource de imagem do pokemon. idPokemon="+id);
+                    e.printStackTrace();
+                }
+            }
         }
 
         c.close();
