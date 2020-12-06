@@ -195,6 +195,10 @@ public class Pokemon implements Serializable{
         return true;
     }
 
+    public void setEvolucao(Pokemon evolucao) {
+        this.evolucao = evolucao;
+    }
+
     public int getQuantDocesNecessarios() {
         switch (this.categoria) {
             case "C":
