@@ -26,39 +26,7 @@ public final class ControladoraFachadaSingleton {
     private static ControladoraFachadaSingleton INSTANCE = new ControladoraFachadaSingleton();
     private boolean sorteouLendario = false;
 
-
-    private List<Doce> doces;
-
-    private void daoDoce(){
-        this.doces = new ArrayList<Doce>();
-
-        Cursor c = BancoDadosSingleton.getInstance().buscar("doce",new String[]{"idDoce","nome","quant"},"","");
-
-        while(c.moveToNext()){
-            int idD = c.getColumnIndex("idDoce");
-            int nome = c.getColumnIndex("nome");
-            int quant = c.getColumnIndex("quant");
-
-            Doce d = new Doce();
-            d.setIdDoce(c.getInt(idD));
-            d.setNomePkm(c.getString(nome));
-            d.setQuantidade(c.getInt(quant));
-
-            this.doces.add(d);
-        }
-
-        c.close();
-
-        //TODO: apagar testes de impressão doce
-
-        //IMPRIME DE TESTE
-        for (Doce d : doces){
-            Log.d("DOCES",d.getNomePkm() + ": " + d.getQuantidade());
-        }
-    }
-
     private ControladoraFachadaSingleton() {
-        daoDoce();
         daoTipo();
         daoPokemons(this);
     }
@@ -92,7 +60,7 @@ public final class ControladoraFachadaSingleton {
     private void daoPokemons(ControladoraFachadaSingleton controladorGeral){
         pokemons = new HashMap<String,List<Pokemon>>();
 
-        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon",new String[]{"idPokemon","nome","categoria","foto","icone","idDoce","idPokemonBase"},"","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon",new String[]{"idPokemon","nome","categoria","foto","icone"},"","");
 
         while(c.moveToNext()){
             int idP = c.getColumnIndex("idPokemon");
@@ -100,10 +68,8 @@ public final class ControladoraFachadaSingleton {
             int cat = c.getColumnIndex("categoria");
             int foto = c.getColumnIndex("foto");
             int icone = c.getColumnIndex("icone");
-            int idDoce = c.getColumnIndex("idDoce");
-            int idPokemonBase = c.getColumnIndex("idPokemonBase");
 
-            Pokemon p = new Pokemon(c.getInt(idP),c.getString(name),c.getString(cat),c.getInt(foto),c.getInt(icone),c.getInt(idDoce), c.getInt(idPokemonBase),controladorGeral);
+            Pokemon p = new Pokemon(c.getInt(idP),c.getString(name),c.getString(cat),c.getInt(foto),c.getInt(icone),controladorGeral);
 
             //verifica se lista de alguma categoria ainda não existe
             if(pokemons.get(p.getCategoria()) == null)
@@ -226,10 +192,6 @@ public final class ControladoraFachadaSingleton {
 
     protected List<Tipo> getTipos(){
         return tiposPokemon;
-    }
-
-    public List<Doce> getDoces() {
-        return doces;
     }
 
     public void sorteiaAparecimentos(double LatMin, double LatMax, double LongMin, double LongMax){

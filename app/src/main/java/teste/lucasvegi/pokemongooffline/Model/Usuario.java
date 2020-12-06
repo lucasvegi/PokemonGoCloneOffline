@@ -139,33 +139,6 @@ public class Usuario {
 
     }
 
-    public void somarDoces(Pokemon p, int num){
-        //Obtendo a linha da tabela de Doces referentes ao pokemon p
-        Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
-                new String[]{"d.idDoce idDoce","d.nome nome","d.quant quant"},
-                "p.idDoce = d.idDoce and d.idDoce = '" + p.getIdDoce() + "'",null);
-        cDoce.moveToNext(); //obs: fora do while pois deve haver apenas uma linha de resposta
-
-        //TODO: seria bom usar um try-catch?
-
-        //Salvando os índices da tabela
-        int idDoce = cDoce.getColumnIndex("idDoce");
-        int nome = cDoce.getColumnIndex("nome");
-        int quantDoces = cDoce.getColumnIndex("quant");
-
-        //Prepara valores para serem persistidos no banco
-        ContentValues valoresDoce = new ContentValues();
-        valoresDoce.put("idDoce",cDoce.getInt(idDoce));
-        valoresDoce.put("nome",cDoce.getString(nome));
-        valoresDoce.put("quant",cDoce.getInt(quantDoces)+num); //soma 3 na qtd de doces
-
-        //Atualizando o banco
-        BancoDadosSingleton.getInstance().atualizar("doce",valoresDoce,"idDoce = " + "'" +p.getIdDoce() + "'");
-
-        Log.i("DOCES", "Quantidade de doces do " + cDoce.getString(nome)+ " = " + (int)(cDoce.getInt(quantDoces)+num) );
-
-    }
-
     public boolean capturar(Aparecimento aparecimento){
         try {
             Log.i("CAPTURA", "Capturando " + aparecimento.getPokemon().getNome());
@@ -185,13 +158,9 @@ public class Usuario {
             valores.put("dtCaptura", dtCap);
             valores.put("latitude", aparecimento.getLatitude());
             valores.put("longitude", aparecimento.getLongitude());
-            valores.put("evoluido",0);
 
             //Persiste captura no banco
             BancoDadosSingleton.getInstance().inserir("pokemonusuario", valores);
-
-            //Adiciona 3 doces ao pokemon capturado
-            somarDoces(pkmnAux,3);
 
             //cria objeto PokemonCapturado com informações vindas do objeto Aparecimento parâmetro
             PokemonCapturado pc = new PokemonCapturado();
