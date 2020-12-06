@@ -22,6 +22,10 @@ public class PokedexActivity extends Activity implements AdapterView.OnItemClick
     private List<Pokemon> pokemons;
     private MediaPlayer mediaPlayer;
 
+    // Constantes auxiliares para o método startActivityForResult()
+    private final int COD_REQUISICAO = 7;
+    private final int ATUALIZAR_TELA = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +44,6 @@ public class PokedexActivity extends Activity implements AdapterView.OnItemClick
             AdapterPokedex adapterPokedex = new AdapterPokedex(pokemons, this);
             listView.setAdapter(adapterPokedex);
             listView.setOnItemClickListener(this);
-
             //Inicia a musica tema do menu
             mediaPlayer = MediaPlayer.create(getBaseContext(), R.raw.tema_menu);
             mediaPlayer.setLooping(true);
@@ -81,12 +84,34 @@ public class PokedexActivity extends Activity implements AdapterView.OnItemClick
 
                 Intent it = new Intent(this,DetalhesPokedexActivity.class);
                 it.putExtra("pkmn",pkmn);
-                startActivity(it);
+
+                startActivityForResult(it,COD_REQUISICAO);
             }
 
         }catch (Exception e){
             Log.e("POKEDEX", "ERRO no click: " + e.getMessage());
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent it) {
+        if(it == null){
+            Log.i("ACTIVITY_RESULT", "Não foi enviado nenhum valor");
+            return;
+        }
+        else if(requestCode == COD_REQUISICAO){
+                if(resultCode == ATUALIZAR_TELA){
+                    Log.i("ACTIVITY_RESULT", "Recebido código para atualizar a tela");
+                    //Inicia uma nova pokedex
+                    Intent itPokedex = new Intent(this, PokedexActivity.class);
+                    startActivity(itPokedex);
+                    //Termina a pokedex antiga
+                    finish();
+                }
+                else{
+                    Log.i("ACTIVITY_RESULT", "Código inválido");
+                }
+        }
     }
 }
