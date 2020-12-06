@@ -349,27 +349,28 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
                         startActivity(it);
 
-                    if(marker.equals(targetPkmn)){
-                        if(currentPolyline != null)
+                        if (marker.equals(targetPkmn)) {
+                            if (currentPolyline != null)
+                                currentPolyline.remove();
+                            targetPkmn = null;
+                        }
+                        marker.remove();
+                    } catch (Exception e) {
+                        Log.e("CliqueMarker", "Erro: " + e.getMessage());
+                    }
+                } else {
+                    if (marker.equals(targetPkmn)) {// caso o usuario clique novamente no pokemon alvo, a rota deve sumir
+                        if (currentPolyline != null)
                             currentPolyline.remove();
                         targetPkmn = null;
+                    } else {
+                        targetPkmn = marker;
+                        String url = getDirectionsUrl(eu.getPosition(), marker.getPosition());
+                        new FetchURL(MapActivity.this).execute(url);
+                        DecimalFormat df = new DecimalFormat("0.##");
+                        Toast.makeText(this, "Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
+                                "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
                     }
-                    marker.remove();
-                }catch (Exception e){
-                    Log.e("CliqueMarker","Erro: " + e.getMessage());
-                }
-            }else{
-                if(marker.equals(targetPkmn)){// caso o usuario clique novamente no pokemon alvo, a rota deve sumir
-                    if(currentPolyline != null)
-                        currentPolyline.remove();
-                    targetPkmn = null;
-                } else {
-                    targetPkmn = marker;
-                    String url = getDirectionsUrl(eu.getPosition(), marker.getPosition());
-                    new FetchURL(MapActivity.this).execute(url);
-                    DecimalFormat df = new DecimalFormat("0.##");
-                    Toast.makeText(this,"Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
-                            "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
                 }
             }
         }
