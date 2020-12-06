@@ -470,6 +470,8 @@ public final class ControladoraFachadaSingleton {
         int tamRaro = pokemons.get("R").size();
         int tamLendario = pokemons.get("L").size();
 
+        //MONKEY PATCH : idOvo precisa ser definido de alguma forma dentro deste método
+        int idOvo = 0;
         Log.d("SORTEIO","C: " + tamComum + " I: "+ tamIncomum + " R: "+ tamRaro + " L: " + tamLendario);
 
         int min = 0;
