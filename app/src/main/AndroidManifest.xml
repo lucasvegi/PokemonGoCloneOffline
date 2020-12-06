@@ -81,12 +81,21 @@
         <activity
             android:name=".Controller.DetalhesPokedexActivity"
             android:screenOrientation="portrait"></activity>
+            android:name="teste.lucasvegi.pokemongooffline.Controller.OvosActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".Controller.DetalhesPokedexActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".Controller.MapCapturasActivity"
             android:screenOrientation="portrait"></activity> <!-- CHAVE API KEY -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyD32K88SnMpmPlsQngbAaL566MOePzWWQY" />
+        <!-- com chave de debug -->
+
     </application>
 
 </manifest>

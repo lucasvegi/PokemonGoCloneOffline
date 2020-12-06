@@ -449,6 +449,38 @@ public final class BancoDadosSingleton {
                     "  CONSTRAINT fk_usuariopokemon_login FOREIGN KEY (login) REFERENCES usuario (login)," +
                     "  CONSTRAINT fk_usuariopokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES pokemon (idPokemon)" +
                     ");",
+            "CREATE TABLE tipoovo (" +
+                    "  idTipoOvo TEXT PRIMARY KEY," +
+                    "  foto INTEGER NOT NULL," +
+                    "  fotoIncubadora INTEGER NOT NULL," +
+                    "  quilometragem DOUBLE NOT NULL," +
+                    "  cor TEXT NOT NULL" +
+                    ");",
+            "INSERT INTO tipoovo (idTipoOvo, foto, fotoIncubadora,quilometragem,cor) VALUES" +
+                    "('C', "+R.drawable.ovo_verde+", "+R.drawable.incubadora_verde+",2,'Verde')," +
+                    "('I', "+R.drawable.ovo_laranja+", "+R.drawable.incubadora_laranja+",5,'Laranja')," +
+                    "('R', "+R.drawable.ovo_azul+", "+R.drawable.incubadora_azul+",7,'Azul')," +
+                    "('L', "+R.drawable.ovo_vermelho+", "+R.drawable.incubadora_vermelha+",10,'Vermelho');",
+            "CREATE TABLE ovo (" +
+                    "  idOvo INTEGER NOT NULL," +
+                    "  idPokemon INTEGER NOT NULL," +
+                    "  idTipoOvo TEXT NOT NULL," +
+                    "  incubado INTEGER NOT NULL," +
+                    "  chocado INTEGER NOT NULL," +
+                    "  exibido INTEGER NOT NULL," +
+                    "  KmAndado DOUBLE NOT NULL," +
+                    "  PRIMARY KEY  (idOvo,idPokemon,idTipoOvo)," +
+                    "  CONSTRAINT fk_usuariopokemon_pokemon FOREIGN KEY (idPokemon) REFERENCES pokemon (idPokemon)," +
+                    "  CONSTRAINT fk_tipoovo FOREIGN KEY (idTipoOvo) REFERENCES tipoovo (idTipoOvo)" +
+                    ");",
+            "INSERT INTO ovo (idOvo, idPokemon, idTipoOvo, incubado, chocado, exibido,KmAndado) VALUES" +
+                    "(1, 23, 'C', 0, 0, 0, 0)," +
+                    "(2, 18, 'R', 0, 0, 0, 0)," +
+                    "(3, 50, 'C', 0, 0, 0, 0)," +
+                    "(4, 19, 'L', 0, 0, 0, 0)," +
+                    "(5, 16, 'C', 0, 0, 0, 0)," +
+                    "(6, 22, 'I', 0, 0, 0, 0);",
+                    ");",
             "CREATE TABLE pokestop (" +
                     "  idPokestop TEXT NOT NULL," +
                     "  latitude REAL NOT NULL," +
@@ -571,7 +603,6 @@ public final class BancoDadosSingleton {
     private BancoDadosSingleton() {
         Context ctx = MyApp.getAppContext();
         // Abre o banco de dados já existente ou então cria um banco novo
-
         db = ctx.openOrCreateDatabase(NOME_BANCO, Context.MODE_PRIVATE, null);
 
         //busca por tabelas existentes no banco = "show tables" do MySQL

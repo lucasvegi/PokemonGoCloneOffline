@@ -1,8 +1,8 @@
 package teste.lucasvegi.pokemongooffline.Controller;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -86,6 +86,7 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
     public final static int MENU_PERFIL = 1;
     public final static int MENU_MAPA = 2;
     public final static int MENU_POKEDEX = 3;
+    public final static int MENU_OVOS = 4;
 
     public List<Aparecimento> aparecimentos;
     public Map<Marker,Aparecimento> aparecimentoMap; //dicionário para ajudar no momento de clicar em pontos
@@ -348,23 +349,27 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
                         startActivity(it);
 
-                        if (marker.equals(targetPkmn)) {
-                            if (currentPolyline != null)
-                                currentPolyline.remove();
-                            targetPkmn = null;
-                        }
-                        marker.remove();
-                    } catch (Exception e) {
-                        Log.e("CliqueMarker", "Erro: " + e.getMessage());
+                    if(marker.equals(targetPkmn)){
+                        if(currentPolyline != null)
+                            currentPolyline.remove();
+                        targetPkmn = null;
                     }
+                    marker.remove();
+                }catch (Exception e){
+                    Log.e("CliqueMarker","Erro: " + e.getMessage());
+                }
+            }else{
+                if(marker.equals(targetPkmn)){// caso o usuario clique novamente no pokemon alvo, a rota deve sumir
+                    if(currentPolyline != null)
+                        currentPolyline.remove();
+                    targetPkmn = null;
                 } else {
-                    DecimalFormat df = new DecimalFormat("0.##");
-                    Toast.makeText(this, "Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
-                            "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
-
                     targetPkmn = marker;
                     String url = getDirectionsUrl(eu.getPosition(), marker.getPosition());
                     new FetchURL(MapActivity.this).execute(url);
+                    DecimalFormat df = new DecimalFormat("0.##");
+                    Toast.makeText(this,"Você está a " + df.format(distanciaPkmn) + " metros do " + marker.getTitle() + ".\n" +
+                            "Aproxime-se pelo menos " + df.format(distanciaPkmn - distanciaMin) + " metros!", Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -528,7 +533,6 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
             aparecimentoMap.clear();
             currentPolyline.remove();
             targetPkmn = null;
-
         }catch (Exception e){
             Log.e("LimparMarker","ERRO: " + e.getMessage());
         }
@@ -666,6 +670,14 @@ public class MapActivity extends FragmentActivity implements LocationListener, G
 
         Intent it = new Intent(this, MapCapturasActivity.class);
         startActivityForResult(it, MENU_MAPA);
+    }
+
+    public void clickOvo(View v){
+        //Toast.makeText(this,"Ovo",Toast.LENGTH_SHORT).show();
+
+        Intent it = new Intent(this, OvosActivity.class);
+        it.putExtra("location", posicaoAtual);
+        startActivityForResult(it, MENU_OVOS);
     }
 
     @Override
