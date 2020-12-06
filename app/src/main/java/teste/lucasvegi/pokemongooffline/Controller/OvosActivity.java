@@ -22,6 +22,7 @@ import java.util.List;
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.Model.Ovo;
 import teste.lucasvegi.pokemongooffline.R;
+import teste.lucasvegi.pokemongooffline.View.AdapterOvos;
 
 public class OvosActivity extends Activity implements AdapterView.OnItemClickListener {
     private List<Ovo> ovos;
