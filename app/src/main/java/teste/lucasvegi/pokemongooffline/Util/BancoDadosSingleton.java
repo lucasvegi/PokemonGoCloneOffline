@@ -480,13 +480,11 @@ public final class BancoDadosSingleton {
                     "(4, 19, 'L', 0, 0, 0, 0)," +
                     "(5, 16, 'C', 0, 0, 0, 0)," +
                     "(6, 22, 'I', 0, 0, 0, 0);",
-                    ");",
             "CREATE TABLE pokestop (" +
                     "  idPokestop TEXT NOT NULL," +
                     "  latitude REAL NOT NULL," +
                     "  longitude REAL NOT NULL," +
                     "  disponivel BOOLEAN NOT NULL," +
-                    //"  ultimoAcesso TEXT," +
                     "  PRIMARY KEY  (idPokestop)" +
                     ");",
             "CREATE TABLE interacaopokestop ("+
