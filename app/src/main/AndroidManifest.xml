@@ -81,13 +81,12 @@
         <activity
             android:name=".Controller.DetalhesPokedexActivity"
             android:screenOrientation="portrait"></activity>
-            android:name="teste.lucasvegi.pokemongooffline.Controller.OvosActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+             >
         <activity
-            android:name=".Controller.DetalhesPokedexActivity"
+            android:name=".Controller.OvosActivity"
             android:screenOrientation="portrait">
         </activity>
+
         <activity
             android:name=".Controller.MapCapturasActivity"
             android:screenOrientation="portrait"></activity> <!-- CHAVE API KEY -->
