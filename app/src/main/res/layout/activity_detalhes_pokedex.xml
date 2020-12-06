@@ -94,6 +94,35 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Doces obtidos: 100"
+                android:textColor="#000000"
+                android:layout_marginTop="10dp"
+                android:layout_alignStart="@id/txtPkmnCapturadosDetalhes"
+                android:id="@+id/txtQuantidadeDocesDetalhes"
+                android:layout_below="@id/txtPkmnCapturadosDetalhes"                />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
+                android:text="Evoluir!"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:background="@drawable/botao_style"
+                android:id="@+id/btnEvoluirDetalhes"
+                android:layout_toEndOf="@id/txtQuantidadeDocesDetalhes"
+                android:layout_alignBaseline="@id/txtQuantidadeDocesDetalhes"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:layout_marginStart="15dp"
+                android:onClick="clickEvoluir"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Tipo:"
                 android:paddingRight="5dp"
                 android:paddingBottom="5dp"
@@ -101,8 +130,8 @@
                 android:textColor="#000000"
                 android:layout_marginTop="15dp"
                 android:id="@+id/txtLabelTipoPkmnDetalhes"
-                android:layout_below="@+id/txtPkmnCapturadosDetalhes"
-                android:layout_alignStart="@+id/txtPkmnCapturadosDetalhes" />
+                android:layout_below="@+id/txtQuantidadeDocesDetalhes"
+                android:layout_alignStart="@+id/txtQuantidadeDocesDetalhes" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -140,10 +169,11 @@
                 android:textColor="#FFFFFF"
                 android:background="@drawable/botao_style"
                 android:id="@+id/btnLocaisCapturasDetalhes"
-                android:layout_below="@+id/txtTipo1PkmnDetalhes"
+                android:layout_below="@+id/txtLabelTipoPkmnDetalhes"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="25dp"
                 android:onClick="clickLocais"/>
+
 
         </RelativeLayout>
 

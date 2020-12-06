@@ -1,10 +1,17 @@
 package teste.lucasvegi.pokemongooffline.Model;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Random;
 
 import teste.lucasvegi.pokemongooffline.Util.BancoDadosSingleton;
 
@@ -18,18 +25,23 @@ public class Pokemon implements Serializable{
     private int foto;
     private int icone;
     private List<Tipo> tipos;
+    private int idDoce;
+    private int idPokemonBase;
+    Pokemon evolucao;
 
     public Pokemon(){
 
     }
 
-    protected Pokemon(int numero, String nome, String categoria, int foto, int icone, ControladoraFachadaSingleton cg){
+    protected Pokemon(int numero, String nome, String categoria, int foto, int icone, int idDoce, int idPokemonBase, ControladoraFachadaSingleton cg){
         this.numero = numero;
         this.nome = nome;
         this.categoria = categoria;
         this.foto = foto;
         this.icone = icone;
         this.tipos = new ArrayList<Tipo>();
+        this.idDoce = idDoce;
+        this.idPokemonBase = idPokemonBase;
 
         preencherTipos(cg);
     }
@@ -96,6 +108,113 @@ public class Pokemon implements Serializable{
 
     public void setIcone(int icone) {
         this.icone = icone;
+    }
+
+    public int getIdDoce(){return idDoce;}
+
+    public int getIdPokemonBase(){return idPokemonBase;}
+
+    public Pokemon getEvolucao() {
+        Cursor cPkmn = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemon pe",
+                new String[]{"pe.idPokemon idPokemon", "pe.nome nome", "pe.categoria categoria", "pe.foto foto", "pe.icone icone",
+                        "pe.idDoce idDoce", "pe.idPokemonBase idPokemonBase"},
+                "pe.idPokemonBase = p.idPokemon AND pe.idPokemonBase = " + this.numero, "");
+
+        //Se a busca não encontrar nada, já retorna null
+        if(!cPkmn.moveToNext()) {
+            cPkmn.close();
+            return null;
+        }
+
+        //Caso especial: Eevee (possui 3 evoluções diretas)
+        if(this.nome.equals("Eevee")) {
+            Random evolEeve = new Random();
+            int n = evolEeve.nextInt(3);
+            Log.i("EVOLUCAO EEVVEE", "n = " + n);
+            while (n>0){
+                cPkmn.moveToNext();
+                n--;
+            }
+        }
+
+        int numero = cPkmn.getColumnIndex("idPokemon");
+        int nome = cPkmn.getColumnIndex("nome");
+        int categoria = cPkmn.getColumnIndex("categoria");
+        int foto = cPkmn.getColumnIndex("foto");
+        int icone = cPkmn.getColumnIndex("icone");
+        int idDoce = cPkmn.getColumnIndex("idDoce");
+        int idPokemonBase = cPkmn.getColumnIndex("idPokemonBase");
+
+        evolucao = new Pokemon(cPkmn.getInt(numero),cPkmn.getString(nome),cPkmn.getString(categoria),
+                cPkmn.getInt(foto),cPkmn.getInt(icone),cPkmn.getInt(idDoce), cPkmn.getInt(idPokemonBase),
+                ControladoraFachadaSingleton.getInstance());
+
+        cPkmn.close();
+
+        return evolucao;
+    }
+
+    public boolean estaDisponivel(boolean atualizarFlagEvoluido){
+        // SELECT pu.login login, pu.idPokemon idPokemon, pu.latitude latitude,pu.longitude longitude,pu.dtCaptura dtCaptura
+        // FROM pokemon p, pokemonusuario pu
+        // WHERE pu.evoluido = 0 AND p.idPokemon = pu.idPokemon AND pu.idPokemon = this.numero
+        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon p, pokemonusuario pu",
+                new String[]{"pu.login login", "pu.idPokemon idPokemon", "pu.latitude latitude",
+                        "pu.longitude longitude","pu.dtCaptura dtCaptura" },
+                "pu.evoluido = 0 AND p.idPokemon = pu.idPokemon AND pu.idPokemon = " + this.numero, "");
+
+        //Se a busca não encontrar nada, retorna false
+        if(!c.moveToNext()){
+            c.close();
+            return false;
+        }
+
+        // Atualizando a flag evoluido para true
+        if(atualizarFlagEvoluido) {
+            int login = c.getColumnIndex("login");
+            int idPokemon = c.getColumnIndex("idPokemon");
+            int latitude = c.getColumnIndex("latitude");
+            int longitude = c.getColumnIndex("longitude");
+            int dtCaptura = c.getColumnIndex("dtCaptura");
+
+            //Prepara valores para serem persistidos no banco
+            ContentValues valores = new ContentValues();
+            valores.put("login", c.getString(login));
+            valores.put("idPokemon", c.getInt(idPokemon));
+            valores.put("latitude", c.getDouble(latitude));
+            valores.put("longitude", c.getDouble(longitude));
+            valores.put("dtCaptura", c.getString(dtCaptura));
+            valores.put("evoluido", 1);
+
+            //Atualiza o banco
+            BancoDadosSingleton.getInstance().atualizar("pokemonusuario",valores,"login = '" + c.getString(login) +
+                    "' AND idPokemon = '" + c.getInt(idPokemon) + "' AND dtCaptura = '" + c.getString(dtCaptura) + "'");
+        }
+
+        c.close();
+        return true;
+    }
+
+    public int getQuantDocesNecessarios() {
+        switch (this.categoria) {
+            case "C":
+                return 25;
+            case "I":
+                return 50;
+            case "R":
+                return 75;
+            default:
+                return 100;
+        }
+    }
+
+    public int getQuantDocesObtidos(){
+        Cursor cDoce = BancoDadosSingleton.getInstance().buscar("pokemon p, doce d",
+                new String[]{"d.quant quant"},
+                "p.idDoce = d.idDoce and d.idDoce = '" + this.getIdDoce() + "'",null);
+        cDoce.moveToNext(); //obs: fora do while pois deve haver apenas uma linha de resposta
+
+        return cDoce.getInt(cDoce.getColumnIndex("quant"));
     }
 
     @Override
