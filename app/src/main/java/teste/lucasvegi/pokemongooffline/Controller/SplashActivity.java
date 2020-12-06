@@ -3,6 +3,7 @@ package teste.lucasvegi.pokemongooffline.Controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -10,12 +11,18 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import teste.lucasvegi.pokemongooffline.Model.ControladoraFachadaSingleton;
 import teste.lucasvegi.pokemongooffline.R;
 
 public class SplashActivity extends Activity {
 
+    private final int LOCATION_PERMISSION = 1;
+    boolean permissao_local = false;
     private WebView webView;
     private TextView versaoApp;
     private static int SPLASH_TIME_OUT = 6000;
@@ -27,9 +34,10 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
 
         configuraViewInicio();
-        configuraSomAbertura();
-
-
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},LOCATION_PERMISSION);
+        else
+            configuraSomAbertura();
         //espera um tempo antes de ir para a proxima tela
         /*new Handler().postDelayed(new Runnable() {
             @Override
@@ -78,7 +86,6 @@ public class SplashActivity extends Activity {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     //Executa quando a musica de abertura acaba
-
                     if(ControladoraFachadaSingleton.getInstance().temSessao()) {
                         Intent i = new Intent(getBaseContext(), MapActivity.class);
                         startActivity(i);
@@ -93,6 +100,26 @@ public class SplashActivity extends Activity {
             mp.start();
         }catch (Exception e){
             Log.e("SPLASH","ERRO: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case LOCATION_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permissão concedida", 5000);
+                    Log.d("PERMISSAO", "DEIXOU USAR CAMERA");
+                    permissao_local=true;
+                    configuraSomAbertura();
+                }
+                else {
+                    Toast.makeText(this, "Permissão Necessária para saber seu local", 5000);
+                    Log.d("PERMISSAO", "NAO DEIXOU USAR GPS");
+                    permissao_local=true;
+                    configuraSomAbertura();
+                }
+            }
         }
     }
 }
