@@ -226,6 +226,7 @@ public final class ControladoraFachadaSingleton {
         InteracaoPokestop interacaoPokestop = new InteracaoPokestop(p, user, acesso);
         p.setDisponivel(false);
         aumentaXp("pokestop");
+        sorteiaOvo();
         return interacaoPokestop;
     }
 
@@ -470,8 +471,15 @@ public final class ControladoraFachadaSingleton {
         int tamRaro = pokemons.get("R").size();
         int tamLendario = pokemons.get("L").size();
 
-        //MONKEY PATCH : idOvo precisa ser definido de alguma forma dentro deste método
+        //TO DO: idOvo precisa ser definido de alguma forma dentro deste método
         int idOvo = 0;
+
+        //Monkey patch para definir id imitando autoincrement
+        Cursor c = BancoDadosSingleton.getInstance().buscar("ovo",new String[]{"idOvo"}, "","");
+        while (c.moveToNext()){
+            idOvo++;
+        }
+
         Log.d("SORTEIO","C: " + tamComum + " I: "+ tamIncomum + " R: "+ tamRaro + " L: " + tamLendario);
 
         int min = 0;
