@@ -2,7 +2,6 @@ package teste.lucasvegi.pokemongooffline.Model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.Serializable;

@@ -449,15 +449,17 @@ public final class ControladoraFachadaSingleton {
 
     public Pokemon getPokemonOvo(int idOvo){
         Pokemon p = null;
-        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon p, ovo o",new String[]{"p.idPokemon idPokemon","p.nome nome","p.categoria categoria","p.foto foto","p.icone icone"},"o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
+        Cursor c = BancoDadosSingleton.getInstance().buscar("pokemon p, ovo o",new String[]{"p.idPokemon idPokemon","p.nome nome","p.categoria categoria","p.foto foto","p.icone icone","p.idDoce idDoce", "p.idPokemonBase idPokemonBase"},"o.idPokemon = p.idPokemon AND o.idOvo = '"+idOvo+"'","");
         while (c.moveToNext()) {
             int idP = c.getColumnIndex("idPokemon");
             int name = c.getColumnIndex("nome");
             int cat = c.getColumnIndex("categoria");
             int foto = c.getColumnIndex("foto");
             int icone = c.getColumnIndex("icone");
+            int idDoce = c.getColumnIndex("idDoce");
+            int idPokemonBase = c.getColumnIndex("idPokemonBase");
 
-            p = new Pokemon(c.getInt(idP),c.getString(name),c.getString(cat),c.getInt(foto),c.getInt(icone),this);
+            p = new Pokemon(c.getInt(idP),c.getString(name),c.getString(cat),c.getInt(foto),c.getInt(icone),c.getInt(idDoce),c.getInt(idPokemonBase),this);
             Log.i("GET", "Nome: " + p.getNome());
 
         }

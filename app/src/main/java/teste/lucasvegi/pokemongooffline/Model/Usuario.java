@@ -264,10 +264,13 @@ public class Usuario {
             valores.put("dtCaptura", dtCap);
             valores.put("latitude", location.getLatitude());
             valores.put("longitude", location.getLongitude());
+            valores.put("evoluido",0);
 
             //Persiste captura no banco
             BancoDadosSingleton.getInstance().inserir("pokemonusuario", valores);
 
+            //Adiciona 3 doces ao pokemon capturado
+            somarDoces(pkmnAux,3);
 
             //cria objeto PokemonCapturado com informações vindas do objeto Aparecimento parâmetro
             PokemonCapturado pc = new PokemonCapturado();
