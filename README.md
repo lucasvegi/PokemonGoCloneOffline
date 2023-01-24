@@ -85,7 +85,7 @@ The screens that implement the main features mentioned above are presented below
 The navigation flow of the screens follows the storyboard presented below:
 
 <div align="center">
-  <img width="100%" src="https://user-images.githubusercontent.com/17458700/214350637-8cb4140c-cd8e-4ec1-84e6-4583b54a5356.png?raw=true">
+  <img width="100%" src="https://user-images.githubusercontent.com/17458700/214377843-4772c956-9136-4d8c-97f3-43d91bd96e19.png?raw=true">
   <br><br>
 </div>
 
