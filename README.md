@@ -96,7 +96,7 @@ ___
 
 The video below (pt-BR) shows the app in action. It has some additional features compared to those [mentioned above](#application-features). These additional features were collaboratively developed by students of the Computer Science undergraduate course at the Federal University of Viçosa (Brazil) and have not yet been fully tested, so they have not yet been incorporated into the code of this repository. The code for this more complete version can be found in this [fork][pokemon-go-complete].
 
-[![Pokémon GO Clone presentation](https://i9.ytimg.com/vi/akgI7fmcn4E/sddefault.jpg?v=5fcc21b7&sqp=CJSkwJ4G&rs=AOn4CLCPfeIPBoz1MeKd4xDX6aermqDF9Q)](https://www.youtube.com/embed/akgI7fmcn4E)
+[![Pokémon GO Clone presentation](https://user-images.githubusercontent.com/17458700/214458048-0630f62b-dcef-42ec-9943-c4d17a2be21a.png)](https://www.youtube.com/embed/akgI7fmcn4E)
 
 [▲ back to Index](#table-of-contents)
 
