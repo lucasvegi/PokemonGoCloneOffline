@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion '25.0.0'
+    namespace 'teste.lucasvegi.pokemongooffline'
+
     defaultConfig {
         applicationId 'teste.lucasvegi.pokemongooffline'
         minSdkVersion 17
@@ -21,8 +23,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.google.android.gms:play-services:8.3.0'
-    compile 'com.android.support:design:23.1.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:23.1.1'
+    implementation 'com.google.android.gms:play-services:8.3.0'
+    implementation 'com.android.support:design:23.1.1'
 }
